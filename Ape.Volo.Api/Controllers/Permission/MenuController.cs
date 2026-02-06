@@ -112,7 +112,7 @@ public class MenusController : BaseApiController
     [HttpGet]
     [Description("Action.BuildLoginMenu")]
     [Route("build")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<MenuVo>))]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<MenuTreeVo>))]
     public async Task<ActionResult> Build()
     {
         var menuVos = await _menuService.BuildTreeAsync(App.HttpUser.Id);
