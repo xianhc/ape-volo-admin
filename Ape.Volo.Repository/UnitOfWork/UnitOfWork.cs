@@ -4,6 +4,9 @@ using SqlSugar;
 
 namespace Ape.Volo.Repository.UnitOfWork;
 
+/// <summary>
+/// 工作单元实现
+/// </summary>
 public class UnitOfWork : IUnitOfWork
 {
     private readonly ISqlSugarClient _sqlSugarClient;

@@ -100,10 +100,26 @@ public static partial class ExtObject
         return (long)(time - startTime).TotalMilliseconds;
     }
 
-    //时间戳(秒)String转换为DateTime类型转换
+    /// <summary>
+    /// 时间戳(秒)String转换为DateTime
+    /// </summary>
+    /// <param name="timestamp"></param>
+    /// <returns></returns>
     public static DateTime TicksToDateTime(this long timestamp)
     {
         DateTimeOffset dateTimeOffset = DateTimeOffset.FromUnixTimeSeconds(timestamp);
+        return dateTimeOffset.LocalDateTime;
+    }
+
+
+    /// <summary>
+    /// 时间戳(毫秒)String转换为DateTime类型转换
+    /// </summary>
+    /// <param name="timestamp"></param>
+    /// <returns></returns>
+    public static DateTime TimeMillisecondToDateTime(this long timestamp)
+    {
+        DateTimeOffset dateTimeOffset = DateTimeOffset.FromUnixTimeMilliseconds(timestamp);
         return dateTimeOffset.LocalDateTime;
     }
 }

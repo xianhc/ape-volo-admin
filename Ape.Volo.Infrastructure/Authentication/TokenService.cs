@@ -7,12 +7,16 @@ using Ape.Volo.Common.WebApp;
 using Ape.Volo.Core;
 using Ape.Volo.Core.ConfigOptions;
 using Ape.Volo.ViewModel.Jwt;
+using Dm.util;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Ape.Volo.Infrastructure.Authentication;
 
+/// <summary>
+/// 
+/// </summary>
 public class TokenService : ITokenService
 {
     private readonly ILogger<TokenService> _logger;
@@ -23,7 +27,15 @@ public class TokenService : ITokenService
         _logger = logger;
     }
 
-    public async Task<TokenVo> IssueTokenAsync(LoginUserInfo loginUserInfo, bool refresh = false)
+    /// <summary>
+    /// 颁发Token
+    /// </summary>
+    /// <param name="loginUserInfo"></param>
+    /// <param name="refresh"></param>
+    /// <param name="refreshTime"></param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentNullException"></exception>
+    public async Task<TokenVo> IssueTokenAsync(LoginUserInfo loginUserInfo, bool refresh = false, long refreshTime = 0)
     {
         if (loginUserInfo == null)
             throw new ArgumentNullException(nameof(loginUserInfo));
@@ -33,14 +45,19 @@ public class TokenService : ITokenService
             new SigningCredentials(new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtAuthOptions.SecurityKey)),
                 SecurityAlgorithms.HmacSha256);
         var nowTime = DateTime.Now;
+        if (refreshTime == 0)
+        {
+            refreshTime = nowTime.AddMinutes(jwtAuthOptions.RefreshTokenExpires).ToUnixTimeStampMillisecond();
+        }
         var cls = new List<Claim>
         {
             new(AuthConstants.JwtClaimTypes.Jti, loginUserInfo.UserId.ToString()),
             new(AuthConstants.JwtClaimTypes.Name, loginUserInfo.Account),
             new(AuthConstants.JwtClaimTypes.TenantId, loginUserInfo.TenantId.ToString()),
             new(AuthConstants.JwtClaimTypes.DeptId, loginUserInfo.DeptId.ToString()),
-            new(AuthConstants.JwtClaimTypes.Iat, nowTime.ToUnixTimeStampSecond().ToString()),
-            new(AuthConstants.JwtClaimTypes.Ip, loginUserInfo.Ip)
+            new(AuthConstants.JwtClaimTypes.Iat, nowTime.ToUnixTimeStampMillisecond().ToString()),
+            new(AuthConstants.JwtClaimTypes.Ip, loginUserInfo.Ip),
+            new(AuthConstants.JwtClaimTypes.RefreshTime,refreshTime.toString())
         };
         var identity = new ClaimsIdentity(AuthConstants.JwtTokenType);
         identity.AddClaims(cls);
@@ -51,33 +68,39 @@ public class TokenService : ITokenService
             audience: jwtAuthOptions.Audience,
             claims: cls,
             notBefore: nowTime,
-            expires: nowTime.AddHours(jwtAuthOptions.Expires),
+            expires: nowTime.AddMinutes(jwtAuthOptions.Expires),
             signingCredentials: signinCredentials
         );
 
-
+        var expires = nowTime.AddMinutes(jwtAuthOptions.Expires).ToUnixTimeStampMillisecond();
         var token = new JwtSecurityTokenHandler().WriteToken(tokeOptions);
         if (refresh)
         {
             return await Task.FromResult(new TokenVo
             {
-                Expires = jwtAuthOptions.Expires * 3600,
+                Expires = expires,
                 TokenType = AuthConstants.JwtTokenType,
                 RefreshToken = token,
+                RefreshTokenExpires = refreshTime
             });
         }
 
         return await Task.FromResult(new TokenVo
         {
             AccessToken = token,
-            Expires = jwtAuthOptions.Expires * 3600,
+            Expires = expires,
             TokenType = AuthConstants.JwtTokenType,
             RefreshToken = "",
-            RefreshTokenExpires = jwtAuthOptions.RefreshTokenExpires * 3600
+            RefreshTokenExpires = refreshTime
         });
     }
 
 
+    /// <summary>
+    /// 读取Token
+    /// </summary>
+    /// <param name="token"></param>
+    /// <returns></returns>
     public async Task<JwtSecurityToken> ReadJwtToken(string token)
     {
         try

@@ -1,4 +1,5 @@
 ﻿using System;
+using Newtonsoft.Json;
 
 namespace Ape.Volo.Entity.Base
 {
@@ -10,12 +11,12 @@ namespace Ape.Volo.Entity.Base
         /// <summary>
         /// 主键
         /// </summary>
-        public T Id { get; set; }
+        public T? Id { get; set; }
 
         /// <summary>
         /// 创建者名称
         /// </summary>
-        public string CreateBy { get; set; }
+        public string CreateBy { get; set; } = string.Empty;
 
         /// <summary>
         /// 创建时间
@@ -25,7 +26,7 @@ namespace Ape.Volo.Entity.Base
         /// <summary>
         /// 更新者名称
         /// </summary>
-        public string UpdateBy { get; set; }
+        public string? UpdateBy { get; set; }
 
 
         /// <summary>
@@ -36,7 +37,7 @@ namespace Ape.Volo.Entity.Base
         /// <summary>
         /// 是否删除
         /// </summary>
-        //[JsonIgnore]
+        [JsonIgnore]
         public bool IsDeleted { get; set; }
     }
 }

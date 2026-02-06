@@ -14,4 +14,10 @@ public class RoleQueryCriteria : DateRange, IConditionalModel
     /// </summary>
     [QueryCondition(ConditionType = ConditionalType.Like)]
     public string Name { get; set; }
+
+    /// <summary>
+    /// 数据权限类型
+    /// </summary>
+    [QueryCondition(ConditionType = ConditionalType.Equal)]
+    public int DataScopeType { get; set; }
 }

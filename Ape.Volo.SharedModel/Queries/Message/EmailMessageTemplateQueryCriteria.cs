@@ -19,5 +19,5 @@ public class EmailMessageTemplateQueryCriteria : DateRange, IConditionalModel
     /// 是否激活
     /// </summary>
     [QueryCondition(ConditionType = ConditionalType.Equal)]
-    public bool? IsActive { get; set; }
+    public bool? Enabled { get; set; }
 }

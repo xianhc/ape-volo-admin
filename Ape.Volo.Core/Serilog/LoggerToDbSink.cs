@@ -4,7 +4,7 @@ using Ape.Volo.Common.Extensions;
 using Ape.Volo.Common.Helper;
 using Ape.Volo.Common.IdGenerator;
 using Ape.Volo.Core.ConfigOptions;
-using Ape.Volo.Entity.Logs;
+using Ape.Volo.Entity.Log;
 using Ape.Volo.Repository.UnitOfWork;
 using Serilog.Events;
 using Serilog.Sinks.PeriodicBatching;

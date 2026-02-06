@@ -36,7 +36,7 @@ public class EmailAccountExport : ExportBase
     /// 电子邮件用户名
     /// </summary>
     [Display(Name = "EmailAccount.Username")]
-    public string Username { get; set; }
+    public string UserName { get; set; }
 
     /// <summary>
     /// 电子邮件密码

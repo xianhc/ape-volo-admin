@@ -37,14 +37,13 @@ public static class ExceptionHelper
     private static string GetExceptionAllMsg(System.Exception ex, int level)
     {
         StringBuilder builder = new StringBuilder();
-        builder.Append($@"
-{level}层错误:
-  消息:
-    {ex?.Message}
-  位置:
+        builder.Append($@"{level}层错误:
+消息:
+{ex?.Message}
+位置:
 {GetExceptionAddr(ex)}
 ");
-        if (ex.InnerException != null)
+        if (ex?.InnerException != null)
         {
             builder.Append(GetExceptionAllMsg(ex.InnerException, level + 1));
         }

@@ -11,10 +11,16 @@ namespace Ape.Volo.SharedModel.Queries.System;
 public class DictQueryCriteria : DateRange, IConditionalModel
 {
     /// <summary>
-    /// 关键字
+    /// 字典名称
     /// </summary>
-    [QueryCondition(ConditionType = ConditionalType.Like, FieldNameItems = ["Name", "Description"])]
-    public string KeyWords { get; set; }
+    [QueryCondition(ConditionType = ConditionalType.Like)]
+    public string Name { get; set; }
+
+    /// <summary>
+    /// 字典描述
+    /// </summary>
+    [QueryCondition(ConditionType = ConditionalType.Like)]
+    public string Description { get; set; }
 
     /// <summary>
     /// 类型

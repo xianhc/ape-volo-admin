@@ -62,7 +62,7 @@ public interface IQueuedEmailService : IBaseServices<QueuedEmail>
     /// <param name="emailAddress"></param>
     /// <param name="messageTemplateName"></param>
     /// <returns></returns>
-    Task<OperateResult> ResetEmail(string emailAddress, string messageTemplateName);
+    Task<OperateResult> ResetEmailCode(string emailAddress, string messageTemplateName);
 
 
     /// <summary>

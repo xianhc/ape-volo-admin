@@ -5,6 +5,7 @@ using Ape.Volo.Api.Controllers.Base;
 using Ape.Volo.Common.Extensions;
 using Ape.Volo.Common.Helper;
 using Ape.Volo.Common.Model;
+using Ape.Volo.Core;
 using Ape.Volo.IBusiness.System;
 using Ape.Volo.SharedModel.Dto.Core.System;
 using Ape.Volo.SharedModel.Queries.Common;
@@ -19,7 +20,7 @@ namespace Ape.Volo.Api.Controllers.System;
 /// 租户管理
 /// </summary>
 [Area("Area.TenantManagement")]
-[Route("/api/tenant", Order = 19)]
+[Route("/tenant", Order = 19)]
 public class TenantController : BaseApiController
 {
     #region 字段
@@ -150,10 +151,7 @@ public class TenantController : BaseApiController
     {
         var tenantExports = await _tenantService.DownloadAsync(tenantQueryCriteria);
         var data = new ExcelHelper().GenerateExcel(tenantExports, out var mimeType, out var fileName);
-        return new FileContentResult(data, mimeType)
-        {
-            FileDownloadName = fileName
-        };
+        return new FileContentResult(data, mimeType) { FileDownloadName = App.L.R("Sys.Tenant") + fileName };
     }
 
     #endregion

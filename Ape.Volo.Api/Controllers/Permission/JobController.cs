@@ -5,6 +5,7 @@ using Ape.Volo.Api.Controllers.Base;
 using Ape.Volo.Common.Extensions;
 using Ape.Volo.Common.Helper;
 using Ape.Volo.Common.Model;
+using Ape.Volo.Core;
 using Ape.Volo.IBusiness.Permission;
 using Ape.Volo.SharedModel.Dto.Core.Permission;
 using Ape.Volo.SharedModel.Queries.Common;
@@ -19,7 +20,7 @@ namespace Ape.Volo.Api.Controllers.Permission;
 /// 岗位管理
 /// </summary>
 [Area("Area.JobManagement")]
-[Route("/api/job", Order = 6)]
+[Route("/job", Order = 6)]
 public class JobController : BaseApiController
 {
     #region 字段
@@ -149,10 +150,7 @@ public class JobController : BaseApiController
     {
         var jobExports = await _jobService.DownloadAsync(jobQueryCriteria);
         var data = new ExcelHelper().GenerateExcel(jobExports, out var mimeType, out var fileName);
-        return new FileContentResult(data, mimeType)
-        {
-            FileDownloadName = fileName
-        };
+        return new FileContentResult(data, mimeType) { FileDownloadName = App.L.R("Sys.Job") + fileName };
     }
 
     #endregion

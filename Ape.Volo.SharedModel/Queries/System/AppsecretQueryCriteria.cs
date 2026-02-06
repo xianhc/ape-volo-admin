@@ -10,8 +10,20 @@ namespace Ape.Volo.SharedModel.Queries.System;
 public class AppsecretQueryCriteria : DateRange, IConditionalModel
 {
     /// <summary>
-    /// 关键字
+    /// 应用Id
     /// </summary>
-    [QueryCondition(ConditionType = ConditionalType.Like, FieldNameItems = ["AppId", "AppName", "Remark"])]
-    public string KeyWords { get; set; }
+    [QueryCondition(ConditionType = ConditionalType.Equal)]
+    public long AppId { get; set; }
+
+    /// <summary>
+    /// 应用名称
+    /// </summary>
+    [QueryCondition(ConditionType = ConditionalType.Like)]
+    public string AppName { get; set; }
+
+    /// <summary>
+    /// 备注
+    /// </summary>
+    [QueryCondition(ConditionType = ConditionalType.Like)]
+    public string Remark { get; set; }
 }

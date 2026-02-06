@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Ape.Volo.Common.Enums;
 using Ape.Volo.Common.Model;
 
 namespace Ape.Volo.ViewModel.Report.Permission;
@@ -6,6 +7,7 @@ namespace Ape.Volo.ViewModel.Report.Permission;
 /// <summary>
 /// 用户导出模板
 /// </summary>
+[Display(Name = "User.Username")]
 public class UserExport : ExportBase
 {
     /// <summary>
@@ -60,5 +62,5 @@ public class UserExport : ExportBase
     /// 性别
     /// </summary>
     [Display(Name = "User.Gender")]
-    public string Gender { get; set; }
+    public GenderCode GenderCode { get; set; }
 }

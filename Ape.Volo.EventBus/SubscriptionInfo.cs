@@ -16,14 +16,6 @@ public partial class InMemoryEventBusSubscriptionsManager
             HandlerType = handlerType;
         }
 
-        //public static SubscriptionInfo Dynamic(Type handlerType)
-        //{
-        //    return new SubscriptionInfo(true, handlerType);
-        //}
-        //public static SubscriptionInfo Typed(Type handlerType)
-        //{
-        //    return new SubscriptionInfo(false, handlerType);
-        //}
         public static SubscriptionInfo Dynamic(Type handlerType) =>
             new SubscriptionInfo(true, handlerType);
 

@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using Ape.Volo.Common.Enums;
+using Ape.Volo.Common.Exception;
 using Ape.Volo.Common.Extensions;
 using Microsoft.Extensions.Caching.Distributed;
 using StackExchange.Redis;
@@ -35,10 +36,7 @@ public class DistributedCache : ICache
         if (valueEntry.ExpireType == CacheExpireType.Relative)
         {
             _cache.Remove(key);
-            var options = new DistributedCacheEntryOptions
-            {
-                AbsoluteExpirationRelativeToNow = valueEntry.ExpireTime
-            };
+            var options = new DistributedCacheEntryOptions { AbsoluteExpirationRelativeToNow = valueEntry.ExpireTime };
             _cache.Set(key, cacheValue, options);
             //_cache.Refresh(key);
         }
@@ -60,10 +58,7 @@ public class DistributedCache : ICache
         if (valueEntry.ExpireType == CacheExpireType.Relative)
         {
             await _cache.RemoveAsync(key);
-            var options = new DistributedCacheEntryOptions
-            {
-                AbsoluteExpirationRelativeToNow = valueEntry.ExpireTime
-            };
+            var options = new DistributedCacheEntryOptions { AbsoluteExpirationRelativeToNow = valueEntry.ExpireTime };
             await _cache.SetAsync(key, cacheValue, options);
             // await _cache.RefreshAsync(key);
         }
@@ -71,7 +66,7 @@ public class DistributedCache : ICache
         return (T)result;
     }
 
-    public bool Set(string key, object value, TimeSpan? timeSpan, CacheExpireType? redisExpireType)
+    public bool Set(string key, object value, TimeSpan? timeSpan, CacheExpireType? cacheExpireType)
     {
         string jsonStr;
         if (value is string s)
@@ -84,18 +79,15 @@ public class DistributedCache : ICache
             Value = jsonStr,
             TypeName = value.GetType().AssemblyQualifiedName,
             ExpireTime = expireTime,
-            ExpireType = redisExpireType ?? CacheExpireType.Absolute
+            ExpireType = cacheExpireType ?? CacheExpireType.Absolute
         };
         var theValue = entry.ToJson();
-        var options = new DistributedCacheEntryOptions
-        {
-            AbsoluteExpirationRelativeToNow = expireTime
-        };
+        var options = new DistributedCacheEntryOptions { AbsoluteExpirationRelativeToNow = expireTime };
         _cache.Set(key, Encoding.UTF8.GetBytes(theValue), options);
         return true;
     }
 
-    public async Task<bool> SetAsync(string key, object value, TimeSpan? timeSpan, CacheExpireType? redisExpireType)
+    public async Task<bool> SetAsync(string key, object value, TimeSpan? timeSpan, CacheExpireType? cacheExpireType)
     {
         string jsonStr;
         if (value is string s)
@@ -108,13 +100,10 @@ public class DistributedCache : ICache
             Value = jsonStr,
             TypeName = value.GetType().AssemblyQualifiedName,
             ExpireTime = expireTime,
-            ExpireType = redisExpireType ?? CacheExpireType.Absolute
+            ExpireType = cacheExpireType ?? CacheExpireType.Absolute
         };
         var theValue = entry.ToJson();
-        var options = new DistributedCacheEntryOptions
-        {
-            AbsoluteExpirationRelativeToNow = expireTime
-        };
+        var options = new DistributedCacheEntryOptions { AbsoluteExpirationRelativeToNow = expireTime };
         await _cache.SetAsync(key, Encoding.UTF8.GetBytes(theValue), options);
         return true;
     }
@@ -133,6 +122,6 @@ public class DistributedCache : ICache
 
     public Task<string[]> ScriptEvaluateKeys(string key)
     {
-        throw new System.Exception("IDistributedCache不支持通配符查询,请切换redis缓存使用此功能");
+        throw new BadRequestException("IDistributedCache不支持通配符查询,请切换redis缓存使用此功能");
     }
 }

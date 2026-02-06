@@ -6,7 +6,7 @@ using Ape.Volo.Entity.Core.System;
 namespace Ape.Volo.SharedModel.Dto.Core.System;
 
 /// <summary>
-/// 全局设置Dto
+/// 系统配置Dto
 /// </summary>
 [AutoMapping(typeof(Setting), typeof(CreateUpdateSettingDto))]
 public class CreateUpdateSettingDto : BaseEntityDto<long>

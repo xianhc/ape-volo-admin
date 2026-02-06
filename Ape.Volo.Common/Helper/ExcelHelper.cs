@@ -6,6 +6,7 @@ using System.IO.Compression;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using Ape.Volo.Common.Exception;
 using Ape.Volo.Common.Extensions;
 using Ape.Volo.Common.Global;
 using Ape.Volo.Common.Model;
@@ -41,6 +42,11 @@ public class ExcelHelper
 
     public virtual byte[] GenerateExcel(List<ExportBase> exportRows, out string mimeType, out string fileName)
     {
+        if (exportRows == null || exportRows.Count == 0)
+        {
+            throw new BadRequestException(Localizer.R("Error.DataNotExist"));
+        }
+
         mimeType = MimeTypes.TextXlsx; //默认xlsx
         ExportMaxCount = ExportMaxCount == 0 ? 10000 : ExportMaxCount > 10000 ? 10000 : ExportMaxCount;
         ExportExcelCount = exportRows.Count < ExportMaxCount
@@ -52,15 +58,12 @@ public class ExcelHelper
         //如果是1，直接下载Excel，如果是多个，下载ZIP包
         if (ExportExcelCount == 1)
         {
-            fileName = exportRows.FirstOrDefault()?.GetType().FullName + "_" +
-                       DateTime.Now.ToString("yyyyMMddHHmmssffff") +
-                       ".xlsx";
+            fileName = $"_{DateTime.Now:yyyyMMddHHmmssffff}.xlsx";
             return DownLoadExcel(exportRows);
         }
 
         mimeType = MimeTypes.ApplicationZip;
-        fileName = exportRows.FirstOrDefault()?.GetType().FullName + "_" + DateTime.Now.ToString("yyyyMMddHHmmssffff") +
-                   ".zip";
+        fileName = $"_{DateTime.Now:yyyyMMddHHmmssffff}.zip";
         return DownLoadZipPackage(exportRows);
     }
 

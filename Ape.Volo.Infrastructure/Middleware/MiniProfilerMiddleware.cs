@@ -20,7 +20,7 @@ public static class MiniProfilerMiddleware
             throw new ArgumentNullException(nameof(app));
         try
         {
-            if (App.GetOptions<MiddlewareOptions>().MiniProfiler.Enabled)
+            if (App.GetOptions<MiddlewareOptions>().MiniProfiler)
             {
                 // 性能分析
                 app.UseMiniProfiler();

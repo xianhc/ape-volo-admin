@@ -1,4 +1,6 @@
-﻿namespace Ape.Volo.SharedModel.Queries.Common;
+﻿using SqlSugar;
+
+namespace Ape.Volo.SharedModel.Queries.Common;
 
 /// <summary>
 /// 分页
@@ -12,8 +14,8 @@ public class Pagination
     {
         PageIndex = 1;
         PageSize = 10;
-        SortFields = new List<string> { "id desc" };
-        TotalElements = 0;
+        SortField = "id";
+        OrderByType = OrderByType.Desc;
     }
 
     /// <summary>
@@ -29,7 +31,12 @@ public class Pagination
     /// <summary>
     /// 排序列
     /// </summary>
-    public List<string> SortFields { get; set; }
+    public string SortField { get; set; }
+
+    /// <summary>
+    /// 排序方式
+    /// </summary>
+    public OrderByType OrderByType { get; set; }
 
     /// <summary>
     /// 总条数

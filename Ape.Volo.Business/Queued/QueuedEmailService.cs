@@ -164,7 +164,7 @@ public class QueuedEmailService : BaseServices<QueuedEmail>, IQueuedEmailService
     /// <param name="emailAddress"></param>
     /// <param name="messageTemplateName"></param>
     /// <returns></returns>
-    public async Task<OperateResult> ResetEmail(string emailAddress, string messageTemplateName)
+    public async Task<OperateResult> ResetEmailCode(string emailAddress, string messageTemplateName)
     {
         var emailMessageTemplate =
             await _emailMessageTemplateService.TableWhere(x => x.Name == messageTemplateName).FirstAsync();
@@ -197,7 +197,7 @@ public class QueuedEmailService : BaseServices<QueuedEmail>, IQueuedEmailService
         await App.Cache.RemoveAsync(GlobalConstants.CachePrefix.EmailCaptcha +
                                     queuedEmail.To.ToMd5String());
         var isTrue = await App.Cache.SetAsync(
-            GlobalConstants.CachePrefix.EmailCaptcha + queuedEmail.To.ToMd5String(), captcha,
+            GlobalConstants.CachePrefix.EmailCaptcha + queuedEmail.To.ToMd5String16(), captcha,
             TimeSpan.FromMinutes(5), null);
 
         if (isTrue)
@@ -248,7 +248,10 @@ public class QueuedEmailService : BaseServices<QueuedEmail>, IQueuedEmailService
                 }
             }
         }
-
+        if (isTrue)
+        {
+            return OperateResult.Success("发送成功，验证码有效期5分钟");
+        }
         return OperateResult.Result(isTrue);
     }
 

@@ -3,8 +3,10 @@ using System.Threading.Tasks;
 using Ape.Volo.Api.ActionExtension.Sign;
 using Ape.Volo.Api.Controllers.Base;
 using Ape.Volo.Common.Attributes;
+using Ape.Volo.Common.IdGenerator;
 using Ape.Volo.Common.Model;
 using Ape.Volo.Core.Caches;
+using Ape.Volo.Entity.Test;
 using Ape.Volo.IBusiness.Test;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -130,17 +132,19 @@ public class TestController : BaseApiController
     [HttpGet]
     [Route("SearchOrder")]
     [Description("Sys.Query")]
-    [NotAudit]
+    [NotOperate]
+    //[AllowAnonymous]
+    [HasRole(["admin"])]
     public async Task<ActionResult> SearchOrder()
     {
-        // await _testOrderService.AddEntityAsync(new TestOrder()
-        // {
-        //     Id = IdHelper.GetLongId(),
-        //     OrderNo = "1001",
-        //     GoodsName = "iphone 16",
-        //     Qty = 1,
-        //     Price = 5000
-        // });
+        await _testOrderService.AddAsync(new TestOrder
+        {
+            Id = IdHelper.NextId(),
+            OrderNo = "1001",
+            GoodsName = "iphone 16",
+            Qty = 1,
+            Price = 5000
+        });
         var list = await _testOrderService.Table.ToListAsync();
         return JsonContent(list);
     }

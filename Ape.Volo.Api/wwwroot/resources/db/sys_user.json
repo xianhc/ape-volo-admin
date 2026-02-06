@@ -1,0 +1,32 @@
+[
+  {
+    "Id": 163519427764300,
+    "UserName": "apevolo",
+    "NickName": "Mr.冼",
+    "Email": "apevolo@gmail.com",
+    "Enabled": true,
+    "Password": "$2a$11$.WUDiK7CrAPKYJDSH9RtNuxarZ.u1llMs.8tWKbE76FU7G4j55E62",
+    "DeptId": 163519427764317,
+    "Phone": "13688888888",
+    "AvatarPath": "/uploads/file/avatar/20231010143458_1711631391147429888.png",
+    "PasswordResetTime": null,
+    "GenderCode": 1,
+    "CreateBy": "apevolo",
+    "TenantId": null
+  },
+  {
+    "Id": 163519427764301,
+    "UserName": "guest",
+    "NickName": "Mr.冼",
+    "Email": "guest@gmail.com",
+    "Enabled": true,
+    "Password": "$2a$11$9BhSJpUSBlfjhemHVho0vej7rOH7PVhu5bqbhRcmwJMEyyVqGLTJe",
+    "DeptId": 163519427764317,
+    "Phone": "13888888889",
+    "AvatarPath": "/uploads/file/avatar/20231010143458_1711631391147429888.png",
+    "PasswordResetTime": null,
+    "GenderCode": 1,
+    "CreateBy": "apevolo",
+    "TenantId": 1001
+  }
+]

@@ -18,7 +18,7 @@ public class LanguageKeyConstants
     public const string FileRecord = "Sys.FileRecord";
     public const string QuartzNet = "Sys.QuartzNet";
     public const string QuartzNetLog = "Sys.QuartzNetLog";
-    public const string Setting = "Sys.Setting";
+    public const string Parameter = "Sys.Parameter";
     public const string Tenant = "Sys.Tenant";
 
     public const string QueuedEmail = "Sys.QueuedEmail";

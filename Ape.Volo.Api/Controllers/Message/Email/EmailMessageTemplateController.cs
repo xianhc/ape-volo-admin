@@ -18,7 +18,7 @@ namespace Ape.Volo.Api.Controllers.Message.Email;
 /// 邮件模板管理
 /// </summary>
 [Area("Area.EmailMessageTemplateManagement")]
-[Route("/api/email/template", Order = 18)]
+[Route("/email/template", Order = 18)]
 public class EmailMessageTemplateController : BaseApiController
 {
     #region 字段

@@ -25,18 +25,25 @@ public static class QuartzNetJobMiddleware
 
         try
         {
-            if (App.GetOptions<MiddlewareOptions>().QuartzNetJob.Enabled)
+            if (App.GetOptions<MiddlewareOptions>().QuartzNetJob)
             {
                 var quartzNetService = app.ApplicationServices.GetRequiredService<IQuartzNetService>();
                 var schedulerCenter = app.ApplicationServices.GetRequiredService<ISchedulerCenterService>();
                 var allTaskQuartzList = AsyncHelper.RunSync(() => quartzNetService.QueryAllAsync());
                 foreach (var item in allTaskQuartzList)
                 {
-                    if (!item.IsEnable) continue;
+                    if (!item.Enabled) continue;
                     var results = AsyncHelper.RunSync(() => schedulerCenter.AddScheduleJobAsync(item));
-                    Logger.Information(results
-                        ? $"{App.L.R("Sys.QuartzNet")}=>{item.TaskName}=>{App.L.R("Action.StartupSSuccess")}！"
-                        : $"{App.L.R("Sys.QuartzNet")}=>{item.TaskName}=>{App.L.R("Action.StartupFailure")}！");
+                    if (results)
+                    {
+                        Logger.Information(
+                            $"{App.L.R("Sys.QuartzNet")}=>{item.TaskName}=>{App.L.R("Action.StartupSuccess")}！");
+                    }
+                    else
+                    {
+                        Logger.Error(
+                            $"{App.L.R("Sys.QuartzNet")}=>{item.TaskName}=>{App.L.R("Action.StartupFailure")}！");
+                    }
                 }
             }
         }

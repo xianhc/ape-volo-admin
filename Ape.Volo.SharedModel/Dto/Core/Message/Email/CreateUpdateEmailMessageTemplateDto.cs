@@ -38,9 +38,9 @@ public class CreateUpdateEmailMessageTemplateDto : BaseEntityDto<long>
     public string Body { get; set; }
 
     /// <summary>
-    /// 是否激活
+    /// 是否启用
     /// </summary>
-    public bool IsActive { get; set; }
+    public bool Enabled { get; set; }
 
     /// <summary>
     /// 邮箱账户标识符

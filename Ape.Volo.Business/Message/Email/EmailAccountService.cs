@@ -104,6 +104,16 @@ public class EmailAccountService : BaseServices<EmailAccount>, IEmailAccountServ
     }
 
     /// <summary>
+    /// 查询所有
+    /// </summary>
+    /// <returns></returns>
+    public async Task<List<EmailAccountVo>> QueryAllAsync()
+    {
+        return App.Mapper.MapTo<List<EmailAccountVo>>(await Table.ToListAsync());
+    }
+
+
+    /// <summary>
     /// 下载
     /// </summary>
     /// <param name="emailAccountQueryCriteria"></param>
@@ -119,7 +129,7 @@ public class EmailAccountService : BaseServices<EmailAccount>, IEmailAccountServ
             DisplayName = x.DisplayName,
             Host = x.Host,
             Port = x.Port,
-            Username = x.Username,
+            UserName = x.UserName,
             EnableSsl = x.EnableSsl,
             UseDefaultCredentials = x.UseDefaultCredentials,
             CreateTime = x.CreateTime

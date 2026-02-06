@@ -9,7 +9,7 @@ namespace Ape.Volo.IBusiness.Permission;
 public interface IDataScopeService
 {
     /// <summary>
-    /// 获取用户所有角色关联的部门ID
+    /// 获取指定用户在数据权限范围内可访问的所有用户账号（用户名）
     /// </summary>
     /// <param name="userId"></param>
     /// <returns></returns>

@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Ape.Volo.ViewModel.Core.Permission.User;
+using Newtonsoft.Json;
 
 namespace Ape.Volo.ViewModel.Jwt;
 
@@ -7,11 +8,24 @@ namespace Ape.Volo.ViewModel.Jwt;
 /// </summary>
 public class LoginResultVo
 {
+    // [JsonProperty("user")]
+    // public JwtUserVo JwtUserVo { get; set; }
+
     /// <summary>
-    /// 
+    /// 用户
     /// </summary>
-    [JsonProperty("user")]
-    public JwtUserVo JwtUserVo { get; set; }
+    public UserVo User { get; set; }
+
+    /// <summary>
+    /// 角色权限
+    /// </summary>
+    public List<string> RoleCodes { get; set; }
+
+    /// <summary>
+    /// 按钮权限
+    /// </summary>
+    public List<string> AuthCodes { get; set; }
+
 
     /// <summary>
     /// 

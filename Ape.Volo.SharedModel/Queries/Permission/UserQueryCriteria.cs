@@ -1,6 +1,5 @@
 using Ape.Volo.Common.Attributes;
 using Ape.Volo.Common.Model;
-using Newtonsoft.Json;
 using SqlSugar;
 
 namespace Ape.Volo.SharedModel.Queries.Permission;
@@ -17,10 +16,16 @@ public class UserQueryCriteria : DateRange, IConditionalModel
     public long Id { get; set; }
 
     /// <summary>
-    /// 关键字
+    /// 用户名
     /// </summary>
-    [QueryCondition(ConditionType = ConditionalType.Like, FieldNameItems = ["Username", "NickName", "Email"])]
-    public string KeyWords { get; set; }
+    [QueryCondition(ConditionType = ConditionalType.Like)]
+    public string UserName { get; set; }
+
+    /// <summary>
+    /// 昵称
+    /// </summary>
+    [QueryCondition(ConditionType = ConditionalType.Like)]
+    public string NickName { get; set; }
 
     /// <summary>
     /// 是否启用
@@ -28,17 +33,9 @@ public class UserQueryCriteria : DateRange, IConditionalModel
     [QueryCondition(ConditionType = ConditionalType.Equal)]
     public bool? Enabled { get; set; }
 
-
-    /// <summary>
-    /// 部门ID
-    /// </summary>
-    public long DeptId { get; set; }
-
-
     /// <summary>
     /// 部门ID集合 用于查询
     /// </summary>
-    [JsonIgnore]
     [QueryCondition(ConditionType = ConditionalType.In, FieldName = "DeptId")]
-    public string DeptIdItems { get; set; }
+    public string DepartmentIdArray { get; set; }
 }

@@ -22,7 +22,7 @@ public class RoleSmallVo
     /// <summary>
     /// 权限标识符
     /// </summary>
-    public string Permission { get; set; }
+    public string AuthCode { get; set; }
 
     /// <summary>
     /// 等级

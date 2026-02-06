@@ -1,4 +1,6 @@
-﻿namespace Ape.Volo.ViewModel.Core.Permission.Menu;
+﻿using Ape.Volo.Common.Enums;
+
+namespace Ape.Volo.ViewModel.Core.Permission.Menu;
 
 /// <summary>
 /// 菜单视图  构建菜单树
@@ -15,8 +17,14 @@ public class MenuTreeVo
     /// </summary>
     public string Path { get; set; }
 
+
     /// <summary>
-    /// 印象
+    /// 菜单类型
+    /// </summary>
+    public MenuType MenuType { get; set; }
+
+    /// <summary>
+    /// 隐藏
     /// </summary>
     public bool Hidden { get; set; }
 

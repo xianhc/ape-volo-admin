@@ -16,10 +16,10 @@ public class UpdateRoleApiDto
     public long Id { get; set; }
 
     /// <summary>
-    /// 角色菜单
+    /// 角色Api
     /// </summary>
     [Display(Name = "Sys.Api")]
     [Required(ErrorMessage = "{0}required")]
     [AtLeastOneItem]
-    public List<RoleApisDto> Apis { get; set; }
+    public List<long> ApiIdArray { get; set; }
 }

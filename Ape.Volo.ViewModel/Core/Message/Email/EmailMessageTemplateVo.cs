@@ -31,9 +31,9 @@ public class EmailMessageTemplateVo : BaseEntityDto<long>
     public string Body { get; set; }
 
     /// <summary>
-    /// 是否激活
+    /// 是否启用
     /// </summary>
-    public bool IsActive { get; set; }
+    public bool Enabled { get; set; }
 
     /// <summary>
     /// 发送邮箱账户

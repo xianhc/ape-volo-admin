@@ -45,6 +45,13 @@ public interface IDictService : IBaseServices<Dict>
     /// <returns></returns>
     Task<List<DictVo>> QueryAsync(DictQueryCriteria dictQueryCriteria, Pagination pagination);
 
+
+    /// <summary>
+    /// 根据名称查询字典
+    /// </summary>
+    /// <returns></returns>
+    Task<DictVo> QueryByNameAsync(string name);
+
     /// <summary>
     /// 下载
     /// </summary>

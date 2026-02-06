@@ -21,7 +21,7 @@ namespace Ape.Volo.Api.Controllers.System;
 /// 文件存储管理
 /// </summary>
 [Area("Area.FileStorageManagement")]
-[Route("/api/storage", Order = 12)]
+[Route("/storage", Order = 12)]
 public class FileRecordController : BaseApiController
 {
     #region 字段
@@ -45,20 +45,12 @@ public class FileRecordController : BaseApiController
     /// 新增文件
     /// </summary>
     /// <param name="file"></param>
-    /// <param name="createUpdateFileRecordDto"></param>
     /// <returns></returns>
     [HttpPost, HttpOptions]
     [Route("upload")]
     [Description("Sys.Create")]
-    public async Task<ActionResult> Upload(CreateUpdateFileRecordDto createUpdateFileRecordDto,
-        [FromForm] IFormFile file)
+    public async Task<ActionResult> Upload([FromForm] IFormFile file)
     {
-        if (!ModelState.IsValid)
-        {
-            var actionError = ModelState.GetErrors();
-            return Error(actionError);
-        }
-
         if (file.IsNull())
         {
             return Error(App.L.R("{0}required", "file"));
@@ -71,7 +63,7 @@ public class FileRecordController : BaseApiController
             return Error(App.L.R("Error.FileTooLarge{0}", fileLimitSize));
         }
 
-        var result = await _fileRecordService.CreateAsync(createUpdateFileRecordDto, file);
+        var result = await _fileRecordService.CreateAsync(file);
         return Ok(result);
     }
 
@@ -151,10 +143,7 @@ public class FileRecordController : BaseApiController
     {
         var fileRecordExports = await _fileRecordService.DownloadAsync(fileRecordQueryCriteria);
         var data = new ExcelHelper().GenerateExcel(fileRecordExports, out var mimeType, out var fileName);
-        return new FileContentResult(data, mimeType)
-        {
-            FileDownloadName = fileName
-        };
+        return new FileContentResult(data, mimeType) { FileDownloadName = App.L.R("Sys.FileRecord") + fileName };
     }
 
     #endregion

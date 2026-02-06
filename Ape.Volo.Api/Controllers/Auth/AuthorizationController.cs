@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
-using Ape.Volo.Api.ActionExtension.Parameter;
 using Ape.Volo.Api.Controllers.Base;
 using Ape.Volo.Common.Attributes;
 using Ape.Volo.Common.Enums;
@@ -20,6 +19,8 @@ using Ape.Volo.IBusiness.Permission;
 using Ape.Volo.IBusiness.Queued;
 using Ape.Volo.IBusiness.System;
 using Ape.Volo.Infrastructure.Authentication;
+using Ape.Volo.SharedModel.Dto.Core.Permission.User;
+using Ape.Volo.SharedModel.Dto.Jwt;
 using Ape.Volo.SharedModel.Queries.Login;
 using Ape.Volo.ViewModel.Core.Permission.User;
 using Ape.Volo.ViewModel.Jwt;
@@ -73,7 +74,7 @@ public class AuthorizationController : BaseApiController
     [Description("Action.GetVerificationCode")]
     [Route("captcha")]
     [AllowAnonymous]
-    [NotAudit]
+    [NotOperate]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CaptchaVo))]
     public async Task<ActionResult> Captcha()
     {
@@ -102,12 +103,7 @@ public class AuthorizationController : BaseApiController
         var captchaId = GlobalConstants.CachePrefix.CaptchaId +
                         IdHelper.NextId().ToString().Base64Encode();
         await App.Cache.SetAsync(captchaId, code, TimeSpan.FromMinutes(2), null);
-        var captchaVo = new CaptchaVo
-        {
-            Img = img,
-            CaptchaId = captchaId,
-            ShowCaptcha = showCaptcha
-        };
+        var captchaVo = new CaptchaVo { Img = img, CaptchaId = captchaId, ShowCaptcha = showCaptcha };
 
         return JsonContent(captchaVo);
     }
@@ -134,17 +130,14 @@ public class AuthorizationController : BaseApiController
 
         var loginFailedLimitOptions = App.GetOptions<LoginFailedLimitOptions>();
         var attempsCacheKey = GlobalConstants.CachePrefix.Attempts + App.HttpContext.Connection.RemoteIpAddress +
-                              authUser.Username;
+                              authUser.UserName;
         LoginAttempt loginAttempt = null;
         if (loginFailedLimitOptions.Enabled)
         {
             loginAttempt = await App.Cache.GetAsync<LoginAttempt>(attempsCacheKey);
             if (loginAttempt.IsNull())
             {
-                loginAttempt = new LoginAttempt
-                {
-                    Count = 0, IsLocked = false, LockUntil = DateTime.MinValue
-                };
+                loginAttempt = new LoginAttempt { Count = 0, IsLocked = false, LockUntil = DateTime.MinValue };
                 await App.Cache.SetAsync(attempsCacheKey, loginAttempt,
                     TimeSpan.FromSeconds(loginFailedLimitOptions.Lockout), null);
             }
@@ -177,7 +170,7 @@ public class AuthorizationController : BaseApiController
         }
 
 
-        if (!App.GetOptions<SystemOptions>().IsQuickDebug && showCaptcha)
+        if (App.GetOptions<SystemOptions>().RunMode != RunMode.Dev && showCaptcha)
         {
             if (authUser.Captcha.IsNullOrEmpty())
             {
@@ -210,7 +203,7 @@ public class AuthorizationController : BaseApiController
             }
         }
 
-        var userDto = await _userService.QueryByNameAsync(authUser.Username);
+        var userDto = await _userService.QueryByNameAsync(authUser.UserName);
         if (userDto == null)
         {
             if (captchaOptions.Threshold > 0)
@@ -279,17 +272,22 @@ public class AuthorizationController : BaseApiController
     /// <summary>
     /// 刷新Token
     /// </summary>
-    /// <param name="token"></param>
+    /// <param name="refreshToken"></param>
     /// <returns></returns>
     [HttpPost]
     [Route("refreshToken")]
     [Description("Action.RefreshToken")]
     [AllowAnonymous]
-    [NotAudit]
-    [ParamRequired("token")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(TokenVo))]
-    public async Task<ActionResult> RefreshToken(string token)
+    public async Task<ActionResult> RefreshToken([FromBody] RefreshToken refreshToken)
     {
+        if (!ModelState.IsValid)
+        {
+            var actionError = ModelState.GetErrors();
+            return Error(actionError);
+        }
+
+        var token = refreshToken.Token;
         var tokenMd5 = token.ToMd5String16();
         var tokenBlacklist = await _tokenBlacklistService
             .TableWhere(x => x.AccessToken == tokenMd5, null, null, null, true)
@@ -305,16 +303,18 @@ public class AuthorizationController : BaseApiController
             var userId = Convert.ToInt64(jwtSecurityToken.Claims
                 .FirstOrDefault(s => s.Type == AuthConstants.JwtClaimTypes.Jti)?.Value);
             var loginTime = Convert.ToInt64(jwtSecurityToken.Claims
-                .FirstOrDefault(s => s.Type == AuthConstants.JwtClaimTypes.Iat)?.Value).TicksToDateTime();
+                .FirstOrDefault(s => s.Type == AuthConstants.JwtClaimTypes.Iat)?.Value).TimeMillisecondToDateTime();
             var nowTime = DateTime.Now.ToLocalTime();
-            var refreshTime = loginTime.AddHours(App.GetOptions<JwtAuthOptions>().RefreshTokenExpires);
+            var refreshTimeClaims = Convert.ToInt64(jwtSecurityToken.Claims
+                .FirstOrDefault(s => s.Type == AuthConstants.JwtClaimTypes.RefreshTime)?.Value);
+            var refreshTime = refreshTimeClaims.TimeMillisecondToDateTime();
             // 允许token刷新时间内
-            if (nowTime <= refreshTime)
+            if (nowTime < refreshTime)
             {
                 var netUser = await _userService.QueryByIdAsync(userId);
                 if (netUser.IsNotNull())
                     if (netUser.UpdateTime == null || netUser.UpdateTime < loginTime)
-                        return await LoginResult(netUser, "refresh");
+                        return await LoginResult(netUser, "refresh", refreshTimeClaims);
             }
 
             return Error(App.L.R("Error.TokenExpired"));
@@ -327,36 +327,42 @@ public class AuthorizationController : BaseApiController
     [HttpGet]
     [Route("info")]
     [Description("Action.PersonalInfo")]
-    [NotAudit]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(JwtUserVo))]
     public async Task<ActionResult> GetInfo()
     {
+        if (App.HttpUser.IsNull() || App.HttpUser.Id == 0)
+        {
+            return Error(App.L.R("Error.TokenExpired"));
+        }
+
         var netUser = await _userService.QueryByIdAsync(App.HttpUser.Id);
-        var permissionIdentifierList = await _permissionService.GetPermissionIdentifierAsync(netUser.Id);
-        permissionIdentifierList.AddRange(netUser.Roles.Select(r => r.Permission));
-        var jwtUserVo = await _onlineUserService.CreateJwtUserAsync(netUser, permissionIdentifierList);
+
+        var authCodeList = await _permissionService.GetAuthCodeAsync(netUser.Id);
+
+
+        var jwtUserVo = await _onlineUserService.CreateJwtUserAsync(netUser, authCodeList);
         return JsonContent(jwtUserVo);
     }
 
 
     /// <summary>
-    /// 获取验证码，申请变更邮箱
+    /// 获取邮箱验证码，申请变更邮箱
     /// </summary>
+    /// <param name="emailCodeDto"></param>
     /// <returns></returns>
     [HttpPost]
     [Description("Action.GetEmailVerificationCode")]
-    [Route("code/reset/email")]
-    [ParamRequired("email")]
+    [Route("resetEmailCode")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ActionResultVm))]
-    public async Task<ActionResult> ResetEmail(string email)
+    public async Task<ActionResult> ResetEmailCode([FromBody] EmailCodeDto emailCodeDto)
     {
-        if (!email.IsEmail())
+        if (!ModelState.IsValid)
         {
-            return Error(App.L.R("{0}Error.Format",
-                App.L.R("Sys.Email")));
+            var actionError = ModelState.GetErrors();
+            return Error(actionError);
         }
 
-        var result = await _queuedEmailService.ResetEmail(email, "EmailVerificationCode");
+        var result = await _queuedEmailService.ResetEmailCode(emailCodeDto.Email, "EmailVerificationCode");
         return Ok(result);
     }
 
@@ -381,12 +387,16 @@ public class AuthorizationController : BaseApiController
                                         App.HttpUser.Id.ToString().ToMd5String16());
             await App.Cache.RemoveAsync(GlobalConstants.CachePrefix.UserMenuById +
                                         App.HttpUser.Id.ToString().ToMd5String16());
-            await App.Cache.RemoveAsync(GlobalConstants.CachePrefix.UserPermissionRoles +
+            await App.Cache.RemoveAsync(GlobalConstants.CachePrefix.UserAuthCodes +
                                         App.HttpUser.Id.ToString().ToMd5String16());
-            await App.Cache.RemoveAsync(GlobalConstants.CachePrefix.UserPermissionUrls +
+            await App.Cache.RemoveAsync(GlobalConstants.CachePrefix.UserAuthUrls +
                                         App.HttpUser.Id.ToString().ToMd5String16());
             await App.Cache.RemoveAsync(GlobalConstants.CachePrefix.UserDataScopeById +
                                         App.HttpUser.Id.ToString().ToMd5String16());
+            await _tokenBlacklistService.AddAsync(new Entity.Core.System.TokenBlacklist
+            {
+                AccessToken = App.HttpUser.JwtToken.ToMd5String16()
+            });
         }
 
         return Ok(OperateResult.Success());
@@ -437,7 +447,6 @@ public class AuthorizationController : BaseApiController
 
     #endregion
 
-
     #region 私有方法
 
     /// <summary>
@@ -445,22 +454,22 @@ public class AuthorizationController : BaseApiController
     /// </summary>
     /// <param name="userDto"></param>
     /// <param name="type">login:登录,refresh:刷新token</param>
+    /// <param name="refreshTime"></param>
     /// <returns></returns>
-    private async Task<ActionResult> LoginResult(UserVo userDto, string type)
+    private async Task<ActionResult> LoginResult(UserVo userDto, string type, long refreshTime = 0)
     {
-        var permissionIdentifierList = new List<string>();
+        var authCodeList = new List<string>();
         var refresh = true;
         if (type.Equals("login"))
         {
             refresh = false;
-            permissionIdentifierList = await _permissionService.GetPermissionIdentifierAsync(userDto.Id);
-            permissionIdentifierList.AddRange(userDto.Roles.Select(r => r.Permission));
+            authCodeList = await _permissionService.GetAuthCodeAsync(userDto.Id);
         }
 
         var remoteIp = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "0.0.0.0";
-        var jwtUserVo = await _onlineUserService.CreateJwtUserAsync(userDto, permissionIdentifierList);
-        var loginUserInfo = await _onlineUserService.SaveLoginUserAsync(jwtUserVo, remoteIp);
-        var token = await _tokenService.IssueTokenAsync(loginUserInfo, refresh);
+        //var jwtUserVo = await _onlineUserService.CreateJwtUserAsync(userDto, authCodeList);
+        var loginUserInfo = await _onlineUserService.SaveLoginUserAsync(userDto, remoteIp);
+        var token = await _tokenService.IssueTokenAsync(loginUserInfo, refresh, refreshTime);
         loginUserInfo.AccessToken = refresh ? token.RefreshToken : token.AccessToken;
         var onlineKey = loginUserInfo.AccessToken.ToMd5String16();
         await App.Cache.SetAsync(
@@ -472,7 +481,9 @@ public class AuthorizationController : BaseApiController
             case "login":
                 var response = new LoginResultVo
                 {
-                    JwtUserVo = jwtUserVo,
+                    User = userDto,
+                    RoleCodes = userDto.Roles.Select(x => x.AuthCode).ToList(),
+                    AuthCodes = authCodeList,
                     TokenVo = token
                 };
                 return JsonContent(response);

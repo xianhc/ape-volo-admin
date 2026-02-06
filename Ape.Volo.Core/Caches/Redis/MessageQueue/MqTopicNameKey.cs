@@ -9,7 +9,7 @@ public static class MqTopicNameKey
 
 
     /// <summary>
-    ///  审计日志队列
+    ///  操作日志队列
     /// </summary>
-    public const string AuditLogQueue = "AuditLogQueue";
+    public const string OperateLogQueue = "OperateLogQueue";
 }

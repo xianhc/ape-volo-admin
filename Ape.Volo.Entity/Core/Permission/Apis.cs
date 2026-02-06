@@ -4,7 +4,7 @@ using SqlSugar;
 namespace Ape.Volo.Entity.Core.Permission
 {
     /// <summary>
-    /// 
+    /// Api路由
     /// </summary>
     [SugarTable("sys_apis")]
     public class Apis : BaseEntity
@@ -12,26 +12,22 @@ namespace Ape.Volo.Entity.Core.Permission
         /// <summary>
         /// 组
         /// </summary>
-        [SugarColumn(IsNullable = false)]
-        public string Group { get; set; }
+        public string Group { get; set; } = string.Empty;
 
         /// <summary>
         /// 路径
         /// </summary>
-        [SugarColumn(IsNullable = false)]
-        public string Url { get; set; }
+        public string Url { get; set; } = string.Empty;
 
 
         /// <summary>
         /// 描述
         /// </summary>
-        [SugarColumn(IsNullable = true)]
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
         /// <summary>
         /// 请求方法
         /// </summary>
-        [SugarColumn(IsNullable = false)]
-        public string Method { get; set; }
+        public string Method { get; set; } = string.Empty;
     }
 }

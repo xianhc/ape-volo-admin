@@ -16,7 +16,7 @@ public class CreateUpdateJobDto : BaseEntityDto<long>
     /// </summary>
     [Display(Name = "Job.Name")]
     [Required(ErrorMessage = "{0}required")]
-    public string Name { get; set; } = string.Empty;
+    public string Name { get; set; }
 
     /// <summary>
     /// 排序

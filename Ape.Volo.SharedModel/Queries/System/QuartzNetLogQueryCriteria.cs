@@ -13,7 +13,7 @@ public class QuartzNetLogQueryCriteria : DateRange, IConditionalModel
     /// 任务ID
     /// </summary>
     [QueryCondition(ConditionType = ConditionalType.Equal, FieldName = "TaskId")]
-    public long Id { get; set; }
+    public long TaskId { get; set; }
 
     /// <summary>
     /// 是否执行成功

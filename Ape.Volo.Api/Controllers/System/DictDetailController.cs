@@ -18,7 +18,7 @@ namespace Ape.Volo.Api.Controllers.System;
 /// 字典详情管理
 /// </summary>
 [Area("Area.DictionaryDetailManagement")]
-[Route("/api/dictDetail", Order = 8)]
+[Route("/dictDetail", Order = 8)]
 public class DictDetailController : BaseApiController
 {
     #region 字段
@@ -86,20 +86,15 @@ public class DictDetailController : BaseApiController
     /// <summary>
     /// 删除字典详情
     /// </summary>
-    /// <param name="id"></param>
+    /// <param name="idCollection"></param>
     /// <returns></returns>
     [HttpDelete]
     [Route("delete")]
     [Description("Sys.Delete")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ActionResultVm))]
-    public async Task<ActionResult> Delete(long id)
+    public async Task<ActionResult> Delete([FromBody] IdCollection idCollection)
     {
-        if (id.IsNullOrEmpty())
-        {
-            return Error("id cannot be empty");
-        }
-
-        var result = await _dictDetailService.DeleteAsync(id);
+        var result = await _dictDetailService.DeleteAsync(idCollection.IdArray);
         return Ok(result);
     }
 

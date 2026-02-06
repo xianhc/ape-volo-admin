@@ -21,7 +21,7 @@ public static class IpLimitMiddleware
             throw new ArgumentNullException(nameof(app));
         try
         {
-            if (App.GetOptions<MiddlewareOptions>().IpLimit.Enabled)
+            if (App.GetOptions<MiddlewareOptions>().IpLimit)
             {
                 app.UseIpRateLimiting();
             }

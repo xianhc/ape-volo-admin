@@ -12,37 +12,32 @@ namespace Ape.Volo.Entity.Core.Message.Email
         /// <summary>
         /// 模板名称
         /// </summary>
-        [SugarColumn(IsNullable = false)]
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
 
         /// <summary>
         /// 抄送邮箱地址
         /// </summary>
-        [SugarColumn(IsNullable = true)]
-        public string BccEmailAddresses { get; set; }
+        public string? BccEmailAddresses { get; set; }
 
         /// <summary>
         /// 主题
         /// </summary>
-        [SugarColumn(IsNullable = true)]
-        public string Subject { get; set; }
+        public string? Subject { get; set; }
 
         /// <summary>
         /// 内容
         /// </summary>
-        [SugarColumn(ColumnDataType = "varcharmax,longtext,text,clob", IsNullable = false)]
-        public string Body { get; set; }
+        [SugarColumn(ColumnDataType = StaticConfig.CodeFirst_BigString)]
+        public string Body { get; set; } = string.Empty;
 
         /// <summary>
-        /// 是否激活
+        /// 是否启用
         /// </summary>
-        [SugarColumn(IsNullable = false)]
-        public bool IsActive { get; set; }
+        public bool Enabled { get; set; }
 
         /// <summary>
         /// 邮箱账户标识符
         /// </summary>
-        [SugarColumn(IsNullable = false)]
         public long EmailAccountId { get; set; }
     }
 }

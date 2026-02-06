@@ -1,5 +1,14 @@
+/******************************************************************************
+ * 项目名称：APE-VOLO-ADMIN
+ * 版权协议：Apache-2.0
+ * 开源地址：https://github.com/xianhc/ape-volo-admin
+ * 系统官网：https://www.apevolo.com
+ * 版权声明：Copyright © 2022 xianhc(冼浩春) 保留所有权利。
+ ******************************************************************************/
+
 using System;
 using System.Reflection;
+using Ape.Volo.Common.Enums;
 using Ape.Volo.Common.Global;
 using Ape.Volo.Common.IdGenerator;
 using Ape.Volo.Common.IdGenerator.Contract;
@@ -41,7 +50,7 @@ builder.Host
                 optional: true, reloadOnChange: false)
             .AddJsonFile("IpRateLimit.json", optional: true, reloadOnChange: false);
     }).UseSerilogMiddleware()
-    .ConfigureContainer<ContainerBuilder>(b => { b.RegisterModule(new AutofacRegister()); });
+    .ConfigureContainer<ContainerBuilder>(b => { b.RegisterModule(new AutofacExtensions()); });
 builder.ConfigureApplication();
 
 
@@ -51,26 +60,27 @@ builder.Services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
 builder.Services.AddSingleton<IRegister, CustomMapper>();
 builder.Services.AddSingleton<IMapper, Mapper>();
 builder.Services.AddSingleton(new AppSettings(builder.Configuration, builder.Environment));
-builder.Services.AddOptionRegisterSetup();
-builder.Services.AddCustomMultiLanguages();
+//builder.Services.AddAppConfigService(builder.Environment);
+builder.Services.AddOptionRegisterService();
+builder.Services.AddCustomMultiLanguagesService();
 // builder.Services.Configure<Configs>(configuration);
 // var configs = configuration.Get<Configs>();
-builder.Services.AddSerilogSetup();
+builder.Services.AddSerilogService();
 builder.Services.Configure<KestrelServerOptions>(options => { options.AllowSynchronousIO = true; });
 builder.Services.Configure<IISServerOptions>(options => { options.AllowSynchronousIO = true; });
-builder.Services.AddCacheSetup();
-builder.Services.AddSqlSugarSetup();
-builder.Services.AddDbSetup();
-builder.Services.AddCorsSetup();
-builder.Services.AddMiniProfilerSetup();
-builder.Services.AddSwaggerSetup();
-builder.Services.AddQuartzNetJobSetup();
-builder.Services.AddAuthorizationSetup();
+builder.Services.AddCacheService();
+builder.Services.AddSqlSugarService();
+builder.Services.AddDbService();
+builder.Services.AddCorsService();
+builder.Services.AddMiniProfilerService();
+builder.Services.AddSwaggerService();
+builder.Services.AddQuartzNetJobService();
+builder.Services.AddAuthorizationService();
 builder.Services.AddBrowserDetection();
-builder.Services.AddRedisInitMqSetup();
-builder.Services.AddIpStrategyRateLimitSetup();
-builder.Services.AddRabbitMqSetup();
-builder.Services.AddEventBusSetup();
+builder.Services.AddRedisInitMqService();
+builder.Services.AddIpStrategyRateLimitService();
+builder.Services.AddRabbitMqService();
+builder.Services.AddEventBusService();
 builder.Services.AddSession(options =>
 {
     options.IdleTimeout = TimeSpan.FromMinutes(30); // 设置会话过期时间
@@ -82,7 +92,12 @@ builder.Services.AddControllers(options =>
         // 异常过滤器
         options.Filters.Add<ExceptionLogFilter>();
         // 审计过滤器
-        options.Filters.Add<AuditLogFilter>();
+        options.Filters.Add<OperateLogFilter>();
+        if (App.GetOptions<SystemOptions>().RunMode == RunMode.Demo)
+        {
+            //演示模式
+            options.Filters.Add<DemoFilter>();
+        }
     })
     //.AddViewLocalization(LanguageViewLocationExpanderFormat.Suffix)
     .AddDataAnnotationsLocalization(typeof(Language))
@@ -98,12 +113,13 @@ builder.Services.AddControllers(options =>
             //options.SerializerSettings.ContractResolver = new CustomContractResolver();
         }
     );
-builder.Services.AddIpSearcherSetup();
+builder.Services.AddIpSearcherService();
 
 // 配置中间件
 var app = builder.Build();
 
 app.ConfigureApplication();
+app.AppConfigNotifier();
 app.ApplicationStartedNotifier();
 
 //实体映射配置
@@ -112,10 +128,6 @@ TypeAdapterConfig.GlobalSettings.Apply(mapper);
 
 //多语言请求扩展
 app.UseCustomRequestLocalization();
-
-//IP限流
-app.UseIpLimitMiddleware();
-
 
 //获取远程真实ip,如果不是nginx代理部署可以不要
 app.UseMiddleware<RealIpMiddleware>();
@@ -133,9 +145,6 @@ app.Use(next => context =>
     return next(context);
 });
 
-//autofac
-//AutofacHelper.Container = app.Services.GetAutofacRoot();
-
 app.UseSession();
 // // Swagger Auth
 app.UseSwaggerAuthorized();
@@ -143,15 +152,18 @@ app.UseSwaggerAuthorized();
 app.UseSwaggerUiMiddleware(() => Assembly.GetExecutingAssembly().GetManifestResourceStream("Ape.Volo.Api.index.html"));
 
 
-// CORS跨域
-app.UseCors(App.GetOptions<CorsOptions>().Name);
 //静态文件
 app.UseStaticFiles();
 //cookie
 app.UseCookiePolicy();
 //错误页
 app.UseStatusCodePages();
+// 路由
 app.UseRouting();
+//IP限流
+app.UseIpLimitMiddleware();
+// CORS跨域
+app.UseCors(App.GetOptions<CorsOptions>().Name);
 // 认证
 app.UseAuthentication();
 // 授权
@@ -160,13 +172,6 @@ app.UseAuthorization();
 app.UseMiniProfilerMiddleware();
 
 //app.UseHttpMethodOverride();
-
-// app.UseEndpoints(endpoints =>
-// {
-//     endpoints.MapControllerRoute(
-//         name: "default",
-//         pattern: "{controller=Home}/{action=Index}/{id?}");
-// });
 
 //种子数据
 app.UseDataSeederMiddleware();

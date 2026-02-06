@@ -22,14 +22,13 @@ public class CreateUpdateRoleDto : BaseEntityDto<long>
     /// 等级
     /// </summary>
     [Display(Name = "Role.Level")]
-    [Range(1, 99, ErrorMessage = "{0}range{1}{2}")]
+    [Range(1, 999, ErrorMessage = "{0}range{1}{2}")]
     public int Level { get; set; }
 
     /// <summary>
     /// 描述
     /// </summary>
     [Display(Name = "Sys.Description")]
-    [Required(ErrorMessage = "{0}required")]
     public string Description { get; set; }
 
     /// <summary>
@@ -44,10 +43,10 @@ public class CreateUpdateRoleDto : BaseEntityDto<long>
     /// </summary>
     [Display(Name = "Role.Permission")]
     [Required(ErrorMessage = "{0}required")]
-    public string Permission { get; set; }
+    public string AuthCode { get; set; }
 
     /// <summary>
-    /// 角色部门
+    /// 部门ID数组
     /// </summary>
-    public List<RoleDeptDto> Depts { get; set; }
+    public List<long> DeptIdArray { get; set; }
 }

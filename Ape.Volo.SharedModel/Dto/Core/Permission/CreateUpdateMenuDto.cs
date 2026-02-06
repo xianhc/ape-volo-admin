@@ -22,22 +22,20 @@ public class CreateUpdateMenuDto : BaseEntityDto<long>
     /// <summary>
     /// 路径
     /// </summary>
+    [Display(Name = "Menu.Path")]
     public string Path { get; set; }
 
     /// <summary>
     /// 权限标识
     /// </summary>
     [Display(Name = "Menu.Permission")]
-    public string Permission { get; set; }
+    public string AuthCode { get; set; }
 
-    /// <summary>
-    /// 是否IFrame
-    /// </summary>
-    public bool IFrame { get; set; }
 
     /// <summary>
     /// 组件
     /// </summary>
+    [Display(Name = "Menu.Component")]
     public string Component { get; set; }
 
     /// <summary>
@@ -49,6 +47,7 @@ public class CreateUpdateMenuDto : BaseEntityDto<long>
     /// <summary>
     /// 父级ID
     /// </summary>
+    [Display(Name = "Menu.PId")]
     public long ParentId { get; set; }
 
     /// <summary>
@@ -61,27 +60,46 @@ public class CreateUpdateMenuDto : BaseEntityDto<long>
     /// <summary>
     /// Icon图标
     /// </summary>
+    [Display(Name = "Menu.Icon")]
     public string Icon { get; set; }
 
     /// <summary>
     /// 类型
     /// </summary>
     [Display(Name = "Menu.Type")]
-    [Range(1, 3, ErrorMessage = "{0}range{1}{2}")]
-    public MenuType Type { get; set; }
+    [Range(1, 5, ErrorMessage = "{0}range{1}{2}")]
+    public MenuType MenuType { get; set; }
 
     /// <summary>
     /// 缓存
     /// </summary>
-    public bool Cache { get; set; }
+    [Display(Name = "Menu.KeepAlive")]
+    public bool KeepAlive { get; set; }
+
+    /// <summary>
+    /// 状态
+    /// </summary>
+    [Display(Name = "Menu.Enabled")]
+    public bool Enabled { get; set; }
 
     /// <summary>
     /// 隐藏
     /// </summary>
+    [Display(Name = "Menu.Hidden")]
     public bool Hidden { get; set; }
 
     /// <summary>
-    /// 子菜单个数
+    /// 徽章类型
     /// </summary>
-    public int SubCount { get; set; }
+    public BadgeType? BadgeType { get; set; }
+
+    /// <summary>
+    /// 徽章文字
+    /// </summary>
+    public string BadgeText { get; set; }
+
+    /// <summary>
+    /// 徽章样式
+    /// </summary>
+    public string BadgeStyle { get; set; }
 }

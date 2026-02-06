@@ -139,5 +139,7 @@ public class AuthConstants
         public const string TenantId = "tenant_id";
 
         public const string DeptId = "dept_id";
+
+        public const string RefreshTime = "refresh_time ";
     }
 }

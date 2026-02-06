@@ -6,8 +6,8 @@ using Ape.Volo.Common.IdGenerator;
 using Ape.Volo.Common.Model;
 using Ape.Volo.Core;
 using Ape.Volo.Core.ConfigOptions;
-using Ape.Volo.Entity.Logs;
-using Ape.Volo.IBusiness.Monitor;
+using Ape.Volo.Entity.Log;
+using Ape.Volo.IBusiness.Log;
 using Ape.Volo.IBusiness.System;
 using IP2Region.Net.Abstractions;
 using Microsoft.AspNetCore.Http;
@@ -22,6 +22,9 @@ using MiniProfiler = StackExchange.Profiling.MiniProfiler;
 
 namespace Ape.Volo.Infrastructure.ActionFilter;
 
+/// <summary>
+/// 异常日志过滤器
+/// </summary>
 public class ExceptionLogFilter : IAsyncExceptionFilter
 {
     private readonly IExceptionLogService _exceptionLogService;
@@ -73,7 +76,7 @@ public class ExceptionLogFilter : IAsyncExceptionFilter
             ContentType = "application/json; charset=utf-8",
             StatusCode = statusCode
         };
-        if (App.GetOptions<MiddlewareOptions>().MiniProfiler.Enabled)
+        if (App.GetOptions<MiddlewareOptions>().MiniProfiler)
         {
             MiniProfiler.Current.CustomTiming("Errors：", throwMsg);
         }
@@ -128,6 +131,7 @@ public class ExceptionLogFilter : IAsyncExceptionFilter
                 .OfType<DescriptionAttribute>()
                 .FirstOrDefault();
             var descriptionValue = descriptionAttribute != null ? descriptionAttribute.Description : "";
+            var userAgent = context.HttpContext.Request.Headers["User-Agent"].ToString();
             log = new ExceptionLog
             {
                 Id = IdHelper.NextId(),
@@ -145,6 +149,7 @@ public class ExceptionLogFilter : IAsyncExceptionFilter
                 ExceptionStack = context.Exception.StackTrace,
                 RequestIp = remoteIp,
                 IpAddress = _ipSearcher.Search(remoteIp),
+                UserAgent = userAgent,
                 LogLevel = LogLevel.Error,
                 OperatingSystem = _browserDetector.Browser?.OS,
                 DeviceType = _browserDetector.Browser?.DeviceType,

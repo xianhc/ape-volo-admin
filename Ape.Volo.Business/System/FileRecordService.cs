@@ -31,10 +31,9 @@ public class FileRecordService : BaseServices<FileRecord>, IFileRecordService
     /// <summary>
     /// 创建
     /// </summary>
-    /// <param name="createUpdateFileRecordDto"></param>
     /// <param name="file"></param>
     /// <returns></returns>
-    public async Task<OperateResult> CreateAsync(CreateUpdateFileRecordDto createUpdateFileRecordDto, IFormFile file)
+    public async Task<OperateResult> CreateAsync(IFormFile file)
     {
         var fileExtensionName = FileHelper.GetExtensionName(file.FileName);
         var fileTypeName = FileHelper.GetFileTypeName(fileExtensionName);
@@ -61,7 +60,7 @@ public class FileRecordService : BaseServices<FileRecord>, IFileRecordService
         relativePath = "/" + relativePath.Replace("\\", "/");
         var fileRecord = new FileRecord
         {
-            Description = createUpdateFileRecordDto.Description,
+            Description = file.FileName,
             OriginalName = file.FileName,
             NewName = fileName,
             FilePath = relativePath,

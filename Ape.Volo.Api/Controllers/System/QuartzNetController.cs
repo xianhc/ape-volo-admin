@@ -8,13 +8,13 @@ using Ape.Volo.Common.Helper;
 using Ape.Volo.Common.Model;
 using Ape.Volo.Core;
 using Ape.Volo.Core.Utils;
-using Ape.Volo.Entity.Core.System.QuartzNet;
+using Ape.Volo.Entity.Core.System;
 using Ape.Volo.IBusiness.System;
 using Ape.Volo.SharedModel.Dto.Core.System;
 using Ape.Volo.SharedModel.Queries.Common;
 using Ape.Volo.SharedModel.Queries.System;
 using Ape.Volo.TaskService.service;
-using Ape.Volo.ViewModel.Core.System.QuartzNet;
+using Ape.Volo.ViewModel.Core.System;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Quartz;
@@ -22,27 +22,24 @@ using Quartz;
 namespace Ape.Volo.Api.Controllers.System;
 
 /// <summary>
-/// 作业调度管理
+/// 作业管理
 /// </summary>
 [Area("Area.JobSchedulingManagement")]
-[Route("/api/tasks", Order = 9)]
+[Route("/timing", Order = 9)]
 public class QuartzNetController : BaseApiController
 {
     #region 字段
 
     private readonly IQuartzNetService _quartzNetService;
-    private readonly IQuartzNetLogService _quartzNetLogService;
     private readonly ISchedulerCenterService _schedulerCenterService;
 
     #endregion
 
     #region 构造函数
 
-    public QuartzNetController(IQuartzNetService quartzNetService, IQuartzNetLogService quartzNetLogService,
-        ISchedulerCenterService schedulerCenterService)
+    public QuartzNetController(IQuartzNetService quartzNetService, ISchedulerCenterService schedulerCenterService)
     {
         _quartzNetService = quartzNetService;
-        _quartzNetLogService = quartzNetLogService;
         _schedulerCenterService = schedulerCenterService;
     }
 
@@ -80,7 +77,7 @@ public class QuartzNetController : BaseApiController
                 return Error(App.L.R("{0}Error.Format", "cron"));
             }
         }
-        else if (createUpdateQuartzNetDto.TriggerType == (int)TriggerType.Simple)
+        else if (createUpdateQuartzNetDto.TriggerType == TriggerType.Simple)
         {
             if (createUpdateQuartzNetDto.IntervalSecond <= 5)
             {
@@ -91,7 +88,7 @@ public class QuartzNetController : BaseApiController
         var quartzNet = await _quartzNetService.CreateAsync(createUpdateQuartzNetDto);
         if (quartzNet.IsNotNull())
         {
-            if (quartzNet.IsEnable)
+            if (quartzNet.Enabled)
             {
                 //开启作业任务
                 await _schedulerCenterService.AddScheduleJobAsync(quartzNet);
@@ -131,9 +128,9 @@ public class QuartzNetController : BaseApiController
                 return Error(App.L.R("{0}Error.Format", "cron"));
             }
         }
-        else if (createUpdateQuartzNetDto.TriggerType == (int)TriggerType.Simple)
+        else if (createUpdateQuartzNetDto.TriggerType == TriggerType.Simple)
         {
-            if (createUpdateQuartzNetDto.IntervalSecond <= 5)
+            if (createUpdateQuartzNetDto.IntervalSecond < 1)
             {
                 return Error(App.L.R("Error.SetIntervalSeconds"));
             }
@@ -143,9 +140,9 @@ public class QuartzNetController : BaseApiController
         if (result.IsSuccess)
         {
             var quartzNet = App.Mapper.MapTo<QuartzNet>(createUpdateQuartzNetDto);
-            await _schedulerCenterService.DeleteScheduleJobAsync(quartzNet);
+            await _schedulerCenterService.DeleteScheduleJobAsync(quartzNet.TaskName, quartzNet.TaskGroup);
 
-            if (quartzNet.IsEnable)
+            if (quartzNet.Enabled)
             {
                 await _schedulerCenterService.AddScheduleJobAsync(quartzNet);
             }
@@ -179,7 +176,7 @@ public class QuartzNetController : BaseApiController
             {
                 foreach (var item in quartzList)
                 {
-                    await _schedulerCenterService.DeleteScheduleJobAsync(item);
+                    await _schedulerCenterService.DeleteScheduleJobAsync(item.TaskName, item.TaskGroup);
                 }
             }
 
@@ -190,7 +187,7 @@ public class QuartzNetController : BaseApiController
     }
 
     /// <summary>
-    /// 获取作业调度任务列表
+    /// 获取作业列表
     /// </summary>
     /// <param name="quartzNetQueryCriteria"></param>
     /// <param name="pagination"></param>
@@ -206,11 +203,29 @@ public class QuartzNetController : BaseApiController
 
         foreach (var quartzNet in quartzNetList)
         {
-            quartzNet.TriggerStatus = await _schedulerCenterService.GetTriggerStatus(quartzNet);
+            quartzNet.TriggerState =
+                await _schedulerCenterService.GetTriggerStatus(quartzNet.TaskName, quartzNet.TaskGroup);
         }
 
         return JsonContent(quartzNetList, pagination);
     }
+
+
+    /// <summary>
+    /// 获取所有作业
+    /// </summary>
+    /// <returns></returns>
+    [HttpGet]
+    [Route("queryAll")]
+    [Description("Sys.Query")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ActionResultVm<List<QuartzNetSmallVo>>))]
+    public async Task<ActionResult> QueryAll()
+    {
+        var list = await _quartzNetService.QueryAllTaskNameAsync();
+
+        return JsonContent(list);
+    }
+
 
     /// <summary>
     /// 导出作业调度
@@ -225,10 +240,7 @@ public class QuartzNetController : BaseApiController
     {
         var quartzNetExports = await _quartzNetService.DownloadAsync(quartzNetQueryCriteria);
         var data = new ExcelHelper().GenerateExcel(quartzNetExports, out var mimeType, out var fileName);
-        return new FileContentResult(data, mimeType)
-        {
-            FileDownloadName = fileName
-        };
+        return new FileContentResult(data, mimeType) { FileDownloadName = App.L.R("Sys.QuartzNet") + fileName };
     }
 
 
@@ -242,11 +254,6 @@ public class QuartzNetController : BaseApiController
     [Route("execute")]
     public async Task<ActionResult> Execute(long id)
     {
-        if (id.IsNullOrEmpty())
-        {
-            return Error("id cannot be empty");
-        }
-
         var quartzNet = await _quartzNetService.TableWhere(x => x.Id == id).FirstAsync();
         if (quartzNet.IsNull())
         {
@@ -254,11 +261,11 @@ public class QuartzNetController : BaseApiController
         }
 
         //开启作业任务
-        quartzNet.IsEnable = true;
+        quartzNet.Enabled = true;
         if (await _quartzNetService.UpdateAsync(quartzNet))
         {
             //检查任务在内存状态
-            var isTrue = await _schedulerCenterService.IsExistScheduleJobAsync(quartzNet);
+            var isTrue = await _schedulerCenterService.IsExistScheduleJobAsync(quartzNet.TaskName, quartzNet.TaskGroup);
             if (!isTrue)
             {
                 if (await _schedulerCenterService.AddScheduleJobAsync(quartzNet))
@@ -285,23 +292,18 @@ public class QuartzNetController : BaseApiController
     [Route("pause")]
     public async Task<ActionResult> Pause(long id)
     {
-        if (id.IsNullOrEmpty())
-        {
-            return Error("id cannot be empty");
-        }
-
         var quartzNet = await _quartzNetService.TableWhere(x => x.Id == id).FirstAsync();
         if (quartzNet.IsNull())
         {
             return Error(ValidationError.NotExist());
         }
 
-        var triggerStatus = await _schedulerCenterService.GetTriggerStatus(App.Mapper.MapTo<QuartzNetVo>(quartzNet));
-        if (triggerStatus == "运行中")
+        var triggerState = await _schedulerCenterService.GetTriggerStatus(quartzNet.TaskName, quartzNet.TaskGroup);
+        if (triggerState == TriggerState.Normal)
         {
             //检查任务在内存状态
-            var isTrue = await _schedulerCenterService.IsExistScheduleJobAsync(quartzNet);
-            if (isTrue && await _schedulerCenterService.PauseJob(quartzNet))
+            var isTrue = await _schedulerCenterService.IsExistScheduleJobAsync(quartzNet.TaskName, quartzNet.TaskGroup);
+            if (isTrue && await _schedulerCenterService.PauseJob(quartzNet.TaskName, quartzNet.TaskGroup))
             {
                 return Ok(OperateResult.Success());
             }
@@ -320,65 +322,24 @@ public class QuartzNetController : BaseApiController
     [Route("resume")]
     public async Task<ActionResult> Resume(long id)
     {
-        if (id.IsNullOrEmpty())
-        {
-            return Error("id cannot be empty");
-        }
-
         var quartzNet = await _quartzNetService.TableWhere(x => x.Id == id).FirstAsync();
         if (quartzNet.IsNull())
         {
             return Error(ValidationError.NotExist());
         }
 
-        var triggerStatus = await _schedulerCenterService.GetTriggerStatus(App.Mapper.MapTo<QuartzNetVo>(quartzNet));
-        if (triggerStatus == "暂停")
+        var triggerState = await _schedulerCenterService.GetTriggerStatus(quartzNet.TaskName, quartzNet.TaskGroup);
+        if (triggerState == TriggerState.Paused)
         {
             //检查任务在内存状态
-            var isTrue = await _schedulerCenterService.IsExistScheduleJobAsync(quartzNet);
-            if (isTrue && await _schedulerCenterService.ResumeJob(quartzNet))
+            var isTrue = await _schedulerCenterService.IsExistScheduleJobAsync(quartzNet.TaskName, quartzNet.TaskGroup);
+            if (isTrue && await _schedulerCenterService.ResumeJob(quartzNet.TaskName, quartzNet.TaskGroup))
             {
                 return Ok(OperateResult.Success());
             }
         }
 
         return Error(App.L.R("Error.RestoreFailed"));
-    }
-
-
-    /// <summary>
-    /// 作业调度执行日志
-    /// </summary>
-    /// <param name="quartzNetLogQueryCriteria"></param>
-    /// <param name="pagination"></param>
-    /// <returns></returns>
-    [HttpGet]
-    [Route("logs/query")]
-    [Description("Action.ExecutionLogJob")]
-    public async Task<ActionResult> QueryLog(QuartzNetLogQueryCriteria quartzNetLogQueryCriteria,
-        Pagination pagination)
-    {
-        var quartzNetLogList = await _quartzNetLogService.QueryAsync(quartzNetLogQueryCriteria, pagination);
-
-        return JsonContent(quartzNetLogList, pagination);
-    }
-
-    /// <summary>
-    /// 导出作业日志
-    /// </summary>
-    /// <param name="quartzNetLogQueryCriteria"></param>
-    /// <returns></returns>
-    [HttpGet]
-    [Description("Sys.Export")]
-    [Route("logs/download")]
-    public async Task<ActionResult> Download(QuartzNetLogQueryCriteria quartzNetLogQueryCriteria)
-    {
-        var quartzNetLogExports = await _quartzNetLogService.DownloadAsync(quartzNetLogQueryCriteria);
-        var data = new ExcelHelper().GenerateExcel(quartzNetLogExports, out var mimeType, out var fileName);
-        return new FileContentResult(data, mimeType)
-        {
-            FileDownloadName = fileName
-        };
     }
 
     #endregion

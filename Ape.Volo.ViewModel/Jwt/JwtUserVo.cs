@@ -15,10 +15,10 @@ public class JwtUserVo
     /// <summary>
     /// 角色权限
     /// </summary>
-    public List<string> Roles { get; set; }
+    public List<string> RoleCodes { get; set; }
 
     /// <summary>
-    /// 数据权限
+    /// 按钮权限
     /// </summary>
-    public List<string> DataScopes { get; set; }
+    public List<string> AuthCodes { get; set; }
 }

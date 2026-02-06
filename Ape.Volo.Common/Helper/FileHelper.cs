@@ -87,6 +87,12 @@ public static class FileHelper
 
     #region 写操作
 
+    public static void SaveFile(byte[] imageBytes, string path)
+    {
+        System.IO.File.WriteAllBytes(path, imageBytes); // ✅
+    }
+
+
     /// <summary>
     /// 输出字符串到文件
     /// 注：使用系统默认编码;若文件不存在则创建新的,若存在则覆盖
@@ -224,17 +230,66 @@ public static class FileHelper
     /// <returns></returns>
     public static string GetFileTypeName(string type)
     {
-        List<string> documents = new List<string> { "txt", "doc", "pdf", "ppt", "pps", "xlsx", "xls", "docx" };
-        List<string> musics = new List<string> { "mp3", "wav", "wma", "mpa", "ram", "ra", "aac", "aif", "m4a" };
+        List<string> documents = new List<string>
+        {
+            "txt",
+            "doc",
+            "pdf",
+            "ppt",
+            "pps",
+            "xlsx",
+            "xls",
+            "docx"
+        };
+        List<string> musics = new List<string>
+        {
+            "mp3",
+            "wav",
+            "wma",
+            "mpa",
+            "ram",
+            "ra",
+            "aac",
+            "aif",
+            "m4a"
+        };
         List<string> videos = new List<string>
         {
-            "mpe", "asf", "mov", "qt", "rm", "mp4", "ogg", "webm", "ogv", "flv", "m4v", "mpg", "wmv", "mpeg",
+            "mpe",
+            "asf",
+            "mov",
+            "qt",
+            "rm",
+            "mp4",
+            "ogg",
+            "webm",
+            "ogv",
+            "flv",
+            "m4v",
+            "mpg",
+            "wmv",
+            "mpeg",
             "avi"
         };
         List<string> images = new List<string>
         {
-            "dib", "tif", "iff", "mpt", "cdr", "bmp", "dif", "jpg", "psd", "pcp", "gif", "jpeg", "png", "pcd",
-            "tga", "eps", "wmf"
+            "dib",
+            "tif",
+            "iff",
+            "mpt",
+            "cdr",
+            "bmp",
+            "dif",
+            "jpg",
+            "psd",
+            "pcp",
+            "gif",
+            "jpeg",
+            "png",
+            "pcd",
+            "tga",
+            "eps",
+            "wmf"
         };
 
         if (documents.Contains(type))

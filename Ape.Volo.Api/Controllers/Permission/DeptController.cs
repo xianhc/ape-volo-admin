@@ -5,6 +5,7 @@ using Ape.Volo.Api.Controllers.Base;
 using Ape.Volo.Common.Extensions;
 using Ape.Volo.Common.Helper;
 using Ape.Volo.Common.Model;
+using Ape.Volo.Core;
 using Ape.Volo.IBusiness.Permission;
 using Ape.Volo.SharedModel.Dto.Core.Permission;
 using Ape.Volo.SharedModel.Queries.Common;
@@ -19,7 +20,7 @@ namespace Ape.Volo.Api.Controllers.Permission;
 /// 部门管理
 /// </summary>
 [Area("Area.DepartmentManagement")]
-[Route("/api/dept", Order = 4)]
+[Route("/dept", Order = 4)]
 public class DeptController : BaseApiController
 {
     #region 构造函数
@@ -153,10 +154,7 @@ public class DeptController : BaseApiController
     {
         var deptExports = await _departmentService.DownloadAsync(deptQueryCriteria);
         var data = new ExcelHelper().GenerateExcel(deptExports, out var mimeType, out var fileName);
-        return new FileContentResult(data, mimeType)
-        {
-            FileDownloadName = fileName
-        };
+        return new FileContentResult(data, mimeType) { FileDownloadName = App.L.R("Sys.Department") + fileName };
     }
 
 

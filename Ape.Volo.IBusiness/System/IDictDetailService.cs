@@ -33,9 +33,9 @@ public interface IDictDetailService : IBaseServices<DictDetail>
     /// <summary>
     /// 删除
     /// </summary>
-    /// <param name="id"></param>
+    /// <param name="ids"></param>
     /// <returns></returns>
-    Task<OperateResult> DeleteAsync(long id);
+    Task<OperateResult> DeleteAsync(HashSet<long> ids);
 
 
     /// <summary>

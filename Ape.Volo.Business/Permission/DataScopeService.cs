@@ -41,7 +41,7 @@ public class DataScopeService : IDataScopeService
     #region 基础方法
 
     /// <summary>
-    /// 获取用户所有角色关联的部门ID
+    /// 获取指定用户在数据权限范围内可访问的所有用户账号（用户名）
     /// </summary>
     /// <param name="userId"></param>
     /// <returns></returns>
@@ -65,13 +65,21 @@ public class DataScopeService : IDataScopeService
 
         foreach (var role in user.Roles)
         {
-            accountList.AddRange(await GetAccounts(role.DataScopeType, role.Id, user.DeptId, user.Username));
+            accountList.AddRange(await GetAccounts(role.DataScopeType, role.Id, user.DeptId, user.UserName));
         }
 
         return Enumerable.ToList(Enumerable.Distinct(accountList));
     }
 
 
+    /// <summary>
+    /// 获取用户账号
+    /// </summary>
+    /// <param name="dataScopeType"></param>
+    /// <param name="roleId"></param>
+    /// <param name="deptId"></param>
+    /// <param name="account"></param>
+    /// <returns></returns>
     private async Task<List<string>> GetAccounts(DataScopeType dataScopeType, long roleId, long deptId,
         string account)
     {
@@ -82,31 +90,31 @@ public class DataScopeService : IDataScopeService
                 accountList.Add(account);
                 break;
             case DataScopeType.MyDept:
-            {
-                var userList = await _db.Queryable<User>().Where(x => x.DeptId == deptId).ToListAsync();
-                accountList.AddRange(Enumerable.Select(userList, x => x.Username));
-                break;
-            }
-            case DataScopeType.MyDeptAndBelow:
-            {
-                var deptIds = await GetChildIds([deptId], null);
-                var userList = await _db.Queryable<User>().Where(x => deptIds.Contains(x.DeptId)).ToListAsync();
-                accountList.AddRange(Enumerable.Select(userList, x => x.Username));
-                break;
-            }
-            case DataScopeType.Customize:
-            {
-                var role = await _db.Queryable<Role>().Includes(x => x.DepartmentList).Where(x => x.Id == roleId)
-                    .FirstAsync();
-                if (role.IsNotNull())
                 {
-                    var deptIds = role.DepartmentList.Select(x => x.Id).ToList();
-                    var userList = await _db.Queryable<User>().Where(x => deptIds.Contains(x.DeptId)).ToListAsync();
-                    accountList.AddRange(userList.Select(x => x.Username));
+                    var userList = await _db.Queryable<User>().Where(x => x.DeptId == deptId).ToListAsync();
+                    accountList.AddRange(Enumerable.Select(userList, x => x.UserName));
+                    break;
                 }
+            case DataScopeType.MyDeptAndBelow:
+                {
+                    var deptIds = await GetChildIds([deptId], null);
+                    var userList = await _db.Queryable<User>().Where(x => deptIds.Contains(x.DeptId)).ToListAsync();
+                    accountList.AddRange(Enumerable.Select(userList, x => x.UserName));
+                    break;
+                }
+            case DataScopeType.Customize:
+                {
+                    var role = await _db.Queryable<Role>().Includes(x => x.DepartmentList).Where(x => x.Id == roleId)
+                        .FirstAsync();
+                    if (role.IsNotNull())
+                    {
+                        var deptIds = role.DepartmentList.Select(x => x.Id).ToList();
+                        var userList = await _db.Queryable<User>().Where(x => deptIds.Contains(x.DeptId)).ToListAsync();
+                        accountList.AddRange(userList.Select(x => x.UserName));
+                    }
 
-                break;
-            }
+                    break;
+                }
         }
 
         return accountList;

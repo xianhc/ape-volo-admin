@@ -112,10 +112,10 @@ public class RedisCache : ICache
     /// <param name="key">键</param>
     /// <param name="value">值</param>
     /// <param name="timeSpan">过期时间</param>
-    /// <param name="redisExpireType">过期类型</param>
+    /// <param name="cacheExpireType">过期类型</param>
     /// <returns>添加结果</returns>
     public bool Set(string key, object value, TimeSpan? timeSpan,
-        CacheExpireType? redisExpireType)
+        CacheExpireType? cacheExpireType)
     {
         string jsonStr;
         if (value is string s)
@@ -128,7 +128,7 @@ public class RedisCache : ICache
             Value = jsonStr,
             TypeName = value.GetType().AssemblyQualifiedName,
             ExpireTime = expireTime,
-            ExpireType = redisExpireType ?? CacheExpireType.Absolute
+            ExpireType = cacheExpireType ?? CacheExpireType.Absolute
         };
         var theValue = entry.ToJson();
         return _database.StringSet(key, theValue, expireTime);
@@ -141,10 +141,10 @@ public class RedisCache : ICache
     /// <param name="key">键</param>
     /// <param name="value">值</param>
     /// <param name="timeSpan">过期时间</param>
-    /// <param name="redisExpireType">过期类型</param>
+    /// <param name="cacheExpireType">过期类型</param>
     /// <returns>添加结果</returns>
     public async Task<bool> SetAsync(string key, object value, TimeSpan? timeSpan,
-        CacheExpireType? redisExpireType)
+        CacheExpireType? cacheExpireType)
     {
         string jsonStr;
         if (value is string s)
@@ -157,7 +157,7 @@ public class RedisCache : ICache
             Value = jsonStr,
             TypeName = value.GetType().AssemblyQualifiedName,
             ExpireTime = expireTime,
-            ExpireType = redisExpireType ?? CacheExpireType.Absolute
+            ExpireType = cacheExpireType ?? CacheExpireType.Absolute
         };
         var theValue = entry.ToJson();
         return await _database.StringSetAsync(key, theValue, expireTime);

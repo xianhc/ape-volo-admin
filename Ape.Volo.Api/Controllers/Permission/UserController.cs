@@ -21,7 +21,7 @@ namespace Ape.Volo.Api.Controllers.Permission;
 /// 用户管理
 /// </summary>
 [Area("Area.UserManagement")]
-[Route("/api/user", Order = 1)]
+[Route("/user", Order = 1)]
 public class UserController : BaseApiController
 {
     #region 字段
@@ -106,6 +106,11 @@ public class UserController : BaseApiController
         return Ok(result);
     }
 
+    /// <summary>
+    /// 修改基础信息
+    /// </summary>
+    /// <param name="updateUserCenterDto"></param>
+    /// <returns></returns>
     [HttpPut]
     [Route("update/center")]
     [Description("Action.UpdatePersonalInfo")]
@@ -122,7 +127,12 @@ public class UserController : BaseApiController
         return Ok(result);
     }
 
-    [HttpPost]
+    /// <summary>
+    /// 修改密码
+    /// </summary>
+    /// <param name="updateUserPassDto"></param>
+    /// <returns></returns>
+    [HttpPut]
     [Route("update/password")]
     [Description("Action.UpdatePassword")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ActionResultVm))]
@@ -138,7 +148,12 @@ public class UserController : BaseApiController
         return Ok(result);
     }
 
-    [HttpPost]
+    /// <summary>
+    /// 修改邮箱
+    /// </summary>
+    /// <param name="updateUserEmailDto"></param>
+    /// <returns></returns>
+    [HttpPut]
     [Route("update/email")]
     [Description("Action.UpdateEmail")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ActionResultVm))]
@@ -154,6 +169,11 @@ public class UserController : BaseApiController
         return Ok(result);
     }
 
+    /// <summary>
+    /// 修改头像
+    /// </summary>
+    /// <param name="avatar"></param>
+    /// <returns></returns>
     [HttpPost, HttpOptions]
     [Route("update/avatar")]
     [Description("Action.UpdateAvatar")]
@@ -201,10 +221,54 @@ public class UserController : BaseApiController
     {
         var userExports = await _userService.DownloadAsync(userQueryCriteria);
         var data = new ExcelHelper().GenerateExcel(userExports, out var mimeType, out var fileName);
-        return new FileContentResult(data, mimeType)
+        return new FileContentResult(data, mimeType) { FileDownloadName = App.L.R("Sys.User") + fileName };
+    }
+
+    #endregion
+
+    #region 扩展修改
+
+    /// <summary>
+    /// 更新用户角色
+    /// </summary>
+    /// <param name="updateUserRole"></param>
+    /// <returns></returns>
+    [HttpPut]
+    [Description("Sys.Edit")]
+    [Route("editRole")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    public async Task<ActionResult> UpdateRole([FromBody] UpdateUserRole updateUserRole)
+    {
+        if (!ModelState.IsValid)
         {
-            FileDownloadName = fileName
-        };
+            var actionError = ModelState.GetErrors();
+            return Error(actionError);
+        }
+
+        var result = await _userService.UpdateRoleAsync(updateUserRole);
+        return Ok(result);
+    }
+
+
+    /// <summary>
+    /// 更新用户岗位
+    /// </summary>
+    /// <param name="updateUserJob"></param>
+    /// <returns></returns>
+    [HttpPut]
+    [Description("Sys.Edit")]
+    [Route("editJob")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    public async Task<ActionResult> UpdateRole([FromBody] UpdateUserJob updateUserJob)
+    {
+        if (!ModelState.IsValid)
+        {
+            var actionError = ModelState.GetErrors();
+            return Error(actionError);
+        }
+
+        var result = await _userService.UpdateRoleAsync(updateUserJob);
+        return Ok(result);
     }
 
     #endregion

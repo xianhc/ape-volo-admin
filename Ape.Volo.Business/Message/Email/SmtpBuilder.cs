@@ -78,9 +78,9 @@ public class SmtpBuilder : ISmtpBuilder
             {
                 await client.AuthenticateAsync(CredentialCache.DefaultNetworkCredentials);
             }
-            else if (!string.IsNullOrWhiteSpace(emailAccount.Username))
+            else if (!string.IsNullOrWhiteSpace(emailAccount.UserName))
             {
-                await client.AuthenticateAsync(new NetworkCredential(emailAccount.Username, emailAccount.Password));
+                await client.AuthenticateAsync(new NetworkCredential(emailAccount.UserName, emailAccount.Password));
             }
 
             return client;

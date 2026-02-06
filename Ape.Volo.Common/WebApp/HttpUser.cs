@@ -92,7 +92,7 @@ public class HttpUser : IHttpUser
             {
                 var claim = _httpContext?.User.Claims.FirstOrDefault(
                     s => s.Type == AuthConstants.JwtClaimTypes.TenantId);
-                return Convert.ToInt32(claim?.Value);
+                return string.IsNullOrWhiteSpace(claim?.Value) ? 0 : Convert.ToInt32(claim.Value);
             }
 
             return default;

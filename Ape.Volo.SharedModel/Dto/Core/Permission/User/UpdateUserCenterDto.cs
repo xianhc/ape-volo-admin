@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Ape.Volo.Common.Enums;
 
 namespace Ape.Volo.SharedModel.Dto.Core.Permission.User;
 
@@ -19,7 +20,7 @@ public class UpdateUserCenterDto
     /// </summary>
     [Display(Name = "User.Gender")]
     [Required(ErrorMessage = "{0}required")]
-    public string Gender { get; set; }
+    public GenderCode GenderCode { get; set; }
 
     /// <summary>
     /// 电话

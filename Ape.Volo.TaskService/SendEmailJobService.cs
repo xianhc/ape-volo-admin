@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using Ape.Volo.IBusiness.Log;
 using Ape.Volo.IBusiness.Message.Email;
 using Ape.Volo.IBusiness.System;
 using Ape.Volo.TaskService.service;
@@ -7,7 +8,7 @@ using Quartz;
 
 namespace Ape.Volo.TaskService;
 
-public class SendEmailJobService : JobBase, IJob
+public class SendEmailJobService : JobBase<SendEmailJobService>, IJob
 {
     private readonly IEmailScheduleTask _emailScheduleTask;
 

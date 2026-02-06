@@ -2,7 +2,8 @@ using System.ComponentModel.DataAnnotations;
 using Ape.Volo.Common.Attributes;
 using Ape.Volo.Common.Enums;
 using Ape.Volo.Entity.Base;
-using Ape.Volo.Entity.Core.System.QuartzNet;
+using Ape.Volo.Entity.Core.System;
+
 
 namespace Ape.Volo.SharedModel.Dto.Core.System;
 
@@ -67,7 +68,7 @@ public class CreateUpdateQuartzNetDto : BaseEntityDto<long>
     public bool PauseAfterFailure { get; set; }
 
     /// <summary>
-    /// 执行次数
+    /// 已执行次数
     /// </summary>
     public int RunTimes { get; set; }
 
@@ -85,26 +86,26 @@ public class CreateUpdateQuartzNetDto : BaseEntityDto<long>
     /// 触发器类型（0、simple 1、cron）
     /// </summary>
     [Display(Name = "Task.TriggerType")]
-    [Range(0, 1, ErrorMessage = "{0}range{1}{2}")]
+    [Range(1, 2, ErrorMessage = "{0}range{1}{2}")]
     public TriggerType TriggerType { get; set; }
 
     /// <summary>
-    /// 执行间隔时间, 秒为单位
+    /// 执行间隔周期, 秒为单位
     /// </summary>
-    public int IntervalSecond { get; set; }
+    public int? IntervalSecond { get; set; }
 
     /// <summary>
     /// 循环执行次数
     /// </summary>
-    public int CycleRunTimes { get; set; }
+    public int? CycleRunTimes { get; set; }
 
     /// <summary>
-    /// 是否启动
+    /// 是否启用
     /// </summary>
-    public bool IsEnable { get; set; } = false;
+    public bool Enabled { get; set; }
 
     /// <summary>
-    /// 执行传参
+    /// 执行参数
     /// </summary>
     public string RunParams { get; set; }
 }

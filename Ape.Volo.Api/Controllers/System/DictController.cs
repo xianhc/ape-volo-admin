@@ -1,11 +1,17 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Threading.Tasks;
+using Ape.Volo.Api.ActionExtension.Parameter;
 using Ape.Volo.Api.Controllers.Base;
+using Ape.Volo.Common.Attributes;
 using Ape.Volo.Common.Extensions;
 using Ape.Volo.Common.Helper;
+using Ape.Volo.Common.IdGenerator;
 using Ape.Volo.Common.Model;
+using Ape.Volo.Core;
+using Ape.Volo.Entity.Test;
 using Ape.Volo.IBusiness.System;
+using Ape.Volo.IBusiness.Test;
 using Ape.Volo.SharedModel.Dto.Core.System.Dict;
 using Ape.Volo.SharedModel.Queries.Common;
 using Ape.Volo.SharedModel.Queries.System;
@@ -19,19 +25,21 @@ namespace Ape.Volo.Api.Controllers.System;
 /// 字典管理
 /// </summary>
 [Area("Area.DictionaryManagement")]
-[Route("/api/dict", Order = 7)]
+[Route("/dict", Order = 7)]
 public class DictController : BaseApiController
 {
     #region 字段
 
     private readonly IDictService _dictService;
+    private readonly ITestOrderService _testOrderService;
 
     #endregion
 
     #region 构造函数
 
-    public DictController(IDictService dictService)
+    public DictController(IDictService dictService, ITestOrderService testOrderService)
     {
+        _testOrderService = testOrderService;
         _dictService = dictService;
     }
 
@@ -116,6 +124,16 @@ public class DictController : BaseApiController
     public async Task<ActionResult> Query(DictQueryCriteria dictQueryCriteria,
         Pagination pagination)
     {
+        await _testOrderService.AddAsync(new TestOrder
+        {
+            Id = IdHelper.NextId(),
+            OrderNo = "1001",
+            GoodsName = "iphone 16",
+            Qty = 1,
+            Price = 5000
+        });
+        var list2 = await _testOrderService.Table.ToListAsync();
+
         var list = await _dictService.QueryAsync(dictQueryCriteria, pagination);
 
         return JsonContent(list, pagination);
@@ -134,10 +152,26 @@ public class DictController : BaseApiController
     {
         var dictExports = await _dictService.DownloadAsync(dictQueryCriteria);
         var data = new ExcelHelper().GenerateExcel(dictExports, out var mimeType, out var fileName);
-        return new FileContentResult(data, mimeType)
-        {
-            FileDownloadName = fileName
-        };
+        return new FileContentResult(data, mimeType) { FileDownloadName = App.L.R("Sys.Dict") + fileName };
+    }
+
+
+    /// <summary>
+    /// 查看字典列表
+    /// </summary>
+    /// <param name="name"></param>
+    /// <returns></returns>
+    [HttpGet]
+    [Route("single")]
+    [Description("Sys.Query")]
+    [ApeVoloOnline]
+    [ParamRequired("name")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ActionResultVm<DictVo>))]
+    public async Task<ActionResult> QueryByName(string name)
+    {
+        var dictVo = await _dictService.QueryByNameAsync(name);
+
+        return JsonContent(dictVo);
     }
 
     #endregion

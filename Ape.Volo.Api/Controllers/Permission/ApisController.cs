@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using Ape.Volo.Api.Controllers.Base;
+using Ape.Volo.Common.Attributes;
 using Ape.Volo.Common.Extensions;
 using Ape.Volo.Common.Global;
 using Ape.Volo.Common.IdGenerator;
@@ -23,10 +24,10 @@ using Microsoft.AspNetCore.Mvc.Routing;
 namespace Ape.Volo.Api.Controllers.Permission;
 
 /// <summary>
-/// Apis管理
+/// Api管理
 /// </summary>
 [Area("Area.ApiManagement")]
-[Route("/api/apis", Order = 20)]
+[Route("/apis", Order = 20)]
 public class ApisController : BaseApiController
 {
     #region 字段
@@ -130,7 +131,48 @@ public class ApisController : BaseApiController
 
 
     /// <summary>
-    /// 刷新Api列表 只实现了新增的api添加
+    /// 获取API分组
+    /// </summary>
+    /// <returns></returns>
+    [HttpGet]
+    [Route("group")]
+    [Description("Action.GetApiGroup")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<string>))]
+    [HasRole(["admin"])]
+    public Task<ActionResult> GetApiGroup()
+    {
+        List<string> apiGroups = new List<string>();
+        var types = GlobalType.ApiTypes.Where(x =>
+                x.IsClass && typeof(Controller).IsAssignableFrom(x) && x.Name != "TestController" &&
+                x.Namespace != "Ape.Volo.Api.Controllers.Base")
+            .OrderBy(x => x.GetCustomAttributes<RouteAttribute>().FirstOrDefault()?.Order).ToList();
+        foreach (var type in types)
+        {
+            var areaAttr = type.GetCustomAttributes(typeof(AreaAttribute), true)
+                .OfType<AreaAttribute>()
+                .FirstOrDefault();
+            if (areaAttr != null)
+            {
+                if (!apiGroups.Contains(areaAttr.RouteValue))
+                {
+                    apiGroups.Add(App.L.R(areaAttr.RouteValue));
+                }
+            }
+            else
+            {
+                if (!apiGroups.Contains(type.Name))
+                {
+                    apiGroups.Add(type.Name);
+                }
+            }
+        }
+
+        return Task.FromResult<ActionResult>(JsonContent(apiGroups));
+    }
+
+
+    /// <summary>
+    /// 刷新Api列表 只实现了api新增添加
     /// </summary>
     /// <returns></returns>
     [HttpPost]
@@ -143,6 +185,7 @@ public class ApisController : BaseApiController
         var allApis = await _apisService.QueryAllAsync();
         var types = GlobalType.ApiTypes.Where(x =>
                 x.IsClass && typeof(Controller).IsAssignableFrom(x) && x.Name != "TestController" &&
+                x.Name != "HealthCheckController" &&
                 x.Namespace != "Ape.Volo.Api.Controllers.Base")
             .OrderBy(x => x.GetCustomAttributes<RouteAttribute>().FirstOrDefault()?.Order).ToList();
         foreach (var type in types)
@@ -169,16 +212,24 @@ public class ApisController : BaseApiController
                 if (!allApis.Any(x =>
                         x.Url.Equals(url, StringComparison.CurrentCultureIgnoreCase) && x.Method == method))
                 {
-                    apis.Add(new Apis
+                    if (method != null)
                     {
-                        Id = IdHelper.NextId(),
-                        Group = areaAttr != null ? areaAttr.RouteValue : type.Name,
-                        Url = url,
-                        Description = methodInfo.GetCustomAttributes(typeof(DescriptionAttribute), true)
+                        var group = areaAttr != null ? App.L.R(areaAttr.RouteValue) : type.Name;
+                        var descriptionAttr = methodInfo.GetCustomAttributes(typeof(DescriptionAttribute), true)
                             .OfType<DescriptionAttribute>()
-                            .FirstOrDefault()?.Description,
-                        Method = method
-                    });
+                            .FirstOrDefault();
+                        var description = descriptionAttr != null
+                            ? App.L.R(descriptionAttr.Description)
+                            : methodInfo.Name;
+                        apis.Add(new Apis
+                        {
+                            Id = IdHelper.NextId(),
+                            Group = group,
+                            Url = url,
+                            Description = description,
+                            Method = method
+                        });
+                    }
                 }
             }
         }
@@ -195,6 +246,50 @@ public class ApisController : BaseApiController
         }
 
         return Ok(OperateResult.Success(App.L.R("Action.ApiRefresh.Fail")));
+    }
+
+    /// <summary>
+    /// 查询所有Api
+    /// </summary>
+    /// <returns></returns>
+    [HttpGet]
+    [Route("queryAll")]
+    [Description("Action.GetAllApi")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<ApisVo>))]
+    public async Task<ActionResult> QueryAllApis()
+    {
+        List<ApisTree> apisTree = new List<ApisTree>();
+        var apis = await _apisService.QueryAllAsync();
+        var apisGroup = apis.GroupBy(x => x.Group).ToList();
+
+        var index = 0;
+        foreach (var g in apisGroup)
+        {
+            var apisTreesTmp = new List<ApisTree>();
+            foreach (var api in g.ToList())
+            {
+                apisTreesTmp.Add(new ApisTree
+                {
+                    Id = api.Id,
+                    Label = api.Description + " => " + api.Url + "",
+                    Leaf = true,
+                    HasChildren = false,
+                    Children = null
+                });
+            }
+
+            index++;
+            apisTree.Add(new ApisTree
+            {
+                Id = index,
+                Label = g.Key,
+                Leaf = false,
+                HasChildren = true,
+                Children = apisTreesTmp
+            });
+        }
+
+        return JsonContent(apisTree);
     }
 
     #endregion

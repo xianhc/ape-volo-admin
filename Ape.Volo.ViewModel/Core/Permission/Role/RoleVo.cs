@@ -4,7 +4,6 @@ using Ape.Volo.Entity.Base;
 using Ape.Volo.Entity.Core.Permission;
 using Ape.Volo.ViewModel.Core.Permission.Department;
 using Ape.Volo.ViewModel.Core.Permission.Menu;
-using Newtonsoft.Json;
 
 namespace Ape.Volo.ViewModel.Core.Permission.Role;
 
@@ -37,23 +36,20 @@ public class RoleVo : BaseEntityDto<long>
     /// <summary>
     /// 权限标识
     /// </summary>
-    public string Permission { get; set; }
+    public string AuthCode { get; set; }
 
     /// <summary>
     /// 菜单列表
     /// </summary>
-    [JsonProperty(PropertyName = "menus")]
     public List<MenuVo> MenuList { get; set; }
 
     /// <summary>
     /// 部门列表
     /// </summary>
-    [JsonProperty(PropertyName = "depts")]
     public List<DepartmentVo> DepartmentList { get; set; }
 
     /// <summary>
     /// 菜单列表
     /// </summary>
-    [JsonProperty(PropertyName = "apis")]
-    public List<Apis> Apis { get; set; }
+    public List<Apis> ApiList { get; set; }
 }

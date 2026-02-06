@@ -9,24 +9,23 @@ namespace Ape.Volo.Entity.Core.Permission
     /// 岗位
     /// </summary>
     [SugarTable("sys_job")]
+    [SugarIndex("unique_{table}_Name", nameof(Name), OrderByType.Asc, true)]
     public class Job : BaseEntity
     {
         /// <summary>
         /// 名称
         /// </summary>
-        [SugarColumn(IsNullable = false)]
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
 
         /// <summary>
         /// 排序
         /// </summary>
-        [SugarColumn(IsNullable = true)]
+        [SugarColumn(DefaultValue = "999")]
         public int Sort { get; set; }
 
         /// <summary>
         /// 是否激活
         /// </summary>
-        [SugarColumn(IsNullable = false)]
         public bool Enabled { get; set; }
 
         /// <summary>
@@ -34,6 +33,6 @@ namespace Ape.Volo.Entity.Core.Permission
         /// </summary>
         [SugarColumn(IsIgnore = true)]
         [Navigate(typeof(UserJob), nameof(UserJob.JobId), nameof(UserJob.UserId))]
-        public List<User.User> Users { get; set; }
+        public List<User.User>? Users { get; set; }
     }
 }

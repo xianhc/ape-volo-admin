@@ -21,13 +21,13 @@ public static class DataSeederMiddleware
         {
             var systemOptions = App.GetOptions<SystemOptions>();
             var tenantOptions = App.GetOptions<TenantOptions>();
-            if (systemOptions.IsInitTable)
+            if (systemOptions.IsInitDb)
             {
                 var dataContext = app.ApplicationServices.GetRequiredService<DataContext>();
-                SeedService.InitMasterDataAsync(dataContext, systemOptions.IsInitData,
-                    systemOptions.IsQuickDebug, tenantOptions).Wait();
-                Thread.Sleep(500);
-                SeedService.InitLogData(dataContext, systemOptions.LogDataBase).Wait();
+                // 优先初始化日志库
+                SeedService.InitLogDataAsync(dataContext, systemOptions.LogDataBase).Wait();
+                Thread.Sleep(500); //保证顺序输出
+                SeedService.InitMasterDataAsync(dataContext, systemOptions, tenantOptions).Wait();
                 if (tenantOptions.Enabled && tenantOptions.Type == TenantType.Db)
                 {
                     Thread.Sleep(500);

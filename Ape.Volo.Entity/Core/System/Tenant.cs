@@ -20,13 +20,12 @@ namespace Ape.Volo.Entity.Core.System
         /// <summary>
         /// 名称
         /// </summary>
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
 
         /// <summary>
         /// 描述
         /// </summary>
-        [SugarColumn(IsNullable = true)]
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
         /// <summary>
         /// 租户类型
@@ -36,20 +35,17 @@ namespace Ape.Volo.Entity.Core.System
         /// <summary>
         /// 库Id
         /// </summary>
-        [SugarColumn(IsNullable = true)]
-        public string ConfigId { get; set; }
+        public string? ConfigId { get; set; }
 
         /// <summary>
-        /// 数据库类型<br/>
+        /// 数据库类型
         /// </summary>
-        [SugarColumn(IsNullable = true)]
-        public DbType DbType { get; set; }
+        public DbType? DbType { get; set; }
 
         /// <summary>
         /// 数据库连接
         /// </summary>
-        [SugarColumn(IsNullable = true)]
-        public string ConnectionString { get; set; }
+        public string? ConnectionString { get; set; }
 
 
         #region 扩展属性
@@ -59,7 +55,7 @@ namespace Ape.Volo.Entity.Core.System
         /// </summary>
         [SugarColumn(IsIgnore = true)]
         [Navigate(NavigateType.OneToMany, nameof(User.TenantId), nameof(TenantId))]
-        public List<User> Users { get; set; }
+        public List<User>? Users { get; set; }
 
         #endregion
     }

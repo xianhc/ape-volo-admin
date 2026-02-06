@@ -3,6 +3,9 @@ using Ape.Volo.EventBus.Events;
 
 namespace Ape.Volo.EventBus;
 
+/// <summary>
+/// 内存事件总线订阅管理器，负责管理事件与订阅者的关系
+/// </summary>
 public partial class InMemoryEventBusSubscriptionsManager : IEventBusSubscriptionsManager
 {
     private readonly Dictionary<string, List<SubscriptionInfo>> _handlers;

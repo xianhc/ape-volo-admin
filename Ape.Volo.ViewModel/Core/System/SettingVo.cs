@@ -5,7 +5,7 @@ using Ape.Volo.Entity.Core.System;
 namespace Ape.Volo.ViewModel.Core.System;
 
 /// <summary>
-/// 全局设置Vo
+/// 系统配置Vo
 /// </summary>
 [AutoMapping(typeof(Setting), typeof(SettingVo))]
 public class SettingVo : BaseEntityDto<long>

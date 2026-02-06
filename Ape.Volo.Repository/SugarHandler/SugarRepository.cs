@@ -52,7 +52,7 @@ public class SugarRepository<TEntity> : ISugarRepository<TEntity> where TEntity 
                                                        tenant.ConnectionString);
                             }
 
-                            iTenant.AddConnection(TenantHelper.GetConnectionConfig(tenant.ConfigId, tenant.DbType,
+                            iTenant.AddConnection(TenantHelper.GetConnectionConfig(tenant.ConfigId, tenant.DbType.Value,
                                 connectionString));
                         }
 

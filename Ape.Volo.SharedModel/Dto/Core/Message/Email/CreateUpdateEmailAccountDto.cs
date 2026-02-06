@@ -45,7 +45,7 @@ public class CreateUpdateEmailAccountDto : BaseEntityDto<long>
     /// </summary>
     [Display(Name = "EmailAccount.Username")]
     [Required(ErrorMessage = "{0}required")]
-    public string Username { get; set; }
+    public string UserName { get; set; }
 
     /// <summary>
     /// 电子邮件密码

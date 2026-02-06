@@ -12,25 +12,21 @@ namespace Ape.Volo.Entity.Core.System
         /// <summary>
         /// 应用ID
         /// </summary>
-        [SugarColumn(IsNullable = false)]
-        public string AppId { get; set; }
+        public string AppId { get; set; } = string.Empty;
 
         /// <summary>
         /// 应用秘钥
         /// </summary>
-        [SugarColumn(IsNullable = false)]
-        public string AppSecretKey { get; set; }
+        public string AppSecretKey { get; set; } = string.Empty;
 
         /// <summary>
         /// 应用名称
         /// </summary>
-        [SugarColumn(IsNullable = false)]
-        public string AppName { get; set; }
+        public string AppName { get; set; } = string.Empty;
 
         /// <summary>
         /// 备注
         /// </summary>
-        [SugarColumn(IsNullable = true)]
-        public string Remark { get; set; }
+        public string? Remark { get; set; }
     }
 }

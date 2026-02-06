@@ -4,33 +4,30 @@ using SqlSugar;
 namespace Ape.Volo.Entity.Core.System
 {
     /// <summary>
-    /// 系统设置
+    /// 参数配置
     /// </summary>
     [SugarTable("sys_setting")]
-    public class Setting : BaseEntityNoDataScope
+    [SugarIndex("unique_{table}_Name", nameof(Name), OrderByType.Asc, true)]
+    public class Setting : BaseEntity
     {
         /// <summary>
         /// 名称
         /// </summary>
-        [SugarColumn(IsNullable = false)]
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
 
         /// <summary>
         /// 值
         /// </summary>
-        [SugarColumn(IsNullable = false)]
-        public string Value { get; set; }
+        public string Value { get; set; } = string.Empty;
 
         /// <summary>
         /// 是否启用
         /// </summary>
-        [SugarColumn(IsNullable = false)]
         public bool Enabled { get; set; }
 
         /// <summary>
         /// 描述
         /// </summary>
-        [SugarColumn(IsNullable = true)]
-        public string Description { get; set; }
+        public string? Description { get; set; }
     }
 }

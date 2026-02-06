@@ -35,9 +35,9 @@ public interface ICache
     /// <param name="key">键</param>
     /// <param name="value">值</param>
     /// <param name="timeout">过期时间</param>
-    /// <param name="redisExpireType">过期类型</param>
+    /// <param name="cacheExpireType">过期类型</param>
     /// <returns>添加结果</returns>
-    bool Set(string key, object value, TimeSpan? timeout, CacheExpireType? redisExpireType);
+    bool Set(string key, object value, TimeSpan? timeout, CacheExpireType? cacheExpireType);
 
     /// <summary>
     /// 添加缓存
@@ -45,9 +45,9 @@ public interface ICache
     /// <param name="key">键</param>
     /// <param name="value">值</param>
     /// <param name="timeout">过期时间</param>
-    /// <param name="redisExpireType">过期类型</param>
+    /// <param name="cacheExpireType">过期类型</param>
     /// <returns>添加结果</returns>
-    Task<bool> SetAsync(string key, object value, TimeSpan? timeout, CacheExpireType? redisExpireType);
+    Task<bool> SetAsync(string key, object value, TimeSpan? timeout, CacheExpireType? cacheExpireType);
 
     #endregion
 

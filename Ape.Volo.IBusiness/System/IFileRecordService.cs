@@ -20,10 +20,9 @@ public interface IFileRecordService : IBaseServices<FileRecord>
     /// <summary>
     /// 创建
     /// </summary>
-    /// <param name="createUpdateFileRecordDto"></param>
     /// <param name="file"></param>
     /// <returns></returns>
-    Task<OperateResult> CreateAsync(CreateUpdateFileRecordDto createUpdateFileRecordDto, IFormFile file);
+    Task<OperateResult> CreateAsync(IFormFile file);
 
     /// <summary>
     /// 更新

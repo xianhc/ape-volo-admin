@@ -17,11 +17,11 @@ public class LoggerPropertyConfiguration : IDisposable
 
     public IDisposable AddAopSqlProperty(ISqlSugarClient db, SerilogOptions serilogOptions)
     {
-        AddStock(LogContext.PushProperty(LoggerProperty.RecordSqlLog, serilogOptions.RecordSqlEnabled));
-        AddStock(LogContext.PushProperty(LoggerProperty.ToDb, serilogOptions.ToDb.Enabled));
-        AddStock(LogContext.PushProperty(LoggerProperty.ToFile, serilogOptions.ToFile.Enabled));
-        AddStock(LogContext.PushProperty(LoggerProperty.ToConsole, serilogOptions.ToConsole.Enabled));
-        AddStock(LogContext.PushProperty(LoggerProperty.ToElasticsearch, serilogOptions.ToElasticsearch.Enabled));
+        AddStock(LogContext.PushProperty(LoggerProperty.RecordSqlLog, serilogOptions.RecordSql));
+        AddStock(LogContext.PushProperty(LoggerProperty.ToDb, serilogOptions.ToDb));
+        AddStock(LogContext.PushProperty(LoggerProperty.ToFile, serilogOptions.ToFile));
+        AddStock(LogContext.PushProperty(LoggerProperty.ToConsole, serilogOptions.ToConsole));
+        AddStock(LogContext.PushProperty(LoggerProperty.ToElasticsearch, serilogOptions.ToElasticsearch));
         AddStock(LogContext.PushProperty(LoggerProperty.SugarActionType, db.SugarActionType));
         return this;
     }

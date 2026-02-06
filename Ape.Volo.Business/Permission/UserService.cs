@@ -62,10 +62,10 @@ public class UserService : BaseServices<User>, IUserService
     [UseTran]
     public async Task<OperateResult> CreateAsync(CreateUpdateUserDto createUpdateUserDto)
     {
-        if (await TableWhere(x => x.Username == createUpdateUserDto.Username).AnyAsync())
+        if (await TableWhere(x => x.UserName == createUpdateUserDto.UserName).AnyAsync())
         {
             return OperateResult.Error(ValidationError.IsExist(createUpdateUserDto,
-                nameof(createUpdateUserDto.Username)));
+                nameof(createUpdateUserDto.UserName)));
         }
 
         if (await TableWhere(x => x.Email == createUpdateUserDto.Email).AnyAsync())
@@ -119,11 +119,11 @@ public class UserService : BaseServices<User>, IUserService
                 nameof(createUpdateUserDto.Id)));
         }
 
-        if (oldUser.Username != createUpdateUserDto.Username &&
-            await TableWhere(x => x.Username == createUpdateUserDto.Username).AnyAsync())
+        if (oldUser.UserName != createUpdateUserDto.UserName &&
+            await TableWhere(x => x.UserName == createUpdateUserDto.UserName).AnyAsync())
         {
             return OperateResult.Error(ValidationError.IsExist(createUpdateUserDto,
-                nameof(createUpdateUserDto.Username)));
+                nameof(createUpdateUserDto.UserName)));
         }
 
         if (oldUser.Email != createUpdateUserDto.Email &&
@@ -146,7 +146,7 @@ public class UserService : BaseServices<User>, IUserService
         var user = App.Mapper.MapTo<User>(createUpdateUserDto);
         user.DeptId = user.Dept.Id;
         //更新用户
-        await UpdateAsync(user, null, x => new { x.Password, x.AvatarPath, x.IsAdmin, x.PasswordReSetTime });
+        await UpdateAsync(user, null, x => new { x.Password, x.AvatarPath, x.PasswordReSetTime }, false);
 
 
         await SugarClient.Deleteable<UserRole>().Where(x => x.UserId == user.Id).ExecuteCommandAsync();
@@ -225,7 +225,7 @@ public class UserService : BaseServices<User>, IUserService
         userExports.AddRange(users.Select(x => new UserExport
         {
             Id = x.Id,
-            Username = x.Username,
+            Username = x.UserName,
             Role = string.Join(",", x.Roles.Select(r => r.Name).ToArray()),
             NickName = x.NickName,
             Phone = x.Phone,
@@ -233,7 +233,7 @@ public class UserService : BaseServices<User>, IUserService
             Enabled = x.Enabled,
             Dept = x.Dept.Name,
             Job = string.Join(",", x.Jobs.Select(j => j.Name).ToArray()),
-            Gender = x.Gender,
+            GenderCode = x.GenderCode,
             CreateTime = x.CreateTime
         }));
         return userExports;
@@ -248,12 +248,11 @@ public class UserService : BaseServices<User>, IUserService
     /// </summary>
     /// <param name="userId">用户Id</param>
     /// <returns></returns>
-    //[UseCache(Expiration = 60, KeyPrefix = GlobalConstants.CachePrefix.UserInfoById)]
+    [UseCache(Expiration = 60, KeyPrefix = GlobalConstants.CachePrefix.UserInfoById)]
     public async Task<UserVo> QueryByIdAsync(long userId)
     {
         var user = await TableWhere(x => x.Id == userId, null, null, null, true).Includes(x => x.Dept)
-            .Includes(x => x.Roles)
-            .Includes(x => x.Jobs).FirstAsync();
+            .Includes(x => x.Roles).Includes(x => x.Jobs).FirstAsync();
 
         return App.Mapper.MapTo<UserVo>(user);
     }
@@ -272,7 +271,7 @@ public class UserService : BaseServices<User>, IUserService
         }
         else
         {
-            user = await TableWhere(s => s.Username == userName, null, null, null, true).FirstAsync();
+            user = await TableWhere(s => s.UserName == userName, null, null, null, true).FirstAsync();
         }
 
         return App.Mapper.MapTo<UserVo>(user);
@@ -312,9 +311,14 @@ public class UserService : BaseServices<User>, IUserService
         }
 
         user.NickName = updateUserCenterDto.NickName;
-        user.Gender = updateUserCenterDto.Gender;
+        user.GenderCode = updateUserCenterDto.GenderCode;
         user.Phone = updateUserCenterDto.Phone;
-        var result = await UpdateAsync(user);
+        var result = await UpdateAsync(user, x => new
+        {
+            x.NickName,
+            x.GenderCode,
+            x.Phone
+        });
         return OperateResult.Result(result);
     }
 
@@ -353,7 +357,7 @@ public class UserService : BaseServices<User>, IUserService
         //设置用户密码
         curUser.Password = BCryptHelper.Hash(newPassword);
         curUser.PasswordReSetTime = DateTime.Now;
-        var isTrue = await UpdateAsync(curUser);
+        var isTrue = await UpdateAsync(curUser, x => new { x.Password, x.PasswordReSetTime });
         if (isTrue)
         {
             //清理缓存
@@ -397,7 +401,7 @@ public class UserService : BaseServices<User>, IUserService
         }
 
         curUser.Email = updateUserEmailDto.Email;
-        var result = await UpdateAsync(curUser);
+        var result = await UpdateAsync(curUser, x => x.Email);
         return OperateResult.Result(result);
     }
 
@@ -443,6 +447,58 @@ public class UserService : BaseServices<User>, IUserService
 
     #endregion
 
+
+    #region 扩展修改
+
+    /// <summary>
+    /// 修改角色
+    /// </summary>
+    /// <param name="updateUserRole"></param>
+    /// <returns></returns>
+    [UseTran]
+    public async Task<OperateResult> UpdateRoleAsync(UpdateUserRole updateUserRole)
+    {
+        var user = await TableWhere(x => x.Id == updateUserRole.Id).FirstAsync();
+        if (user.IsNull())
+        {
+            return OperateResult.Error(ValidationError.NotExist());
+        }
+
+        await UpdateAsync(user);
+        await SugarClient.Deleteable<UserRole>().Where(x => x.UserId == updateUserRole.Id).ExecuteCommandAsync();
+        var userRoles = new List<UserRole>();
+        userRoles.AddRange(updateUserRole.RoleIdArray.Select(r => new UserRole
+        { UserId = updateUserRole.Id, RoleId = r }));
+        await SugarClient.Insertable(userRoles).ExecuteCommandAsync();
+        return OperateResult.Success();
+    }
+
+
+    /// <summary>
+    /// 修改岗位
+    /// </summary>
+    /// <param name="updateUserJob"></param>
+    /// <returns></returns>
+    [UseTran]
+    public async Task<OperateResult> UpdateRoleAsync(UpdateUserJob updateUserJob)
+    {
+        var user = await TableWhere(x => x.Id == updateUserJob.Id).FirstAsync();
+        if (user.IsNull())
+        {
+            return OperateResult.Error(ValidationError.NotExist());
+        }
+
+        await UpdateAsync(user);
+        await SugarClient.Deleteable<UserJob>().Where(x => x.UserId == updateUserJob.Id).ExecuteCommandAsync();
+        var userRoles = new List<UserJob>();
+        userRoles.AddRange(updateUserJob.JobIdArray.Select(r => new UserJob
+        { UserId = updateUserJob.Id, JobId = r }));
+        await SugarClient.Insertable(userRoles).ExecuteCommandAsync();
+        return OperateResult.Success();
+    }
+
+    #endregion
+
     #region 用户缓存
 
     private async Task ClearUserCache(long userId)
@@ -451,9 +507,9 @@ public class UserService : BaseServices<User>, IUserService
         await App.Cache.RemoveAsync(GlobalConstants.CachePrefix.UserInfoById +
                                     userId.ToString().ToMd5String16());
         await App.Cache.RemoveAsync(
-            GlobalConstants.CachePrefix.UserPermissionUrls + userId.ToString().ToMd5String16());
+            GlobalConstants.CachePrefix.UserAuthUrls + userId.ToString().ToMd5String16());
         await App.Cache.RemoveAsync(
-            GlobalConstants.CachePrefix.UserPermissionRoles + userId.ToString().ToMd5String16());
+            GlobalConstants.CachePrefix.UserAuthCodes + userId.ToString().ToMd5String16());
         await App.Cache.RemoveAsync(GlobalConstants.CachePrefix.UserMenuById +
                                     userId.ToString().ToMd5String16());
         await App.Cache.RemoveAsync(GlobalConstants.CachePrefix.UserDataScopeById +
@@ -464,18 +520,22 @@ public class UserService : BaseServices<User>, IUserService
 
     #region 条件模型
 
-    private async Task<List<IConditionalModel>> GetConditionalModel(UserQueryCriteria userQueryCriteria)
+    private Task<List<IConditionalModel>> GetConditionalModel(UserQueryCriteria userQueryCriteria)
     {
-        if (userQueryCriteria.DeptId > 0)
+        // if (userQueryCriteria.DeptId > 0)
+        // {
+        //     var allIds = await _departmentService.GetChildIds([userQueryCriteria.DeptId], null);
+        //     if (allIds.Any())
+        //     {
+        //         userQueryCriteria.DeptIdItems = string.Join(",", allIds);
+        //     }
+        // }
+        if (!userQueryCriteria.DepartmentIdArray.IsNullOrEmpty())
         {
-            var allIds = await _departmentService.GetChildIds([userQueryCriteria.DeptId], null);
-            if (allIds.Any())
-            {
-                userQueryCriteria.DeptIdItems = string.Join(",", allIds);
-            }
+            userQueryCriteria.DepartmentIdArray = string.Join(",", userQueryCriteria.DepartmentIdArray);
         }
 
-        return userQueryCriteria.ApplyQueryConditionalModel();
+        return Task.FromResult(userQueryCriteria.ApplyQueryConditionalModel());
     }
 
     #endregion

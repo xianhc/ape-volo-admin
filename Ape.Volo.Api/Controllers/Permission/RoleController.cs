@@ -20,7 +20,7 @@ namespace Ape.Volo.Api.Controllers.Permission;
 /// 角色管理
 /// </summary>
 [Area("Area.RoleManagement")]
-[Route("/api/role", Order = 2)]
+[Route("/role", Order = 2)]
 public class RoleController : BaseApiController
 {
     #region 字段
@@ -113,17 +113,12 @@ public class RoleController : BaseApiController
     /// <param name="id"></param>
     /// <returns></returns>
     [HttpGet]
-    [Route("querySingle")]
+    [Route("single")]
     [Description("Action.ViewSingleRole")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(RoleVo))]
     public async Task<ActionResult> QuerySingle(long id)
     {
-        if (id.IsNullOrEmpty())
-        {
-            return Error("id cannot be empty");
-        }
-
-        var role = await _roleService.TableWhere(x => x.Id == id).Includes(x => x.MenuList).Includes(x => x.Apis)
+        var role = await _roleService.TableWhere(x => x.Id == id).Includes(x => x.MenuList).Includes(x => x.ApiList)
             .Includes(x => x.DepartmentList).SingleAsync();
         return JsonContent(App.Mapper.MapTo<RoleVo>(role));
     }
@@ -159,10 +154,7 @@ public class RoleController : BaseApiController
     {
         var roleExports = await _roleService.DownloadAsync(roleQueryCriteria);
         var data = new ExcelHelper().GenerateExcel(roleExports, out var mimeType, out var fileName);
-        return new FileContentResult(data, mimeType)
-        {
-            FileDownloadName = fileName
-        };
+        return new FileContentResult(data, mimeType) { FileDownloadName = App.L.R("Sys.Role") + fileName };
     }
 
     /// <summary>
@@ -180,6 +172,49 @@ public class RoleController : BaseApiController
         return JsonContent(allRoles);
     }
 
+
+    /// <summary>
+    /// 更新角色菜单关联
+    /// </summary>
+    /// <param name="updateRoleMenuDto"></param>
+    /// <returns></returns>
+    [HttpPut]
+    [Route("editMenu")]
+    [Description("Action.UpdateRoleMenu")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    public async Task<ActionResult> UpdateRoleMenu([FromBody] UpdateRoleMenuDto updateRoleMenuDto)
+    {
+        if (!ModelState.IsValid)
+        {
+            var actionError = ModelState.GetErrors();
+            return Error(actionError);
+        }
+
+        var result = await _roleService.UpdateRoleMenuAsync(updateRoleMenuDto);
+        return Ok(result);
+    }
+
+    /// <summary>
+    /// 更新角色Api关联
+    /// </summary>
+    /// <param name="updateRoleApiDto"></param>
+    /// <returns></returns>
+    [HttpPut]
+    [Route("editApi")]
+    [Description("Action.UpdateRoleApi")]
+    public async Task<ActionResult> UpdateRoleApi([FromBody] UpdateRoleApiDto updateRoleApiDto)
+    {
+        if (!ModelState.IsValid)
+        {
+            var actionError = ModelState.GetErrors();
+            return Error(actionError);
+        }
+
+        var result = await _roleService.UpdateRoleApiAsync(updateRoleApiDto);
+        return Ok(result);
+    }
+
+
     /// <summary>
     /// 获取当前用户角色等级
     /// </summary>
@@ -193,10 +228,7 @@ public class RoleController : BaseApiController
     {
         var curLevel = await _roleService.VerificationUserRoleLevelAsync(level);
 
-        var response = new RoleLevelVo
-        {
-            Level = curLevel
-        };
+        var response = new RoleLevelVo { Level = curLevel };
 
         return JsonContent(response);
     }

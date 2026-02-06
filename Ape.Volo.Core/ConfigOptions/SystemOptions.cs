@@ -1,4 +1,5 @@
 ﻿using Ape.Volo.Common.Attributes;
+using Ape.Volo.Common.Enums;
 
 namespace Ape.Volo.Core.ConfigOptions;
 
@@ -8,25 +9,18 @@ namespace Ape.Volo.Core.ConfigOptions;
 [OptionsSettings]
 public class SystemOptions
 {
-    /// <summary>
-    /// 是否初始化表
-    /// </summary>
-    public bool IsInitTable { get; set; }
+    public RunMode RunMode { get; set; }
 
     /// <summary>
-    /// 是否初始化数据
+    /// 是否初始化数据库
     /// </summary>
-    public bool IsInitData { get; set; }
+    public bool IsInitDb { get; set; }
 
     /// <summary>
     /// 是否开启读写分离
     /// </summary>
     public bool IsCqrs { get; set; }
 
-    /// <summary>
-    /// 是否开发模式
-    /// </summary>
-    public bool IsQuickDebug { get; set; }
 
     /// <summary>
     /// 用户默认密码
@@ -46,7 +40,7 @@ public class SystemOptions
     /// <summary>
     /// 主库
     /// </summary>
-    public string MasterDataBase { get; set; }
+    public string MainDataBase { get; set; }
 
     /// <summary>
     /// 日志库

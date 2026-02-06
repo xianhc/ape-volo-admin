@@ -1,0 +1,79 @@
+[
+  {
+    "Id": 163519427764325,
+    "DictType": 1,
+    "Name": "dict_type",
+    "Description": "字典类型(系统or业务)",
+    "CreateBy": "apevolo"
+  },
+  {
+    "Id": 163519427764328,
+    "DictType": 2,
+    "Name": "status_type",
+    "Description": "启用禁用状态",
+    "CreateBy": "apevolo"
+  },
+  {
+    "Id": 163519427764343,
+    "DictType": 1,
+    "Name": "task_trigger_type",
+    "Description": "作业触发器类型",
+    "CreateBy": "apevolo"
+  },
+  {
+    "Id": 163519427764346,
+    "DictType": 1,
+    "Name": "tenant_type",
+    "Description": "租户类型",
+    "CreateBy": "apevolo"
+  },
+  {
+    "Id": 163519427764349,
+    "DictType": 1,
+    "Name": "db_type",
+    "Description": "数据库类型",
+    "CreateBy": "apevolo"
+  },
+  {
+    "Id": 163519427768391,
+    "DictType": 2,
+    "Name": "data_scope_type",
+    "Description": "数据权限",
+    "CreateBy": "apevolo"
+  },
+  {
+    "Id": 163519427768392,
+    "DictType": 2,
+    "Name": "http_method",
+    "Description": "Http请求方法",
+    "CreateBy": "apevolo"
+  },
+  {
+    "Id": 163519427768393,
+    "DictType": 2,
+    "Name": "menu_type",
+    "Description": "菜单类型",
+    "CreateBy": "apevolo"
+  },
+  {
+    "Id": 163519427768394,
+    "DictType": 2,
+    "Name": "badge_type",
+    "Description": "徽章类型",
+    "CreateBy": "apevolo"
+  },
+  {
+    "Id": 163519427768395,
+    "DictType": 2,
+    "Name": "gender_code",
+    "Description": "性别",
+    "CreateBy": "apevolo"
+  },
+  {
+    "Id": 183847050895429,
+    "DictType": 2,
+    "Name": "task_trigger_state",
+    "Description": "作业触发器状态",
+    "CreateBy": "apevolo"
+  }
+]

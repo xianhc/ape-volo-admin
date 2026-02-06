@@ -14,91 +14,77 @@ namespace Ape.Volo.Entity.Core.Queued
         /// <summary>
         /// 发件邮箱
         /// </summary>
-        [SugarColumn(IsNullable = false)]
-        public string From { get; set; }
+        public string From { get; set; } = string.Empty;
 
         /// <summary>
         /// 发件人名称
         /// </summary>
-        [SugarColumn(IsNullable = true)]
-        public string FromName { get; set; }
+        public string? FromName { get; set; }
 
         /// <summary>
         /// 收件邮箱
         /// </summary>
-        [SugarColumn(IsNullable = false)]
-        public string To { get; set; }
+        public string To { get; set; } = string.Empty;
 
         /// <summary>
         /// 收件人名称
         /// </summary>
-        [SugarColumn(IsNullable = true)]
-        public string ToName { get; set; }
+        public string? ToName { get; set; }
 
         /// <summary>
         /// 回复邮箱
         /// </summary>
-        [SugarColumn(IsNullable = true)]
-        public string ReplyTo { get; set; }
+        public string? ReplyTo { get; set; }
 
         /// <summary>
         /// 回复人名称
         /// </summary>
-        [SugarColumn(IsNullable = true)]
-        public string ReplyToName { get; set; }
+        public string? ReplyToName { get; set; }
 
         /// <summary>
         /// 优先级
         /// </summary>
-        [SugarColumn(IsNullable = false)]
         public QueuedEmailPriority Priority { get; set; }
 
         /// <summary>
         /// 抄送
         /// </summary>
-        [SugarColumn(IsNullable = true)]
-        public string Cc { get; set; }
+        public string? Cc { get; set; }
 
         /// <summary>
         /// 密件抄送
         /// </summary>
-        [SugarColumn(IsNullable = true)]
-        public string Bcc { get; set; }
+        public string? Bcc { get; set; }
 
         /// <summary>
         /// 标题
         /// </summary>
-        [SugarColumn(IsNullable = true)]
-        public string Subject { get; set; }
+        public string? Subject { get; set; }
 
         /// <summary>
         /// 内容
         /// </summary>
-        [SugarColumn(Length = 4000, IsNullable = false)]
-        public string Body { get; set; }
+        [SugarColumn(ColumnDataType = StaticConfig.CodeFirst_BigString)]
+        public string Body { get; set; } = string.Empty;
 
         /// <summary>
         /// 发送上限次数
         /// </summary>
-        [SugarColumn(IsNullable = false)]
         public int SentTries { get; set; }
 
         /// <summary>
         /// 是否已发送
         /// </summary>
-        [SugarColumn(IsNullable = true)]
-        public bool? IsSend { get; set; }
+        public bool IsSend { get; set; }
 
         /// <summary>
         /// 发送时间
         /// </summary>
-        [SugarColumn(IsNullable = true)]
         public DateTime? SendTime { get; set; }
 
         /// <summary>
         /// 发件邮箱ID
         /// </summary>
-        [SugarColumn(IsNullable = false)]
         public long EmailAccountId { get; set; }
     }
 }

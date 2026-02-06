@@ -15,7 +15,7 @@ namespace Ape.Volo.Entity.Base
         /// 创建者名称
         /// </summary>
         [SugarColumn(IsNullable = true, IsOnlyIgnoreUpdate = true)]
-        public string CreateBy { get; set; }
+        public string? CreateBy { get; set; }
 
         /// <summary>
         /// 创建时间
@@ -27,7 +27,7 @@ namespace Ape.Volo.Entity.Base
         /// 更新者名称
         /// </summary>
         [SugarColumn(IsNullable = true, IsOnlyIgnoreInsert = true)]
-        public string UpdateBy { get; set; }
+        public string? UpdateBy { get; set; }
 
         /// <summary>
         /// 最后更新时间

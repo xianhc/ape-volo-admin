@@ -44,7 +44,7 @@ public class TenantExport : ExportBase
     /// 库类型
     /// </summary>
     [Display(Name = "Tenant.DbType")]
-    public DbType DbType { get; set; }
+    public DbType? DbType { get; set; }
 
     /// <summary>
     /// 库连接

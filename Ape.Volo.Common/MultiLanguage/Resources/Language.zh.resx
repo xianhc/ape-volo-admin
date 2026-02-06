@@ -89,8 +89,8 @@
   <data name="Sys.Api" xml:space="preserve">
     <value>Api路由</value>
     </data>
-  <data name="Sys.Setting" xml:space="preserve">
-    <value>系统设置</value>
+  <data name="Sys.Parameter" xml:space="preserve">
+    <value>系统参数</value>
     </data>
   <data name="Sys.Dict" xml:space="preserve">
     <value>字典</value>
@@ -109,6 +109,9 @@
   </data>
   <data name="Sys.ExceptionLog" xml:space="preserve">
     <value>异常日志</value>
+  </data>
+  <data name="Sys.TaskLog" xml:space="preserve">
+    <value>作业日志</value>
   </data>
   <data name="Sys.QueuedEmail" xml:space="preserve">
     <value>队列邮件</value>
@@ -335,9 +338,6 @@
   <data name="User.Email" xml:space="preserve">
       <value>用户邮箱</value>
     </data>
-  <data name="User.IsAdmin" xml:space="preserve">
-      <value>是否管理员</value>
-    </data>
   <data name="User.Enabled" xml:space="preserve">
       <value>是否激活</value>
     </data>
@@ -448,11 +448,14 @@
   <data name="Menu.Type" xml:space="preserve">
       <value>菜单类型</value>
     </data>
-  <data name="Menu.Cache" xml:space="preserve">
+  <data name="Menu.KeepAlive" xml:space="preserve">
       <value>是否缓存</value>
     </data>
   <data name="Menu.Hidden" xml:space="preserve">
       <value>是否隐藏</value>
+    </data>
+  <data name="Menu.Enabled" xml:space="preserve">
+      <value>是否启用</value>
     </data>
   <data name="Menu.SubCount" xml:space="preserve">
       <value>子菜单个数</value>
@@ -514,14 +517,14 @@
       <value>文件大小</value>
     </data>
 
-  <!-- 设置 -->
-  <data name="Setting.Name" xml:space="preserve">
-      <value>设置名称</value>
+  <!-- 参数 -->
+  <data name="Parameter.Name" xml:space="preserve">
+      <value>参数名称</value>
     </data>
-  <data name="Setting.Value" xml:space="preserve">
-      <value>设置值</value>
+  <data name="Parameter.Value" xml:space="preserve">
+      <value>参数值</value>
     </data>
-  <data name="Setting.Enabled" xml:space="preserve">
+  <data name="Parameter.Enabled" xml:space="preserve">
       <value>是否启用</value>
     </data>
 
@@ -751,11 +754,14 @@
   <data name="Area.EmailMessageTemplateManagement" xml:space="preserve">
       <value>邮件模板管理</value>
     </data>
-  <data name="Area.AuditLogManagement" xml:space="preserve">
-      <value>审计管理</value>
+  <data name="Area.OperateLogManagement" xml:space="preserve">
+      <value>操作日志管理</value>
     </data>
   <data name="Area.ExceptionLogManagement" xml:space="preserve">
       <value>异常日志管理</value>
+    </data>
+    <data name="Area.TaskLogManagement" xml:space="preserve">
+      <value>作业日志管理</value>
     </data>
   <data name="Area.ServerResourceManagement" xml:space="preserve">
       <value>服务器资源管理</value>
@@ -797,10 +803,10 @@
       <value>文件存储管理</value>
     </data>
   <data name="Area.JobSchedulingManagement" xml:space="preserve">
-      <value>作业调度管理</value>
+      <value>作业管理</value>
     </data>
-  <data name="Area.GlobalSettingsManagement" xml:space="preserve">
-      <value>全局设置管理</value>
+  <data name="Area.GlobalSettingManagement" xml:space="preserve">
+      <value>系统配置</value>
     </data>
   <data name="Area.TenantManagement" xml:space="preserve">
       <value>租户管理</value>
@@ -835,8 +841,8 @@
   <data name="Action.RefreshApi" xml:space="preserve">
       <value>刷新Api</value>
     </data>
-  <data name="Action.RefreshApi" xml:space="preserve">
-      <value>刷新Api</value>
+  <data name="Action.GetApiGroup" xml:space="preserve">
+      <value>获取Api分组</value>
     </data>
   <data name="Action.ApiRefresh.Success" xml:space="preserve">
       <value>刷新Api成功</value>
@@ -913,7 +919,7 @@
   <data name="Action.GetAllTenant" xml:space="preserve">
       <value>获取全部租户</value>
     </data>
-  <data name="Action.StartupSSuccess" xml:space="preserve">
+  <data name="Action.StartupSuccess" xml:space="preserve">
       <value>启动成功</value>
     </data>
   <data name="Action.StartupFailure" xml:space="preserve">

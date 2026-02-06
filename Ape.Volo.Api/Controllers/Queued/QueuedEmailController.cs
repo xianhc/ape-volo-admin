@@ -18,7 +18,7 @@ namespace Ape.Volo.Api.Controllers.Queued;
 /// 邮件队列管理
 /// </summary>
 [Area("Area.MailQueueManagement")]
-[Route("/api/queued/email", Order = 19)]
+[Route("/queued/email", Order = 19)]
 public class QueuedEmailController : BaseApiController
 {
     private readonly IQueuedEmailService _queuedEmailService;

@@ -1,4 +1,4 @@
-﻿using Ape.Volo.Common.Attributes;
+﻿using Ape.Volo.Common.Model;
 using Ape.Volo.Entity.Base;
 using SqlSugar;
 
@@ -9,19 +9,19 @@ namespace Ape.Volo.Entity.Test
     /// 单表ID隔离注释[MultiDbTenant]，继承ITenantEntity
     /// 多库隔离取消继承ITenantEntity，增加[MultiDbTenant]
     /// </summary>
-    [MultiDbTenant]
+    //[MultiDbTenant]
     [SugarTable("test_order")]
-    public class TestOrder : BaseEntity //, ITenantEntity
+    public class TestOrder : BaseEntity, ITenantEntity
     {
         /// <summary>
         /// 订单号
         /// </summary>
-        public string OrderNo { get; set; }
+        public string OrderNo { get; set; } = string.Empty;
 
         /// <summary>
         /// 商品名称
         /// </summary>
-        public string GoodsName { get; set; }
+        public string GoodsName { get; set; } = string.Empty;
 
         /// <summary>
         /// 数量

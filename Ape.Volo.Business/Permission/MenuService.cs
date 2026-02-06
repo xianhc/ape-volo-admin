@@ -19,6 +19,7 @@ using Ape.Volo.SharedModel.Dto.Core.Permission;
 using Ape.Volo.SharedModel.Queries.Permission;
 using Ape.Volo.ViewModel.Core.Permission.Menu;
 using Ape.Volo.ViewModel.Report.Permission;
+using SqlSugar;
 
 namespace Ape.Volo.Business.Permission;
 
@@ -43,21 +44,21 @@ public class MenuService : BaseServices<Menu>, IMenuService
                 nameof(createUpdateMenuDto.Title)));
         }
 
-        if (createUpdateMenuDto.Type != MenuType.Catalog)
+        if (createUpdateMenuDto.MenuType is not (MenuType.Catalog or MenuType.InternalLink or MenuType.ExternalLink))
         {
-            if (createUpdateMenuDto.Permission.IsNullOrEmpty())
+            if (createUpdateMenuDto.AuthCode.IsNullOrEmpty())
             {
                 return OperateResult.Error(ValidationError.Required(createUpdateMenuDto,
-                    nameof(createUpdateMenuDto.Permission)));
+                    nameof(createUpdateMenuDto.AuthCode)));
             }
         }
 
-        if (createUpdateMenuDto.Type != MenuType.Catalog &&
-            await TableWhere(x => x.Permission == createUpdateMenuDto.Permission)
+        if (createUpdateMenuDto.MenuType is not (MenuType.Catalog or MenuType.InternalLink or MenuType.ExternalLink) &&
+            await TableWhere(x => x.AuthCode == createUpdateMenuDto.AuthCode)
                 .AnyAsync())
         {
             return OperateResult.Error(ValidationError.IsExist(createUpdateMenuDto,
-                nameof(createUpdateMenuDto.Permission)));
+                nameof(createUpdateMenuDto.AuthCode)));
         }
 
         if (!createUpdateMenuDto.ComponentName.IsNullOrEmpty() && await TableWhere(m =>
@@ -68,7 +69,7 @@ public class MenuService : BaseServices<Menu>, IMenuService
         }
 
 
-        if (createUpdateMenuDto.IFrame)
+        if (createUpdateMenuDto.MenuType == MenuType.ExternalLink)
         {
             string http = "http://", https = "https://";
             if (!(createUpdateMenuDto.Path.ToLower().StartsWith(http) ||
@@ -123,20 +124,21 @@ public class MenuService : BaseServices<Menu>, IMenuService
                 nameof(createUpdateMenuDto.Title)));
         }
 
-        if (createUpdateMenuDto.Type != MenuType.Catalog)
+        if (createUpdateMenuDto.MenuType is not (MenuType.Catalog or MenuType.InternalLink or MenuType.ExternalLink))
         {
-            if (createUpdateMenuDto.Permission.IsNullOrEmpty())
+            if (createUpdateMenuDto.AuthCode.IsNullOrEmpty())
             {
                 return OperateResult.Error(ValidationError.Required(createUpdateMenuDto,
-                    nameof(createUpdateMenuDto.Permission)));
+                    nameof(createUpdateMenuDto.AuthCode)));
             }
         }
 
-        if (createUpdateMenuDto.Type != MenuType.Catalog && oldMenu.Permission != createUpdateMenuDto.Permission &&
-            await TableWhere(x => x.Permission == createUpdateMenuDto.Permission).AnyAsync())
+        if (createUpdateMenuDto.MenuType is not (MenuType.Catalog or MenuType.InternalLink or MenuType.ExternalLink) &&
+            await TableWhere(x => x.AuthCode == createUpdateMenuDto.AuthCode)
+                .AnyAsync())
         {
             return OperateResult.Error(ValidationError.IsExist(createUpdateMenuDto,
-                nameof(createUpdateMenuDto.Permission)));
+                nameof(createUpdateMenuDto.AuthCode)));
         }
 
         if (!createUpdateMenuDto.ComponentName.IsNullOrEmpty())
@@ -150,7 +152,7 @@ public class MenuService : BaseServices<Menu>, IMenuService
         }
 
 
-        if (createUpdateMenuDto.IFrame)
+        if (createUpdateMenuDto.MenuType == MenuType.ExternalLink)
         {
             string http = "http://", https = "https://";
             if (!(createUpdateMenuDto.Path.ToLower().StartsWith(http) ||
@@ -273,7 +275,7 @@ public class MenuService : BaseServices<Menu>, IMenuService
     /// <returns></returns>
     public async Task<List<MenuVo>> QueryAsync(MenuQueryCriteria menuQueryCriteria)
     {
-        var menus = await TableWhere(menuQueryCriteria.ApplyQueryConditionalModel(), null, x => x.Sort)
+        var menus = await TableWhere(menuQueryCriteria.ApplyQueryConditionalModel(), null, x => x.Sort, OrderByType.Asc)
             .ToListAsync();
         var menuVos = App.Mapper.MapTo<List<MenuVo>>(menus);
         return menuVos;
@@ -293,16 +295,15 @@ public class MenuService : BaseServices<Menu>, IMenuService
             Id = x.Id,
             Title = x.Title,
             Path = x.Path,
-            Permission = x.Permission,
-            IsFrame = x.IFrame,
+            AuthCode = x.AuthCode,
             Component = x.Component,
             ComponentName = x.ComponentName,
             PId = 0,
             Sort = x.Sort,
             Icon = x.Icon,
-            MenuType = x.Type,
-            IsCache = x.Cache,
-            IsHidden = x.Hidden,
+            MenuType = x.MenuType,
+            KeepAlive = x.KeepAlive,
+            Hidden = x.Hidden,
             SubCount = x.SubCount,
             CreateTime = x.CreateTime
         }));
@@ -345,26 +346,25 @@ public class MenuService : BaseServices<Menu>, IMenuService
     {
         var menuList = await SugarClient
             .Queryable<UserRole, RoleMenu, Menu>((ur, rm, m) => ur.RoleId == rm.RoleId && rm.MenuId == m.Id)
-            .Where((ur, rm, m) => ur.UserId == userId && m.Type != MenuType.Button)
+            .Where((ur, rm, m) => ur.UserId == userId && m.MenuType != MenuType.Button)
             .OrderBy((ur, rm, m) => m.Sort)
             .ClearFilter<ICreateByEntity>()
             .Select((ur, rm, m) => new MenuVo
             {
                 Title = m.Title,
                 Path = m.Path,
-                Permission = m.Permission,
-                IFrame = m.IFrame,
+                AuthCode = m.AuthCode,
                 Component = m.Component,
                 ComponentName = m.ComponentName,
                 ParentId = m.ParentId,
                 Sort = m.Sort,
                 Icon = m.Icon,
-                Type = m.Type,
+                MenuType = m.MenuType,
                 IsDeleted = m.IsDeleted,
                 Id = m.Id,
                 CreateTime = m.CreateTime,
                 CreateBy = m.CreateBy,
-                Cache = m.Cache,
+                KeepAlive = m.KeepAlive,
                 Hidden = m.Hidden
             }).Distinct().ToListAsync();
         var menuListChild = TreeHelper<MenuVo>.ListToTrees(menuList, "Id", "ParentId", 0);
@@ -424,32 +424,27 @@ public class MenuService : BaseServices<Menu>, IMenuService
     private static async Task<List<MenuTreeVo>> BuildAsync(List<MenuVo> menuList)
     {
         List<MenuTreeVo> menuVos = new List<MenuTreeVo>();
-        MenuTreeVo menuVo = null;
-        List<MenuVo> menuDtoList = null;
-
         foreach (var menu in menuList)
         {
-            menuDtoList = menu.Children;
-            menuVo = new MenuTreeVo
+            List<MenuVo> menuDtoList = menu.Children;
+            MenuTreeVo menuVo = new MenuTreeVo
             {
                 Name = menu.ComponentName.IsNullOrEmpty() ? menu.Title : menu.ComponentName,
-                Path = menu.ParentId == 0 ? "/" + menu.Path : menu.Path,
-                Hidden = menu.Hidden
+                Path = menu.Path,
+                Hidden = menu.Hidden,
+                MenuType = menu.MenuType
             };
 
-            if (!menu.IFrame)
+            if (menu.ParentId == 0)
             {
-                if (menu.ParentId == 0)
-                {
-                    menuVo.Component = menu.Component.IsNullOrEmpty() ? "Layout" : menu.Component;
-                }
-                else if (!menu.Component.IsNullOrEmpty())
-                {
-                    menuVo.Component = menu.Component;
-                }
+                menuVo.Component = menu.Component.IsNullOrEmpty() ? "Layout" : menu.Component;
+            }
+            else if (!menu.Component.IsNullOrEmpty())
+            {
+                menuVo.Component = menu.Component;
             }
 
-            menuVo.Meta = new MenuMetaVo(menu.Title, menu.Icon, !menu.Cache);
+            menuVo.Meta = new MenuMetaVo(menu.Title, menu.Icon, menu.KeepAlive);
             if (menuDtoList is { Count: > 0 })
             {
                 menuVo.AlwaysShow = true;

@@ -10,13 +10,14 @@ namespace Ape.Volo.Entity.Core.Permission.Role
     /// 角色
     /// </summary>
     [SugarTable("sys_role")]
+    [SugarIndex("unique_{table}_Name", nameof(Name), OrderByType.Asc, true)]
+    [SugarIndex("unique_{table}_AuthCode", nameof(AuthCode), OrderByType.Asc, true)]
     public class Role : BaseEntity
     {
         /// <summary>
         /// 角色名称
         /// </summary>
-        public string Name { get; set; }
-
+        public string Name { get; set; } = string.Empty;
 
         /// <summary>
         /// 角色等级
@@ -26,8 +27,7 @@ namespace Ape.Volo.Entity.Core.Permission.Role
         /// <summary>
         /// 描述
         /// </summary>
-        [SugarColumn(IsNullable = true)]
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
         /// <summary>
         /// 数据权限
@@ -37,29 +37,28 @@ namespace Ape.Volo.Entity.Core.Permission.Role
         /// <summary>
         /// 角色代码
         /// </summary>
-        [SugarColumn(Length = 20)]
-        public string Permission { get; set; }
+        public string AuthCode { get; set; } = string.Empty;
 
         /// <summary>
         /// 菜单集合
         /// </summary>
         [SugarColumn(IsIgnore = true)]
         [Navigate(typeof(RoleMenu), nameof(RoleMenu.RoleId), nameof(RoleMenu.MenuId))]
-        public List<Menu> MenuList { get; set; }
+        public List<Menu>? MenuList { get; set; }
 
         /// <summary>
         /// 部门集合
         /// </summary>
         [SugarColumn(IsIgnore = true)]
         [Navigate(typeof(RoleDepartment), nameof(RoleDepartment.RoleId), nameof(RoleDepartment.DeptId))]
-        public List<Department> DepartmentList { get; set; }
+        public List<Department>? DepartmentList { get; set; }
 
         /// <summary>
         /// 用户列表
         /// </summary>
         [SugarColumn(IsIgnore = true)]
         [Navigate(typeof(UserRole), nameof(UserRole.RoleId), nameof(UserRole.UserId))]
-        public List<User.User> Users { get; set; }
+        public List<User.User>? Users { get; set; }
 
 
         /// <summary>
@@ -67,6 +66,6 @@ namespace Ape.Volo.Entity.Core.Permission.Role
         /// </summary>
         [SugarColumn(IsIgnore = true)]
         [Navigate(typeof(RoleApis), nameof(RoleApis.RoleId), nameof(RoleApis.ApisId))]
-        public List<Apis> Apis { get; set; }
+        public List<Apis>? ApiList { get; set; }
     }
 }

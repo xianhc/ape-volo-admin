@@ -18,7 +18,7 @@ public class QueuedEmailQueryCriteria : DateRange, IConditionalModel
     /// <summary>
     /// 最大执行次数
     /// </summary>
-    [QueryCondition(ConditionType = ConditionalType.LessThan)]
+    [QueryCondition(ConditionType = ConditionalType.LessThan, FieldName = "SentTries")]
     public int MaxTries { get; set; }
 
     /// <summary>

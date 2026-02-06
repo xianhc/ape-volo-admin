@@ -67,14 +67,16 @@ public class DictDetailService : BaseServices<DictDetail>, IDictDetailService
         }
 
         if (oldDictDetail.Label != createUpdateDictDetailDto.Label &&
-            await TableWhere(x => x.Label == createUpdateDictDetailDto.Label).AnyAsync())
+            await TableWhere(x =>
+                x.DictId == createUpdateDictDetailDto.DictId && x.Label == createUpdateDictDetailDto.Label).AnyAsync())
         {
             return OperateResult.Error(ValidationError.IsExist(createUpdateDictDetailDto,
                 nameof(createUpdateDictDetailDto.Label)));
         }
 
         if (oldDictDetail.Value != createUpdateDictDetailDto.Value &&
-            await TableWhere(x => x.Value == createUpdateDictDetailDto.Value).AnyAsync())
+            await TableWhere(x =>
+                x.DictId == createUpdateDictDetailDto.DictId && x.Value == createUpdateDictDetailDto.Value).AnyAsync())
         {
             return OperateResult.Error(ValidationError.IsExist(createUpdateDictDetailDto,
                 nameof(createUpdateDictDetailDto.Value)));
@@ -89,17 +91,17 @@ public class DictDetailService : BaseServices<DictDetail>, IDictDetailService
     /// <summary>
     /// 删除
     /// </summary>
-    /// <param name="id"></param>
+    /// <param name="ids"></param>
     /// <returns></returns>
-    public async Task<OperateResult> DeleteAsync(long id)
+    public async Task<OperateResult> DeleteAsync(HashSet<long> ids)
     {
-        var dictDetail = await TableWhere(x => x.Id == id).FirstAsync();
-        if (dictDetail == null)
+        var dictList = await TableWhere(x => ids.Contains(x.Id)).ToListAsync();
+        if (dictList.Count <= 0)
         {
             return OperateResult.Error(ValidationError.NotExist());
         }
 
-        var result = await LogicDelete<DictDetail>(x => x.Id == id);
+        var result = await LogicDelete<DictDetail>(x => ids.Contains(x.Id));
         return OperateResult.Result(result);
     }
 
@@ -125,25 +127,26 @@ public class DictDetailService : BaseServices<DictDetail>, IDictDetailService
     public async Task<List<DictDetailVo>> QueryAsync(DictDetailQueryCriteria dictDetailQueryCriteria,
         Pagination pagination)
     {
-        if (dictDetailQueryCriteria.DictId > 0)
-        {
-            dictDetailQueryCriteria.DictName = "";
-        }
+        // if (dictDetailQueryCriteria.DictId > 0)
+        // {
+        //     dictDetailQueryCriteria.DictName = "";
+        // }
+        //
+        // if (!dictDetailQueryCriteria.DictName.IsNullOrEmpty())
+        // {
+        //     var dict = await SugarClient.Queryable<Dict>().Where(x => x.Name == dictDetailQueryCriteria.DictName)
+        //         .FirstAsync();
+        //     if (dict == null)
+        //     {
+        //         return new List<DictDetailVo>();
+        //     }
+        //
+        //     var dictDetailList = await App.GetService<IDictDetailService>().GetDetailByDictIdAsync(dict.Id);
+        //     return dictDetailList;
+        // }
 
-        if (!dictDetailQueryCriteria.DictName.IsNullOrEmpty())
-        {
-            var dict = await SugarClient.Queryable<Dict>().Where(x => x.Name == dictDetailQueryCriteria.DictName)
-                .FirstAsync();
-            if (dict == null)
-            {
-                return new List<DictDetailVo>();
-            }
-
-            var dictDetailList = await App.GetService<IDictDetailService>().GetDetailByDictIdAsync(dict.Id);
-            return dictDetailList;
-        }
-
-        pagination.SortFields = new List<string> { "dict_sort" };
+        // pagination.SortField = "dictSort";
+        // pagination.OrderByType = OrderByType.Asc;
         var queryOptions = new QueryOptions<DictDetail>
         {
             Pagination = pagination,

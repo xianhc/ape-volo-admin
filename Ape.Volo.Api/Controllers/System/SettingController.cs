@@ -5,6 +5,7 @@ using Ape.Volo.Api.Controllers.Base;
 using Ape.Volo.Common.Extensions;
 using Ape.Volo.Common.Helper;
 using Ape.Volo.Common.Model;
+using Ape.Volo.Core;
 using Ape.Volo.IBusiness.System;
 using Ape.Volo.SharedModel.Dto.Core.System;
 using Ape.Volo.SharedModel.Queries.Common;
@@ -16,10 +17,10 @@ using Microsoft.AspNetCore.Mvc;
 namespace Ape.Volo.Api.Controllers.System;
 
 /// <summary>
-/// 全局设置管理
+/// 系统配置
 /// </summary>
-[Area("Area.GlobalSettingsManagement")]
-[Route("/api/setting", Order = 10)]
+[Area("Area.GlobalSettingManagement")]
+[Route("/setting", Order = 10)]
 public class SettingController : BaseApiController
 {
     #region 字段
@@ -40,7 +41,7 @@ public class SettingController : BaseApiController
     #region 内部接口
 
     /// <summary>
-    /// 新增设置
+    /// 新增参数
     /// </summary>
     /// <param name="createUpdateSettingDto"></param>
     /// <returns></returns>
@@ -62,7 +63,7 @@ public class SettingController : BaseApiController
     }
 
     /// <summary>
-    /// 更新设置
+    /// 更新参数
     /// </summary>
     /// <param name="createUpdateSettingDto"></param>
     /// <returns></returns>
@@ -84,7 +85,7 @@ public class SettingController : BaseApiController
     }
 
     /// <summary>
-    /// 删除设置
+    /// 删除参数
     /// </summary>
     /// <param name="idCollection"></param>
     /// <returns></returns>
@@ -105,40 +106,37 @@ public class SettingController : BaseApiController
     }
 
     /// <summary>
-    /// 获取设置列表
+    /// 获取参数列表
     /// </summary>
-    /// <param name="settingQueryCriteria"></param>
+    /// <param name="parameterQueryCriteria"></param>
     /// <param name="pagination"></param>
     /// <returns></returns>
     [HttpGet]
     [Route("query")]
     [Description("Sys.Query")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ActionResultVm<List<SettingVo>>))]
-    public async Task<ActionResult> Query(SettingQueryCriteria settingQueryCriteria, Pagination pagination)
+    public async Task<ActionResult> Query(ParameterQueryCriteria parameterQueryCriteria, Pagination pagination)
     {
-        var settingList = await _settingService.QueryAsync(settingQueryCriteria, pagination);
+        var settingList = await _settingService.QueryAsync(parameterQueryCriteria, pagination);
 
         return JsonContent(settingList, pagination);
     }
 
 
     /// <summary>
-    /// 导出设置
+    /// 导出参数
     /// </summary>
-    /// <param name="settingQueryCriteria"></param>
+    /// <param name="parameterQueryCriteria"></param>
     /// <returns></returns>
     [HttpGet]
     [Description("Sys.Export")]
     [Route("download")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(FileContentResult))]
-    public async Task<ActionResult> Download(SettingQueryCriteria settingQueryCriteria)
+    public async Task<ActionResult> Download(ParameterQueryCriteria parameterQueryCriteria)
     {
-        var settingExports = await _settingService.DownloadAsync(settingQueryCriteria);
+        var settingExports = await _settingService.DownloadAsync(parameterQueryCriteria);
         var data = new ExcelHelper().GenerateExcel(settingExports, out var mimeType, out var fileName);
-        return new FileContentResult(data, mimeType)
-        {
-            FileDownloadName = fileName
-        };
+        return new FileContentResult(data, mimeType) { FileDownloadName = App.L.R("Sys.Parameter") + fileName };
     }
 
     #endregion

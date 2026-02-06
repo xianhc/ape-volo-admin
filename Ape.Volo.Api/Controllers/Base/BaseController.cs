@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
 using Ape.Volo.Common.Extensions;
 using Ape.Volo.Common.Model;
 using Ape.Volo.Core;
@@ -109,32 +108,35 @@ public class BaseController : Controller
 
         if (Request.Method.ToUpper() == "POST")
         {
-            string pattern = @"/create$";
-            bool isMatch = Regex.IsMatch(Request.Path, pattern);
-            if (isMatch)
-            {
-                return Created(msg);
-            }
+            // string pattern = @"/create$";
+            // bool isMatch = Regex.IsMatch(Request.Path, pattern);
+            // if (isMatch)
+            // {
+            //     return Created(msg);
+            // }
+            return Created();
         }
 
         if (Request.Method == "PUT")
         {
-            string pattern = @"/edit$";
-            bool isMatch = Regex.IsMatch(Request.Path, pattern);
-            if (isMatch)
-            {
-                return new NoContentResult();
-            }
+            // string pattern = @"/edit$";
+            // bool isMatch = Regex.IsMatch(Request.Path, pattern);
+            // if (isMatch)
+            // {
+            //     return new NoContentResult();
+            // }
+            return new NoContentResult();
         }
 
         if (Request.Method == "DELETE")
         {
-            string pattern = @"/delete$";
-            bool isMatch = Regex.IsMatch(Request.Path, pattern);
-            if (isMatch)
-            {
-                msg = App.L.R("Sys.HttpDelete");
-            }
+            // string pattern = @"/delete$";
+            // bool isMatch = Regex.IsMatch(Request.Path, pattern);
+            // if (isMatch)
+            // {
+            //     msg = App.L.R("Sys.HttpDelete");
+            // }
+            msg = App.L.R("Sys.HttpDelete");
         }
 
         return Success(msg);

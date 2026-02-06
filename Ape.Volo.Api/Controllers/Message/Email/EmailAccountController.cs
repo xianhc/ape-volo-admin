@@ -2,9 +2,11 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Threading.Tasks;
 using Ape.Volo.Api.Controllers.Base;
+using Ape.Volo.Common.Attributes;
 using Ape.Volo.Common.Extensions;
 using Ape.Volo.Common.Helper;
 using Ape.Volo.Common.Model;
+using Ape.Volo.Core;
 using Ape.Volo.IBusiness.Message.Email;
 using Ape.Volo.SharedModel.Dto.Core.Message.Email;
 using Ape.Volo.SharedModel.Queries.Common;
@@ -19,7 +21,7 @@ namespace Ape.Volo.Api.Controllers.Message.Email;
 /// 邮箱账户管理
 /// </summary>
 [Area("Area.EmailAccountManagement")]
-[Route("/api/email/account", Order = 17)]
+[Route("/email/account", Order = 17)]
 public class EmailAccountController : BaseApiController
 {
     private readonly IEmailAccountService _emailAccountService;
@@ -115,6 +117,23 @@ public class EmailAccountController : BaseApiController
     }
 
     /// <summary>
+    /// 获取所有邮箱账户
+    /// </summary>
+    /// <returns></returns>
+    [HttpGet]
+    [Route("queryAll")]
+    [Description("Sys.Query")]
+    [HasRole(["admin"])]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<EmailAccountVo>))]
+    public async Task<ActionResult> QueryAll()
+    {
+        var emailAccountList = await _emailAccountService.QueryAllAsync();
+
+        return JsonContent(emailAccountList);
+    }
+
+
+    /// <summary>
     /// 导出邮箱账户
     /// </summary>
     /// <param name="emailAccountQueryCriteria"></param>
@@ -127,9 +146,6 @@ public class EmailAccountController : BaseApiController
     {
         var emailAccountExports = await _emailAccountService.DownloadAsync(emailAccountQueryCriteria);
         var data = new ExcelHelper().GenerateExcel(emailAccountExports, out var mimeType, out var fileName);
-        return new FileContentResult(data, mimeType)
-        {
-            FileDownloadName = fileName
-        };
+        return new FileContentResult(data, mimeType) { FileDownloadName = App.L.R("Sys.EmailAccount") + fileName };
     }
 }

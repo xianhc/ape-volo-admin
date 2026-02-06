@@ -11,15 +11,15 @@
   "profiles": {
     "Ape.Volo.Api": {
       "commandName": "Project",
-      "launchBrowser": true,
+      "launchBrowser": false,
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
-      }//,
-      //"applicationUrl": "http://localhost:8002/swagger/api/index.html"
+      },
+      "applicationUrl": "http://localhost:8002/swagger/api/index.html"
     },
     "IIS Express": {
       "commandName": "IISExpress",
-      "launchBrowser": true,
+      "launchBrowser": false,
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }

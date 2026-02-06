@@ -1,4 +1,5 @@
-﻿using Ape.Volo.Core;
+﻿using Ape.Volo.Common.Enums;
+using Ape.Volo.Core;
 using Ape.Volo.Core.ConfigOptions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -42,7 +43,7 @@ public class SwaggerAuthorizeMiddleware
 
     public bool IsAuthorized(HttpContext context)
     {
-        if (App.GetOptions<SystemOptions>().IsQuickDebug)
+        if (App.GetOptions<SystemOptions>().RunMode == RunMode.Dev)
         {
             //开发环境免登录
             return true;

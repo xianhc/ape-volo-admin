@@ -21,5 +21,5 @@ public class UpdateRoleMenuDto
     [Display(Name = "Sys.Menu")]
     [Required(ErrorMessage = "{0}required")]
     [AtLeastOneItem]
-    public List<RoleMenuDto> Menus { get; set; }
+    public List<long> MenuIdArray { get; set; }
 }

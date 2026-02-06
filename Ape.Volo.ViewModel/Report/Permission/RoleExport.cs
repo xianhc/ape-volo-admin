@@ -43,5 +43,5 @@ public class RoleExport : ExportBase
     /// 角色代码
     /// </summary>
     [Display(Name = "Role.Permission")]
-    public string Permission { get; set; }
+    public string AuthCode { get; set; }
 }

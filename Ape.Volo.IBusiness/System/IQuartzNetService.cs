@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Ape.Volo.Common.Model;
-using Ape.Volo.Entity.Core.System.QuartzNet;
+using Ape.Volo.Entity.Core.System;
 using Ape.Volo.SharedModel.Dto.Core.System;
 using Ape.Volo.SharedModel.Queries.Common;
 using Ape.Volo.SharedModel.Queries.System;
-using Ape.Volo.ViewModel.Core.System.QuartzNet;
+using Ape.Volo.ViewModel.Core.System;
 
 namespace Ape.Volo.IBusiness.System;
 
@@ -40,9 +40,8 @@ public interface IQuartzNetService : IBaseServices<QuartzNet>
     /// 更新任务与日志
     /// </summary>
     /// <param name="quartzNet"></param>
-    /// <param name="quartzNetLog"></param>
     /// <returns></returns>
-    Task<OperateResult> UpdateJobInfoAsync(QuartzNet quartzNet, QuartzNetLog quartzNetLog);
+    Task<OperateResult> UpdateJobInfoAsync(QuartzNet quartzNet);
 
     /// <summary>
     /// 删除
@@ -58,6 +57,12 @@ public interface IQuartzNetService : IBaseServices<QuartzNet>
     /// <param name="pagination"></param>
     /// <returns></returns>
     Task<List<QuartzNetVo>> QueryAsync(QuartzNetQueryCriteria quartzNetQueryCriteria, Pagination pagination);
+
+    /// <summary>
+    /// 查询全部作业名称
+    /// </summary>
+    /// <returns></returns>
+    Task<List<QuartzNetSmallVo>> QueryAllTaskNameAsync();
 
     /// <summary>
     /// 下载

@@ -34,14 +34,14 @@ public class BaseServices<TEntity> : IBaseServices<TEntity> where TEntity : clas
 
     #region 构造函数
 
-    /// <summary>
-    /// 构造函数
-    /// </summary>
-    /// <param name="sugarRepository"></param>
-    public BaseServices(ISugarRepository<TEntity> sugarRepository = null)
-    {
-        SugarRepository = sugarRepository;
-    }
+    // public BaseServices(ISugarRepository<TEntity> sugarRepository)
+    // {
+    //     if (sugarRepository == null)
+    //     {
+    //         throw new ArgumentNullException(nameof(sugarRepository), "sugarRepository cannot be null");
+    //     }
+    //     SugarRepository = sugarRepository;
+    // }
 
     #endregion
 
@@ -196,11 +196,13 @@ public class BaseServices<TEntity> : IBaseServices<TEntity> where TEntity : clas
     /// <param name="isClearCreateByFilter">清除创建人过滤器</param>
     /// <param name="lockString">锁</param>
     /// <param name="cacheDurationInSeconds">缓存时间(秒)</param>
+    /// <param name="isSplitTable">是否分表</param>
     /// <returns></returns>
     public ISugarQueryable<TEntity> TableWhere(Expression<Func<TEntity, bool>> whereExpression,
         Expression<Func<TEntity, TEntity>> selectExpression = null,
         Expression<Func<TEntity, object>> orderExpression = null, OrderByType? orderByType = null,
-        bool isClearCreateByFilter = false, string lockString = "", int cacheDurationInSeconds = 0)
+        bool isClearCreateByFilter = false, string lockString = "", int cacheDurationInSeconds = 0,
+        bool isSplitTable = false)
     {
         var table = Table.Where(whereExpression).WithCacheIF(cacheDurationInSeconds > 0, cacheDurationInSeconds);
 
@@ -217,6 +219,11 @@ public class BaseServices<TEntity> : IBaseServices<TEntity> where TEntity : clas
         if (selectExpression != null)
         {
             table = table.Select(selectExpression);
+        }
+
+        if (isSplitTable)
+        {
+            table = table.SplitTable();
         }
 
         if (orderExpression != null && orderByType != null)
@@ -238,11 +245,13 @@ public class BaseServices<TEntity> : IBaseServices<TEntity> where TEntity : clas
     /// <param name="isClearCreateByFilter">清除创建人过滤器</param>
     /// <param name="lockString">锁</param>
     /// <param name="cacheDurationInSeconds">缓存时间(秒)</param>
+    /// <param name="isSplitTable">是否分表</param>
     /// <returns></returns>
     public ISugarQueryable<TEntity> TableWhere(List<IConditionalModel> conditionalModels,
         Expression<Func<TEntity, TEntity>> selectExpression = null,
         Expression<Func<TEntity, object>> orderExpression = null, OrderByType? orderByType = null,
-        bool isClearCreateByFilter = false, string lockString = "", int cacheDurationInSeconds = 0)
+        bool isClearCreateByFilter = false, string lockString = "", int cacheDurationInSeconds = 0,
+        bool isSplitTable = false)
     {
         var table = Table.Where(conditionalModels).WithCacheIF(cacheDurationInSeconds > 0, cacheDurationInSeconds);
         if (!lockString.IsNullOrEmpty())
@@ -258,6 +267,11 @@ public class BaseServices<TEntity> : IBaseServices<TEntity> where TEntity : clas
         if (selectExpression != null)
         {
             table = table.Select(selectExpression);
+        }
+
+        if (isSplitTable)
+        {
+            table = table.SplitTable();
         }
 
         if (orderExpression != null && orderByType != null)
@@ -325,9 +339,25 @@ public class BaseServices<TEntity> : IBaseServices<TEntity> where TEntity : clas
             query = query.SplitTable();
         }
 
-        if (queryOptions.Pagination.SortFields.Count > 0)
+        if (!string.IsNullOrEmpty(queryOptions.Pagination.SortField))
         {
-            query = query.OrderBy(string.Join(",", queryOptions.Pagination.SortFields));
+            //默认防注入：并且可以用StaticConfig.Check_FieldFunc重写验证机质
+            // var orderList = OrderByModel.Create(
+            //     new OrderByModel
+            //     {
+            //         FieldName = UtilMethods.ToUnderLine(queryOptions.Pagination.SortField),
+            //         OrderByType = queryOptions.Pagination.OrderByType
+            //     }
+            // );
+            var orderList = OrderByModel.Create(
+                new OrderByModel
+                {
+                    FieldName =
+                        SugarClient.EntityMaintenance.GetDbColumnName<TEntity>(queryOptions.Pagination.SortField),
+                    OrderByType = queryOptions.Pagination.OrderByType
+                }
+            );
+            query = query.OrderBy(orderList);
         }
 
         var list = await query.ToPageListAsync(queryOptions.Pagination.PageIndex, queryOptions.Pagination.PageSize,

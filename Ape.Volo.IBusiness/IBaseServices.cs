@@ -98,11 +98,13 @@ public interface IBaseServices<TEntity> where TEntity : class
     /// <param name="isClearCreateByFilter">清除创建人过滤器</param>
     /// <param name="lockString">锁</param>
     /// <param name="cacheDurationInSeconds">缓存时间(秒)</param>
+    /// <param name="isSplitTable">是否分表</param>
     /// <returns></returns>
     ISugarQueryable<TEntity> TableWhere(Expression<Func<TEntity, bool>> whereExpression = null,
         Expression<Func<TEntity, TEntity>> selectExpression = null,
         Expression<Func<TEntity, object>> orderExpression = null, OrderByType? orderByType = null,
-        bool isClearCreateByFilter = false, string lockString = "", int cacheDurationInSeconds = 0);
+        bool isClearCreateByFilter = false, string lockString = "", int cacheDurationInSeconds = 0,
+        bool isSplitTable = false);
 
 
     /// <summary>
@@ -115,11 +117,13 @@ public interface IBaseServices<TEntity> where TEntity : class
     /// <param name="isClearCreateByFilter">清除创建人过滤器</param>
     /// <param name="lockString">锁</param>
     /// <param name="cacheDurationInSeconds">缓存时间(秒)</param>
+    /// <param name="isSplitTable">是否分表</param>
     /// <returns></returns>
     ISugarQueryable<TEntity> TableWhere(List<IConditionalModel> conditionalModels = null,
         Expression<Func<TEntity, TEntity>> selectExpression = null,
         Expression<Func<TEntity, object>> orderExpression = null, OrderByType? orderByType = null,
-        bool isClearCreateByFilter = false, string lockString = "", int cacheDurationInSeconds = 0);
+        bool isClearCreateByFilter = false, string lockString = "", int cacheDurationInSeconds = 0,
+        bool isSplitTable = false);
 
     /// <summary>
     /// 表格分页

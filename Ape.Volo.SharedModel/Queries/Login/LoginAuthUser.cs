@@ -12,7 +12,7 @@ public class LoginAuthUser
     /// </summary>
     [Display(Name = "User.Username")]
     [Required(ErrorMessage = "{0}required")]
-    public string Username { get; set; }
+    public string UserName { get; set; }
 
     /// <summary>
     /// 密码

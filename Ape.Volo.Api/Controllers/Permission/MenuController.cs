@@ -20,7 +20,7 @@ namespace Ape.Volo.Api.Controllers.Permission;
 /// 菜单管理
 /// </summary>
 [Area("Area.MenuManagement")]
-[Route("/api/menu", Order = 4)]
+[Route("/menu", Order = 4)]
 public class MenusController : BaseApiController
 {
     #region 字段
@@ -168,10 +168,7 @@ public class MenusController : BaseApiController
     {
         var menuExports = await _menuService.DownloadAsync(menuQueryCriteria);
         var data = new ExcelHelper().GenerateExcel(menuExports, out var mimeType, out var fileName);
-        return new FileContentResult(data, mimeType)
-        {
-            FileDownloadName = fileName
-        };
+        return new FileContentResult(data, mimeType) { FileDownloadName = App.L.R("Sys.Menu") + fileName };
     }
 
     /// <summary>
@@ -202,6 +199,23 @@ public class MenusController : BaseApiController
     {
         var menuIds = await _menuService.FindChildAsync(id);
         return Ok(menuIds);
+    }
+
+
+    /// <summary>
+    /// 查询所有菜单
+    /// </summary>
+    /// <returns></returns>
+    [HttpGet]
+    [Route("queryAll")]
+    [Description("Action.GetAllMenu")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<MenuVo>))]
+    public async Task<ActionResult> QueryAllMenu()
+    {
+        var menus = await _menuService.QueryAllAsync();
+
+        var menuTree = TreeHelper<MenuVo>.ListToTrees(menus, "Id", "ParentId", 0);
+        return JsonContent(menuTree);
     }
 
     #endregion

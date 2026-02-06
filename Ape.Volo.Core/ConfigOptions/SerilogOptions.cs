@@ -11,57 +11,25 @@ public class SerilogOptions
     /// <summary>
     /// 是否记录SQL日志
     /// </summary>
-    public bool RecordSqlEnabled { get; set; }
+    public bool RecordSql { get; set; }
 
     /// <summary>
     /// 输出到数据库
     /// </summary>
-    public ToDb ToDb { get; set; }
+    public bool ToDb { get; set; }
 
     /// <summary>
     /// 输出到文件
     /// </summary>
-    public ToFile ToFile { get; set; }
+    public bool ToFile { get; set; }
 
     /// <summary>
     /// 输出到控制台
     /// </summary>
-    public ToConsole ToConsole { get; set; }
+    public bool ToConsole { get; set; }
 
     /// <summary>
     /// 输出到Elasticsearch
     /// </summary>
-    public ToElasticsearch ToElasticsearch { get; set; }
-}
-
-/// <summary>
-/// 输出到数据库
-/// </summary>
-public class ToDb
-{
-    public bool Enabled { get; set; }
-}
-
-/// <summary>
-/// 输出到文件
-/// </summary>
-public class ToFile
-{
-    public bool Enabled { get; set; }
-}
-
-/// <summary>
-/// 输出到控制台
-/// </summary>
-public class ToConsole
-{
-    public bool Enabled { get; set; }
-}
-
-/// <summary>
-/// 输出到Elasticsearch
-/// </summary>
-public class ToElasticsearch
-{
-    public bool Enabled { get; set; }
+    public bool ToElasticsearch { get; set; }
 }

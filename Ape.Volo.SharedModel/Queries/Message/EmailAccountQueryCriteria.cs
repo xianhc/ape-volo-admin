@@ -25,5 +25,5 @@ public class EmailAccountQueryCriteria : DateRange, IConditionalModel
     /// 用户名
     /// </summary>
     [QueryCondition(ConditionType = ConditionalType.Like)]
-    public string Username { get; set; }
+    public string UserName { get; set; }
 }

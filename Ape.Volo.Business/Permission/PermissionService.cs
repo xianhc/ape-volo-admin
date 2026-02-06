@@ -24,20 +24,20 @@ public class PermissionService : BaseServices<Role>, IPermissionService
     /// <summary>
     /// 获取权限标识符
     /// </summary>
-    /// <param name="userId"></param>
+    /// <param name="userId">用户Id</param>
     /// <returns></returns>
-    [UseCache(Expiration = 60, KeyPrefix = GlobalConstants.CachePrefix.UserPermissionRoles)]
-    public async Task<List<string>> GetPermissionIdentifierAsync(long userId)
+    [UseCache(Expiration = 60, KeyPrefix = GlobalConstants.CachePrefix.UserAuthCodes)]
+    public async Task<List<string>> GetAuthCodeAsync(long userId)
     {
-        var permissionIdentifierList = await SugarClient
+        var authCodeList = await SugarClient
             .Queryable<UserRole, RoleMenu, Menu>((ur, rm, m) => ur.RoleId == rm.RoleId && rm.MenuId == m.Id)
-            .GroupBy((ur, rm, m) => m.Permission)
-            .Where((ur, rm, m) => ur.UserId == userId && m.Type != MenuType.Catalog && m.Permission != null)
-            .OrderBy((ur, rm, m) => m.Permission)
+            .GroupBy((ur, rm, m) => m.AuthCode)
+            .Where((ur, rm, m) => ur.UserId == userId && m.MenuType != MenuType.Catalog && m.AuthCode != null)
+            .OrderBy((ur, rm, m) => m.AuthCode)
             .ClearFilter<ICreateByEntity>()
-            .Select((ur, rm, m) => m.Permission).ToListAsync();
-        permissionIdentifierList = permissionIdentifierList.Where(x => !x.IsNullOrEmpty()).ToList();
-        return permissionIdentifierList;
+            .Select((ur, rm, m) => m.AuthCode).ToListAsync();
+        authCodeList = authCodeList.Where(x => !x.IsNullOrEmpty()).ToList();
+        return authCodeList;
     }
 
 
@@ -46,7 +46,7 @@ public class PermissionService : BaseServices<Role>, IPermissionService
     /// </summary>
     /// <param name="userId"></param>
     /// <returns></returns>
-    [UseCache(Expiration = 60, KeyPrefix = GlobalConstants.CachePrefix.UserPermissionUrls)]
+    [UseCache(Expiration = 60, KeyPrefix = GlobalConstants.CachePrefix.UserAuthUrls)]
     public async Task<List<UrlAccessControlVo>> GetUrlAccessControlAsync(long userId)
     {
         var urlAccessControlList = await SugarClient

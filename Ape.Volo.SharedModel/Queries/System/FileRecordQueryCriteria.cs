@@ -12,6 +12,6 @@ public class FileRecordQueryCriteria : DateRange, IConditionalModel
     /// <summary>
     /// 关键字
     /// </summary>
-    [QueryCondition(ConditionType = ConditionalType.Like, FieldNameItems = ["Description", "OriginalName"])]
-    public string KeyWords { get; set; }
+    [QueryCondition(ConditionType = ConditionalType.Like)]
+    public string Description { get; set; }
 }

@@ -50,12 +50,4 @@ public class DepartmentVo : BaseEntityDto<long>
     /// 页
     /// </summary>
     public bool Leaf => SubCount == 0;
-
-    /// <summary>
-    /// 标签
-    /// </summary>
-    public string Label
-    {
-        get { return Name; }
-    }
 }

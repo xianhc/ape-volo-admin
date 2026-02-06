@@ -109,4 +109,23 @@ public interface IUserService : IBaseServices<User>
     Task<OperateResult> UpdateAvatarAsync(IFormFile file);
 
     #endregion
+
+    #region 扩展修改
+
+    /// <summary>
+    /// 修改角色
+    /// </summary>
+    /// <param name="updateUserRole"></param>
+    /// <returns></returns>
+    Task<OperateResult> UpdateRoleAsync(UpdateUserRole updateUserRole);
+
+
+    /// <summary>
+    /// 修改岗位
+    /// </summary>
+    /// <param name="updateUserJob"></param>
+    /// <returns></returns>
+    Task<OperateResult> UpdateRoleAsync(UpdateUserJob updateUserJob);
+
+    #endregion
 }

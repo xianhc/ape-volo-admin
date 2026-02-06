@@ -25,13 +25,7 @@ public class MenuExport : ExportBase
     /// 权限标识符
     /// </summary>
     [Display(Name = "Menu.Permission")]
-    public string Permission { get; set; }
-
-    /// <summary>
-    /// 是否IFrame
-    /// </summary>
-    [Display(Name = "Menu.IFrame")]
-    public bool IsFrame { get; set; }
+    public string AuthCode { get; set; }
 
     /// <summary>
     /// 组件
@@ -73,13 +67,13 @@ public class MenuExport : ExportBase
     /// 是否缓存
     /// </summary>
     [Display(Name = "Menu.IsCache")]
-    public bool IsCache { get; set; }
+    public bool KeepAlive { get; set; }
 
     /// <summary>
     /// 是否隐藏
     /// </summary>
     [Display(Name = "Menu.IsHidden")]
-    public bool IsHidden { get; set; }
+    public bool Hidden { get; set; }
 
     /// <summary>
     /// 子菜单个数

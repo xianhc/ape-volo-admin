@@ -8,28 +8,13 @@ namespace Ape.Volo.Core.ConfigOptions;
 [OptionsSettings]
 public class AopOptions
 {
-    public Tran Tran { get; set; }
-    public Cache Cache { get; set; }
-}
-
-/// <summary>
-/// 事务
-/// </summary>
-public class Tran
-{
     /// <summary>
-    /// 是否启用
+    /// 事务
     /// </summary>
-    public bool Enabled { get; set; }
-}
+    public bool Transactions { get; set; }
 
-/// <summary>
-/// 缓存
-/// </summary>
-public class Cache
-{
     /// <summary>
-    /// 是否启用
+    /// 缓存
     /// </summary>
-    public bool Enabled { get; set; }
+    public bool Cache { get; set; }
 }

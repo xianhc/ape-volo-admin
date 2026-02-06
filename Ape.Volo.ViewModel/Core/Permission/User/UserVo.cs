@@ -1,9 +1,11 @@
 ﻿using Ape.Volo.Common.Attributes;
+using Ape.Volo.Common.Enums;
 using Ape.Volo.Entity.Base;
 using Ape.Volo.ViewModel.Core.Permission.Department;
 using Ape.Volo.ViewModel.Core.Permission.Job;
 using Ape.Volo.ViewModel.Core.Permission.Role;
 using Ape.Volo.ViewModel.Core.System;
+using Newtonsoft.Json;
 
 namespace Ape.Volo.ViewModel.Core.Permission.User;
 
@@ -25,7 +27,7 @@ public class UserVo : BaseEntityDto<long>
     /// <summary>
     /// 用户名
     /// </summary>
-    public string Username { get; set; }
+    public string UserName { get; set; }
 
     /// <summary>
     /// 昵称
@@ -38,11 +40,6 @@ public class UserVo : BaseEntityDto<long>
     public string Email { get; set; }
 
     /// <summary>
-    /// 内置管理员
-    /// </summary>
-    public bool IsAdmin { get; set; }
-
-    /// <summary>
     /// 是否激活
     /// </summary>
     public bool Enabled { get; set; }
@@ -50,6 +47,7 @@ public class UserVo : BaseEntityDto<long>
     /// <summary>
     /// 密码
     /// </summary>
+    [JsonIgnore]
     public string Password { get; set; }
 
     /// <summary>
@@ -66,12 +64,13 @@ public class UserVo : BaseEntityDto<long>
     /// <summary>
     /// 头像文件路径
     /// </summary>
+    [JsonProperty("headerImg")]
     public string AvatarPath { get; set; }
 
     /// <summary>
     /// 性别
     /// </summary>
-    public string Gender { get; set; }
+    public GenderCode GenderCode { get; set; }
 
     /// <summary>
     /// 最后修改密码时间
@@ -96,7 +95,7 @@ public class UserVo : BaseEntityDto<long>
     /// <summary>
     /// 租户ID
     /// </summary>
-    public int TenantId { get; set; }
+    public int? TenantId { get; set; }
 
     /// <summary>
     /// 租户

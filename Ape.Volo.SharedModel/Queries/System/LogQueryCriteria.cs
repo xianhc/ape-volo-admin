@@ -10,8 +10,20 @@ namespace Ape.Volo.SharedModel.Queries.System;
 public class LogQueryCriteria : DateRange, IConditionalModel
 {
     /// <summary>
-    /// 关键字
+    /// 描述
     /// </summary>
-    [QueryCondition(ConditionType = ConditionalType.Like, FieldName = "Description")]
-    public string KeyWords { get; set; }
+    [QueryCondition(ConditionType = ConditionalType.Like)]
+    public string Description { get; set; }
+
+    /// <summary>
+    /// 描述
+    /// </summary>
+    [QueryCondition(ConditionType = ConditionalType.Equal)]
+    public string Method { get; set; }
+
+    /// <summary>
+    /// 描述
+    /// </summary>
+    [QueryCondition(ConditionType = ConditionalType.Like)]
+    public string CreateBy { get; set; }
 }

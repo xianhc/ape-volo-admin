@@ -2,7 +2,9 @@
 using System.Diagnostics;
 using System.Threading.Tasks;
 using Ape.Volo.Common.Extensions;
-using Ape.Volo.Entity.Core.System.QuartzNet;
+using Ape.Volo.Common.IdGenerator;
+using Ape.Volo.Entity.Log;
+using Ape.Volo.IBusiness.Log;
 using Ape.Volo.IBusiness.System;
 using Ape.Volo.TaskService.service;
 using Microsoft.Extensions.Logging;
@@ -11,16 +13,16 @@ using Quartz;
 namespace Ape.Volo.TaskService;
 
 /// <summary>
-/// 作业调度基类，所有作业须继承
+/// 作业调度基类（所有作业须继承）
 /// </summary>
-public class JobBase
+public class JobBase<T>
 {
     #region 字段
 
     public IQuartzNetService QuartzNetService;
     public IQuartzNetLogService QuartzNetLogService;
     public ISchedulerCenterService SchedulerCenterService;
-    public ILogger<JobBase> Logger;
+    public ILogger<T> Logger;
 
     #endregion
 
@@ -34,15 +36,14 @@ public class JobBase
     protected async Task ExecuteJob(IJobExecutionContext context, Func<Task> func)
     {
         //是否成功
-        bool isSucceed = true;
+        bool isSuccess = true;
         //异常详情
         string exceptionDetail = string.Empty;
         //记录Job时间
         Stopwatch stopwatch = new Stopwatch();
-        //JOBID
-        string jobId = context.JobDetail.Key.Name;
-        var jobIdTmp = Convert.ToInt64(jobId);
-        var quartzNet = await QuartzNetService.TableWhere(x => x.Id == jobIdTmp).SingleAsync();
+        //taskName
+        string taskName = context.JobDetail.Key.Name;
+        var quartzNet = await QuartzNetService.TableWhere(x => x.TaskName == taskName).SingleAsync();
         if (quartzNet == null)
         {
             await Task.CompletedTask;
@@ -53,7 +54,7 @@ public class JobBase
         string groupName = context.JobDetail.Key.Group;
         //日志
         string jobHistory =
-            $"【{DateTime.Now:yyyy-MM-dd HH:mm:ss}】【执行开始】【组别：{groupName} => 任务：{quartzNet.TaskName} => Id：{jobId}】";
+            $"【{DateTime.Now:yyyy-MM-dd HH:mm:ss}】【执行开始】【组别：{groupName} => 任务：{quartzNet.TaskName}";
         //耗时
         try
         {
@@ -64,13 +65,13 @@ public class JobBase
         }
         catch (Exception ex)
         {
-            isSucceed = false;
+            isSuccess = false;
             exceptionDetail = $" {ex.Message}\n{ex.StackTrace}";
             JobExecutionException e2 = new JobExecutionException(ex);
             //失败后是否暂停
             if (quartzNet.PauseAfterFailure)
             {
-                await SchedulerCenterService.PauseJob(quartzNet);
+                await SchedulerCenterService.PauseJob(quartzNet.TaskName, quartzNet.TaskGroup);
             }
             else
             {
@@ -99,6 +100,7 @@ public class JobBase
                 //记录任务日志
                 var quartzNetLog = new QuartzNetLog
                 {
+                    Id = IdHelper.NextId(),
                     TaskId = quartzNet.Id,
                     TaskName = quartzNet.TaskName,
                     TaskGroup = quartzNet.TaskGroup,
@@ -108,11 +110,12 @@ public class JobBase
                     ExceptionDetail = exceptionDetail,
                     ExecutionDuration = stopwatch.ElapsedMilliseconds,
                     RunParams = quartzNet.RunParams,
-                    IsSuccess = isSucceed,
-                    CreateBy = "QuartzNet Task",
+                    IsSuccess = isSuccess,
+                    CreateBy = "QuartzNet",
                     CreateTime = quartzNet.UpdateTime ?? DateTime.MinValue
                 };
-                await QuartzNetService.UpdateJobInfoAsync(quartzNet, quartzNetLog);
+                await QuartzNetService.UpdateJobInfoAsync(quartzNet);
+                await QuartzNetLogService.CreateAsync(quartzNetLog);
             }
         }
 

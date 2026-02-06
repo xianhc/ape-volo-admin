@@ -23,12 +23,8 @@ public class MenuVo : BaseEntityDto<long>
     /// <summary>
     /// 权限标识
     /// </summary>
-    public string Permission { get; set; }
+    public string AuthCode { get; set; }
 
-    /// <summary>
-    /// 是否IFrame
-    /// </summary>
-    public bool IFrame { get; set; }
 
     /// <summary>
     /// 组件
@@ -58,12 +54,17 @@ public class MenuVo : BaseEntityDto<long>
     /// <summary>
     /// 类型
     /// </summary>
-    public MenuType Type { get; set; }
+    public MenuType MenuType { get; set; }
+
+    /// <summary>
+    /// 状态
+    /// </summary>
+    public bool Enabled { get; set; }
 
     /// <summary>
     /// 缓存
     /// </summary>
-    public bool Cache { get; set; }
+    public bool KeepAlive { get; set; }
 
     /// <summary>
     /// 隐藏
@@ -75,6 +76,23 @@ public class MenuVo : BaseEntityDto<long>
     /// </summary>
     public int SubCount { get; set; }
 
+
+    /// <summary>
+    /// 徽章类型
+    /// </summary>
+    public BadgeType? BadgeType { get; set; }
+
+    /// <summary>
+    /// 徽章文字
+    /// </summary>
+    public string BadgeText { get; set; }
+
+    /// <summary>
+    /// 徽章样式
+    /// </summary>
+    public string BadgeStyle { get; set; }
+
+
     /// <summary>
     /// 子节点
     /// </summary>
@@ -85,16 +103,9 @@ public class MenuVo : BaseEntityDto<long>
     /// </summary>
     public bool Leaf => SubCount == 0;
 
+
     /// <summary>
     /// 是否有子节点
     /// </summary>
     public bool HasChildren => SubCount > 0;
-
-    /// <summary>
-    /// 标签
-    /// </summary>
-    public string Label
-    {
-        get { return Title; }
-    }
 }

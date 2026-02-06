@@ -43,13 +43,13 @@ public class RoleService : BaseServices<Role>, IRoleService
                 nameof(createUpdateRoleDto.Name)));
         }
 
-        if (await TableWhere(r => r.Permission == createUpdateRoleDto.Permission).AnyAsync())
+        if (await TableWhere(r => r.AuthCode == createUpdateRoleDto.AuthCode).AnyAsync())
         {
             return OperateResult.Error(ValidationError.IsExist(createUpdateRoleDto,
-                nameof(createUpdateRoleDto.Permission)));
+                nameof(createUpdateRoleDto.AuthCode)));
         }
 
-        if (createUpdateRoleDto.DataScopeType == DataScopeType.Customize && createUpdateRoleDto.Depts.Count == 0)
+        if (createUpdateRoleDto.DataScopeType == DataScopeType.Customize && createUpdateRoleDto.DeptIdArray.Count == 0)
         {
             return OperateResult.Error(App.L.R("{0}AtLeastOne",
                 App.L.R("Sys.Department")));
@@ -61,8 +61,8 @@ public class RoleService : BaseServices<Role>, IRoleService
         if (createUpdateRoleDto.DataScopeType == DataScopeType.Customize)
         {
             var roleDepts = new List<RoleDepartment>();
-            roleDepts.AddRange(createUpdateRoleDto.Depts.Select(rd => new RoleDepartment
-                { RoleId = role.Id, DeptId = rd.Id }));
+            roleDepts.AddRange(createUpdateRoleDto.DeptIdArray.Select(d => new RoleDepartment
+            { RoleId = role.Id, DeptId = d }));
             await SugarClient.Insertable(roleDepts).ExecuteCommandAsync();
         }
 
@@ -92,14 +92,14 @@ public class RoleService : BaseServices<Role>, IRoleService
                 nameof(createUpdateRoleDto.Name)));
         }
 
-        if (oldRole.Permission != createUpdateRoleDto.Permission &&
-            await TableWhere(x => x.Permission == createUpdateRoleDto.Permission).AnyAsync())
+        if (oldRole.AuthCode != createUpdateRoleDto.AuthCode &&
+            await TableWhere(x => x.AuthCode == createUpdateRoleDto.AuthCode).AnyAsync())
         {
             return OperateResult.Error(ValidationError.IsExist(createUpdateRoleDto,
-                nameof(createUpdateRoleDto.Permission)));
+                nameof(createUpdateRoleDto.AuthCode)));
         }
 
-        if (createUpdateRoleDto.DataScopeType == DataScopeType.Customize && createUpdateRoleDto.Depts.Count == 0)
+        if (createUpdateRoleDto.DataScopeType == DataScopeType.Customize && createUpdateRoleDto.DeptIdArray.Count == 0)
         {
             return OperateResult.Error(App.L.R("{0}AtLeastOne",
                 App.L.R("Sys.Department")));
@@ -115,8 +115,8 @@ public class RoleService : BaseServices<Role>, IRoleService
         if (createUpdateRoleDto.DataScopeType == DataScopeType.Customize)
         {
             var roleDepts = new List<RoleDepartment>();
-            roleDepts.AddRange(createUpdateRoleDto.Depts.Select(rd => new RoleDepartment
-                { RoleId = role.Id, DeptId = rd.Id }));
+            roleDepts.AddRange(createUpdateRoleDto.DeptIdArray.Select(d => new RoleDepartment
+            { RoleId = role.Id, DeptId = d }));
             await SugarClient.Insertable(roleDepts).ExecuteCommandAsync();
         }
 
@@ -180,7 +180,7 @@ public class RoleService : BaseServices<Role>, IRoleService
             Pagination = pagination,
             ConditionalModels = roleQueryCriteria.ApplyQueryConditionalModel(),
             IsIncludes = true,
-            IgnorePropertyNameList = new[] { "Users" }
+            IgnorePropertyNameList = new[] { "Users", "MenuList", "ApiList" }
         };
         var roleList =
             await TablePageAsync(queryOptions);
@@ -206,7 +206,7 @@ public class RoleService : BaseServices<Role>, IRoleService
             Description = x.Description,
             DataScopeType = x.DataScopeType,
             DataDept = string.Join(",", x.DepartmentList.Select(d => d.Name).ToArray()),
-            Permission = x.Permission,
+            AuthCode = x.AuthCode,
             CreateTime = x.CreateTime
         }));
         return roleExports;
@@ -281,7 +281,7 @@ public class RoleService : BaseServices<Role>, IRoleService
     /// <param name="updateRoleMenuDto"></param>
     /// <returns></returns>
     [UseTran]
-    public async Task<OperateResult> UpdateRolesMenusAsync(UpdateRoleMenuDto updateRoleMenuDto)
+    public async Task<OperateResult> UpdateRoleMenuAsync(UpdateRoleMenuDto updateRoleMenuDto)
     {
         var role = await TableWhere(x => x.Id == updateRoleMenuDto.Id).Includes(x => x.Users).FirstAsync();
         if (role.IsNull())
@@ -294,8 +294,8 @@ public class RoleService : BaseServices<Role>, IRoleService
 
         //删除菜单
         List<RoleMenu> roleMenus = new List<RoleMenu>();
-        roleMenus.AddRange(updateRoleMenuDto.Menus.Select(rm => new RoleMenu
-            { RoleId = role.Id, MenuId = rm.Id }));
+        roleMenus.AddRange(updateRoleMenuDto.MenuIdArray.Select(m => new RoleMenu
+        { RoleId = role.Id, MenuId = m }));
 
         await SugarClient.Deleteable<RoleMenu>().Where(x => x.RoleId == role.Id).ExecuteCommandAsync();
         await SugarClient.Insertable(roleMenus).ExecuteCommandAsync();
@@ -304,7 +304,7 @@ public class RoleService : BaseServices<Role>, IRoleService
         //删除用户缓存
         foreach (var user in role.Users)
         {
-            await App.Cache.RemoveAsync(GlobalConstants.CachePrefix.UserPermissionRoles +
+            await App.Cache.RemoveAsync(GlobalConstants.CachePrefix.UserAuthCodes +
                                         user.Id.ToString().ToMd5String16());
             await App.Cache.RemoveAsync(GlobalConstants.CachePrefix.UserMenuById +
                                         user.Id.ToString().ToMd5String16());
@@ -319,7 +319,7 @@ public class RoleService : BaseServices<Role>, IRoleService
     /// <param name="updateRoleApiDto"></param>
     /// <returns></returns>
     [UseTran]
-    public async Task<OperateResult> UpdateRolesApisAsync(UpdateRoleApiDto updateRoleApiDto)
+    public async Task<OperateResult> UpdateRoleApiAsync(UpdateRoleApiDto updateRoleApiDto)
     {
         var role = await TableWhere(x => x.Id == updateRoleApiDto.Id).Includes(x => x.Users).FirstAsync();
         if (role.IsNull())
@@ -333,9 +333,9 @@ public class RoleService : BaseServices<Role>, IRoleService
         //删除菜单
         List<RoleApis> roleApis = new List<RoleApis>();
         // 这里过滤一下自生成的一级节点ID
-        updateRoleApiDto.Apis = updateRoleApiDto.Apis.Where(x => x.Id > 10000).ToList();
-        roleApis.AddRange(updateRoleApiDto.Apis.Select(ra => new RoleApis
-            { RoleId = role.Id, ApisId = ra.Id }));
+        updateRoleApiDto.ApiIdArray = updateRoleApiDto.ApiIdArray.Where(x => x > 10000).ToList();
+        roleApis.AddRange(updateRoleApiDto.ApiIdArray.Select(a => new RoleApis
+        { RoleId = role.Id, ApisId = a }));
 
         await SugarClient.Deleteable<RoleApis>().Where(x => x.RoleId == role.Id).ExecuteCommandAsync();
         await SugarClient.Insertable(roleApis).ExecuteCommandAsync();
@@ -344,7 +344,7 @@ public class RoleService : BaseServices<Role>, IRoleService
         //删除用户缓存
         foreach (var user in role.Users)
         {
-            await App.Cache.RemoveAsync(GlobalConstants.CachePrefix.UserPermissionUrls +
+            await App.Cache.RemoveAsync(GlobalConstants.CachePrefix.UserAuthUrls +
                                         user.Id.ToString().ToMd5String16());
             await App.Cache.RemoveAsync(GlobalConstants.CachePrefix.UserMenuById +
                                         user.Id.ToString().ToMd5String16());

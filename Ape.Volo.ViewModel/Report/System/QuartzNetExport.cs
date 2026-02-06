@@ -91,19 +91,19 @@ public class QuartzNetExport : ExportBase
     /// 执行间隔时间, 秒为单位
     /// </summary>
     [Display(Name = "Task.IntervalSecond")]
-    public int IntervalSecond { get; set; }
+    public int? IntervalSecond { get; set; }
 
     /// <summary>
     /// 循环执行次数
     /// </summary>
     [Display(Name = "Task.CycleRunTimes")]
-    public int CycleRunTimes { get; set; }
+    public int? CycleRunTimes { get; set; }
 
     /// <summary>
-    /// 是否启动
+    /// 是否启用
     /// </summary>
     [Display(Name = "Task.IsEnable")]
-    public bool IsEnable { get; set; }
+    public bool Enabled { get; set; }
 
     /// <summary>
     /// 执行传参

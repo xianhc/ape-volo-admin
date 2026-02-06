@@ -47,6 +47,13 @@ public interface IEmailAccountService : IBaseServices<EmailAccount>
         Pagination pagination);
 
     /// <summary>
+    /// 查询
+    /// </summary>
+    /// <returns></returns>
+    Task<List<EmailAccountVo>> QueryAllAsync();
+
+
+    /// <summary>
     /// 下载
     /// </summary>
     /// <param name="emailAccountQueryCriteria"></param>

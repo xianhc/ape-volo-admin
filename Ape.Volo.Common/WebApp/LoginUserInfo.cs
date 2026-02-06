@@ -74,12 +74,7 @@ public class LoginUserInfo
     public DateTime LoginTime { get; set; }
 
     /// <summary>
-    /// 是否系统管理员
-    /// </summary>
-    public bool IsAdmin { get; set; }
-
-    /// <summary>
     /// 租户Id
     /// </summary>
-    public int TenantId { get; set; }
+    public int? TenantId { get; set; }
 }

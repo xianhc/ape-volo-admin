@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Ape.Volo.IBusiness.Log;
 using Ape.Volo.IBusiness.System;
 using Ape.Volo.TaskService.service;
 using Microsoft.Extensions.Logging;
@@ -8,9 +9,9 @@ using Quartz;
 namespace Ape.Volo.TaskService;
 
 /// <summary>
-/// 测试控制台打印作业
+/// 输出当前时间到控制台
 /// </summary>
-public class TestConsoleWriteJobService : JobBase, IJob
+public class TestConsoleWriteJobService : JobBase<TestConsoleWriteJobService>, IJob
 {
     public TestConsoleWriteJobService(ISchedulerCenterService schedulerCenterService,
         IQuartzNetService quartzNetService, IQuartzNetLogService quartzNetLogService,

@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using Ape.Volo.Common.Attributes;
+using Ape.Volo.Common.Enums;
 using Ape.Volo.Entity.Base;
 
 namespace Ape.Volo.SharedModel.Dto.Core.Permission.User;
@@ -15,7 +16,7 @@ public class CreateUpdateUserDto : BaseEntityDto<long>
     /// </summary>
     [Display(Name = "User.Username")]
     [Required(ErrorMessage = "{0}required")]
-    public string Username { get; set; }
+    public string UserName { get; set; }
 
     /// <summary>
     /// 昵称
@@ -51,7 +52,7 @@ public class CreateUpdateUserDto : BaseEntityDto<long>
     /// </summary>
     [Display(Name = "User.Gender")]
     [Required(ErrorMessage = "{0}required")]
-    public string Gender { get; set; }
+    public GenderCode GenderCode { get; set; }
 
     /// <summary>
     /// 部门
@@ -77,7 +78,7 @@ public class CreateUpdateUserDto : BaseEntityDto<long>
     public List<UserJobDto> Jobs { get; set; }
 
     /// <summary>
-    /// 租户ID
+    /// 租户
     /// </summary>
     public int? TenantId { get; set; }
 }

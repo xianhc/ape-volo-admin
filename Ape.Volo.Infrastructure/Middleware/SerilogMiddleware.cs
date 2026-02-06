@@ -1,4 +1,5 @@
-﻿using Ape.Volo.Core;
+﻿using Ape.Volo.Common.Enums;
+using Ape.Volo.Core;
 using Ape.Volo.Core.ConfigOptions;
 using Ape.Volo.Core.Serilog;
 using Microsoft.Extensions.Hosting;
@@ -27,7 +28,7 @@ public static class SerilogMiddleware
 
 
             var serilogOptions = App.GetOptions<SerilogOptions>();
-            if (serilogOptions.ToFile.Enabled)
+            if (serilogOptions.ToFile)
             {
                 foreach (LogEventLevel logEvent in Enum.GetValues(typeof(LogEventLevel)))
                 {
@@ -36,20 +37,20 @@ public static class SerilogMiddleware
                 }
             }
 
-            if (App.GetOptions<SystemOptions>().IsQuickDebug && serilogOptions.ToConsole.Enabled)
+            if (App.GetOptions<SystemOptions>().RunMode == RunMode.Dev && serilogOptions.ToConsole)
             {
                 //输出到控制台
                 logger.WriteToConsole();
             }
 
 
-            if (serilogOptions.ToDb.Enabled)
+            if (serilogOptions.ToDb)
             {
                 //输出到数据库
                 logger.WriteToDb();
             }
 
-            if (serilogOptions.ToElasticsearch.Enabled && App.GetOptions<MiddlewareOptions>().Elasticsearch.Enabled)
+            if (serilogOptions.ToElasticsearch && App.GetOptions<MiddlewareOptions>().Elasticsearch)
             {
                 //输出到Elasticsearch
                 //需要配置elasticsearch环境使用

@@ -14,25 +14,25 @@ namespace Ape.Volo.Entity.Base
         /// <summary>
         /// 创建者名称
         /// </summary>
-        [SugarColumn(IsNullable = true, IsOnlyIgnoreUpdate = true)]
-        public string CreateBy { get; set; }
+        [SugarColumn(IsOnlyIgnoreUpdate = true)]
+        public string CreateBy { get; set; } = string.Empty;
 
         /// <summary>
         /// 创建时间
         /// </summary>
-        [SugarColumn(IsNullable = true, IsOnlyIgnoreUpdate = true)]
+        [SugarColumn(IsOnlyIgnoreUpdate = true)]
         public DateTime CreateTime { get; set; }
 
         /// <summary>
         /// 更新者名称
         /// </summary>
-        [SugarColumn(IsNullable = true, IsOnlyIgnoreInsert = true)]
-        public string UpdateBy { get; set; }
+        [SugarColumn(IsOnlyIgnoreInsert = true)]
+        public string? UpdateBy { get; set; }
 
         /// <summary>
         /// 最后更新时间
         /// </summary>
-        [SugarColumn(IsNullable = true, IsOnlyIgnoreInsert = true)]
+        [SugarColumn(IsOnlyIgnoreInsert = true)]
         public DateTime? UpdateTime { get; set; }
 
 

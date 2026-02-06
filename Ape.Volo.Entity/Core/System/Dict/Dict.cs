@@ -21,13 +21,12 @@ namespace Ape.Volo.Entity.Core.System.Dict
         /// 字典名称
         /// </summary>
         /// <returns></returns>
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
 
         /// <summary>
         /// 描述
         /// </summary>
-        [SugarColumn(IsNullable = true)]
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
         #region 扩展属性
 
@@ -36,7 +35,7 @@ namespace Ape.Volo.Entity.Core.System.Dict
         /// </summary>
         [SugarColumn(IsIgnore = true)]
         [Navigate(NavigateType.OneToMany, nameof(DictDetail.DictId))]
-        public List<DictDetail> DictDetails { get; set; }
+        public List<DictDetail>? DictDetails { get; set; }
 
         #endregion
     }

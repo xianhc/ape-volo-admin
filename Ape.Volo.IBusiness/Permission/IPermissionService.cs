@@ -13,9 +13,9 @@ public interface IPermissionService : IBaseServices<Role>
     /// <summary>
     /// 获取权限标识符
     /// </summary>
-    /// <param name="userId">用户ID</param>
+    /// <param name="userId">用户Id</param>
     /// <returns></returns>
-    Task<List<string>> GetPermissionIdentifierAsync(long userId);
+    Task<List<string>> GetAuthCodeAsync(long userId);
 
 
     /// <summary>

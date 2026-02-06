@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Ape.Volo.Common.Attributes;
 using Ape.Volo.Common.Global;
 using Ape.Volo.Common.Model;
 using Ape.Volo.Core;
@@ -93,8 +94,8 @@ public class DictService : BaseServices<Dict>, IDictService
         var queryOptions = new QueryOptions<Dict>
         {
             Pagination = pagination,
-            ConditionalModels = ConditionalModelExtensions.ApplyQueryConditionalModel(dictQueryCriteria)
-            //IsIncludes = true
+            ConditionalModels = ConditionalModelExtensions.ApplyQueryConditionalModel(dictQueryCriteria),
+            IsIncludes = true
         };
         var list = await TablePageAsync(queryOptions);
         var dicts = App.Mapper.MapTo<List<DictVo>>(list);
@@ -104,6 +105,18 @@ public class DictService : BaseServices<Dict>, IDictService
         // }
 
         return dicts;
+    }
+
+    /// <summary>
+    /// 根据名称查询字典
+    /// </summary>
+    /// <returns></returns>
+    [UseCache(Expiration = 30, KeyPrefix = GlobalConstants.CachePrefix.LoadDictByName)]
+    public async Task<DictVo> QueryByNameAsync(string name)
+    {
+        var dict = await Table.Where(x => x.Name == name).Includes(x => x.DictDetails.OrderBy(y => y.DictSort).ToList())
+            .FirstAsync();
+        return App.Mapper.MapTo<DictVo>(dict);
     }
 
     /// <summary>

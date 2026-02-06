@@ -14,5 +14,5 @@ public enum TriggerType
     /// 简单的
     /// </summary>
     [Display(Name = "Enum.Trigger.Simple")]
-    Simple = 0
+    Simple = 2
 }

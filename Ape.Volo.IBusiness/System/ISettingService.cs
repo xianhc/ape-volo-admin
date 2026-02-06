@@ -40,17 +40,17 @@ public interface ISettingService : IBaseServices<Setting>
     /// <summary>
     /// 查询
     /// </summary>
-    /// <param name="settingQueryCriteria"></param>
+    /// <param name="parameterQueryCriteria"></param>
     /// <param name="pagination"></param>
     /// <returns></returns>
-    Task<List<SettingVo>> QueryAsync(SettingQueryCriteria settingQueryCriteria, Pagination pagination);
+    Task<List<SettingVo>> QueryAsync(ParameterQueryCriteria parameterQueryCriteria, Pagination pagination);
 
     /// <summary>
     /// 下载
     /// </summary>
-    /// <param name="settingQueryCriteria"></param>
+    /// <param name="parameterQueryCriteria"></param>
     /// <returns></returns>
-    Task<List<ExportBase>> DownloadAsync(SettingQueryCriteria settingQueryCriteria);
+    Task<List<ExportBase>> DownloadAsync(ParameterQueryCriteria parameterQueryCriteria);
 
     /// <summary>
     /// 根据名称查询

@@ -54,5 +54,5 @@ public class CreateUpdateTenantDto : BaseEntityDto<long>
     /// 数据库连接
     /// </summary>
     [Display(Name = "Tenant.Connection")]
-    public string Connection { get; set; }
+    public string ConnectionString { get; set; }
 }

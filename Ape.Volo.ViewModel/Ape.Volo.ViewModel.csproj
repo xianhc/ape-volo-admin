@@ -12,9 +12,5 @@
     <ItemGroup>
       <ProjectReference Include="..\Ape.Volo.Entity\Ape.Volo.Entity.csproj" />
     </ItemGroup>
-  
-    <ItemGroup>
-      <Folder Include="Core\" />
-    </ItemGroup>
 
 </Project>

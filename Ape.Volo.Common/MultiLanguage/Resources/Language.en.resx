@@ -1,1061 +1,1070 @@
 <?xml version="1.0" encoding="utf-8"?>
 <root>
-  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-              xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
-    <xsd:element name="root" msdata:IsDataSet="true">
-      <xsd:complexType>
-        <xsd:choice maxOccurs="unbounded">
-          <xsd:element name="metadata">
+    <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+        <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+        <xsd:element name="root" msdata:IsDataSet="true">
             <xsd:complexType>
-              <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
-              </xsd:sequence>
-              <xsd:attribute name="name" use="required" type="xsd:string"/>
-              <xsd:attribute name="type" type="xsd:string"/>
-              <xsd:attribute name="mimetype" type="xsd:string"/>
-              <xsd:attribute ref="xml:space"/>
+                <xsd:choice maxOccurs="unbounded">
+                    <xsd:element name="metadata">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" use="required" type="xsd:string"/>
+                            <xsd:attribute name="type" type="xsd:string"/>
+                            <xsd:attribute name="mimetype" type="xsd:string"/>
+                            <xsd:attribute ref="xml:space"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="assembly">
+                        <xsd:complexType>
+                            <xsd:attribute name="alias" type="xsd:string"/>
+                            <xsd:attribute name="name" type="xsd:string"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="data">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+                            <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+                            <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+                            <xsd:attribute ref="xml:space"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="resheader">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" type="xsd:string" use="required"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                </xsd:choice>
             </xsd:complexType>
-          </xsd:element>
-          <xsd:element name="assembly">
-            <xsd:complexType>
-              <xsd:attribute name="alias" type="xsd:string"/>
-              <xsd:attribute name="name" type="xsd:string"/>
-            </xsd:complexType>
-          </xsd:element>
-          <xsd:element name="data">
-            <xsd:complexType>
-              <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
-                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
-              </xsd:sequence>
-              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
-              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
-              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
-              <xsd:attribute ref="xml:space"/>
-            </xsd:complexType>
-          </xsd:element>
-          <xsd:element name="resheader">
-            <xsd:complexType>
-              <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
-              </xsd:sequence>
-              <xsd:attribute name="name" type="xsd:string" use="required"/>
-            </xsd:complexType>
-          </xsd:element>
-        </xsd:choice>
-      </xsd:complexType>
-    </xsd:element>
-  </xsd:schema>
-  <resheader name="resmimetype">
-    <value>text/microsoft-resx</value>
-  </resheader>
-  <resheader name="version">
-    <value>2.0</value>
-  </resheader>
-  <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral,
-      PublicKeyToken=b77a5c561934e089
-    </value>
-  </resheader>
-  <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral,
-      PublicKeyToken=b77a5c561934e089
-    </value>
-  </resheader>
+        </xsd:element>
+    </xsd:schema>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>2.0</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
+    </resheader>
 
-  <!-- 系统菜单 -->
-  <data name="Sys.User" xml:space="preserve">
+    <!-- 系统菜单 -->
+    <data name="Sys.User" xml:space="preserve">
   <value>User</value>
 </data>
-  <data name="Sys.Department" xml:space="preserve">
+    <data name="Sys.Department" xml:space="preserve">
   <value>Department</value>
 </data>
-  <data name="Sys.Job" xml:space="preserve">
+    <data name="Sys.Job" xml:space="preserve">
   <value>Job</value>
 </data>
-  <data name="Sys.Role" xml:space="preserve">
+    <data name="Sys.Role" xml:space="preserve">
   <value>Role</value>
 </data>
-  <data name="Sys.AppSecret" xml:space="preserve">
+    <data name="Sys.AppSecret" xml:space="preserve">
   <value>App Secret</value>
 </data>
-  <data name="Sys.FileRecord" xml:space="preserve">
+    <data name="Sys.FileRecord" xml:space="preserve">
   <value>File Record</value>
 </data>
-  <data name="Sys.Menu" xml:space="preserve">
+    <data name="Sys.Menu" xml:space="preserve">
   <value>Menu</value>
 </data>
-  <data name="Sys.Api" xml:space="preserve">
+    <data name="Sys.Api" xml:space="preserve">
   <value>API Route</value>
 </data>
-  <data name="Sys.Setting" xml:space="preserve">
-  <value>System Setting</value>
+    <data name="Sys.Parameter" xml:space="preserve">
+  <value>System Parameter</value>
 </data>
-  <data name="Sys.Dict" xml:space="preserve">
+    <data name="Sys.Dict" xml:space="preserve">
   <value>Dictionary</value>
 </data>
-  <data name="Sys.DictDetail" xml:space="preserve">
+    <data name="Sys.DictDetail" xml:space="preserve">
   <value>Dictionary Detail</value>
 </data>
-  <data name="Sys.EmailAccount" xml:space="preserve">
+    <data name="Sys.EmailAccount" xml:space="preserve">
   <value>Email Account</value>
 </data>
-  <data name="Sys.EmailMessageTemplate" xml:space="preserve">
+    <data name="Sys.EmailMessageTemplate" xml:space="preserve">
   <value>Email Template</value>
 </data>
-  <data name="Sys.AuditLog" xml:space="preserve">
+    <data name="Sys.AuditLog" xml:space="preserve">
   <value>Audit Log</value>
 </data>
-  <data name="Sys.ExceptionLog" xml:space="preserve">
+    <data name="Sys.ExceptionLog" xml:space="preserve">
   <value>Exception Log</value>
 </data>
-  <data name="Sys.QueuedEmail" xml:space="preserve">
+    <data name="Sys.TaskLog" xml:space="preserve">
+    <value>Job Log</value>
+  </data>
+    <data name="Sys.QueuedEmail" xml:space="preserve">
   <value>Queued Email</value>
 </data>
-  <data name="Sys.QuartzNet" xml:space="preserve">
+    <data name="Sys.QuartzNet" xml:space="preserve">
   <value>Job Scheduler</value>
 </data>
-  <data name="Sys.QuartzNetLog" xml:space="preserve">
+    <data name="Sys.QuartzNetLog" xml:space="preserve">
   <value>Job Scheduler Log</value>
 </data>
-  <data name="Sys.ServiceMonitoring" xml:space="preserve">
+    <data name="Sys.ServiceMonitoring" xml:space="preserve">
   <value>Server Monitoring</value>
 </data>
-  <data name="Sys.OnlineUser" xml:space="preserve">
+    <data name="Sys.OnlineUser" xml:space="preserve">
   <value>Online User</value>
 </data>
-  <data name="Sys.Tenant" xml:space="preserve">
+    <data name="Sys.Tenant" xml:space="preserve">
   <value>Tenant</value>
 </data>
 
-  <!-- 公共属性 -->
-  <data name="Sys.Create" xml:space="preserve">
+    <!-- 公共属性 -->
+    <data name="Sys.Create" xml:space="preserve">
   <value>Execute Creation</value>
 </data>
-  <data name="Sys.Edit" xml:space="preserve">
+    <data name="Sys.Edit" xml:space="preserve">
   <value>Execute Edit</value>
 </data>
-  <data name="Sys.Delete" xml:space="preserve">
+    <data name="Sys.Delete" xml:space="preserve">
   <value>Execute Deletion</value>
 </data>
-  <data name="Sys.Query" xml:space="preserve">
+    <data name="Sys.Query" xml:space="preserve">
   <value>Execute Query</value>
 </data>
-  <data name="Sys.Export" xml:space="preserve">
+    <data name="Sys.Export" xml:space="preserve">
   <value>Execute Export</value>
 </data>
-  <data name="Sys.HttpOK" xml:space="preserve">
+    <data name="Sys.HttpOK" xml:space="preserve">
   <value>Request Successful</value>
 </data>
-  <data name="Sys.HttpCreated" xml:space="preserve">
+    <data name="Sys.HttpCreated" xml:space="preserve">
   <value>Created Successfully</value>
 </data>
-  <data name="Sys.HttpNoContent" xml:space="preserve">
+    <data name="Sys.HttpNoContent" xml:space="preserve">
   <value>Edited Successfully</value>
 </data>
-  <data name="Sys.HttpDelete" xml:space="preserve">
+    <data name="Sys.HttpDelete" xml:space="preserve">
   <value>Deleted Successfully</value>
 </data>
-  <data name="Sys.HttpBadRequest" xml:space="preserve">
+    <data name="Sys.HttpBadRequest" xml:space="preserve">
   <value>Request Failed</value>
 </data>
-  <data name="Sys.HttpUnauthorized" xml:space="preserve">
+    <data name="Sys.HttpUnauthorized" xml:space="preserve">
   <value>Sorry, you do not have access to this API</value>
 </data>
-  <data name="Sys.HttpForbidden" xml:space="preserve">
+    <data name="Sys.HttpForbidden" xml:space="preserve">
   <value>Sorry, your access level is insufficient</value>
 </data>
-  <data name="Sys.HttpInternalServerError" xml:space="preserve">
+    <data name="Sys.HttpInternalServerError" xml:space="preserve">
   <value>System Exception</value>
 </data>
-  <data name="Sys.Name" xml:space="preserve">
+    <data name="Sys.Name" xml:space="preserve">
   <value>Name</value>
 </data>
-  <data name="Sys.Sort" xml:space="preserve">
+    <data name="Sys.Sort" xml:space="preserve">
   <value>Sort</value>
 </data>
-  <data name="Sys.List" xml:space="preserve">
+    <data name="Sys.List" xml:space="preserve">
   <value>List</value>
 </data>
-  <data name="Sys.Id" xml:space="preserve">
+    <data name="Sys.Id" xml:space="preserve">
   <value>ID</value>
 </data>
-  <data name="Sys.CreateBy" xml:space="preserve">
+    <data name="Sys.CreateBy" xml:space="preserve">
   <value>Created By</value>
 </data>
-  <data name="Sys.CreateTime" xml:space="preserve">
+    <data name="Sys.CreateTime" xml:space="preserve">
   <value>Creation Time</value>
 </data>
-  <data name="Sys.UpdateBy" xml:space="preserve">
+    <data name="Sys.UpdateBy" xml:space="preserve">
   <value>Updated By</value>
 </data>
-  <data name="Sys.UpdateTime" xml:space="preserve">
+    <data name="Sys.UpdateTime" xml:space="preserve">
   <value>Updated Time</value>
 </data>
-  <data name="Sys.IsDeleted" xml:space="preserve">
+    <data name="Sys.IsDeleted" xml:space="preserve">
   <value>Is Deleted</value>
 </data>
-  <data name="Sys.DeletedTime" xml:space="preserve">
+    <data name="Sys.DeletedTime" xml:space="preserve">
   <value>Deleted Time</value>
 </data>
-  <data name="Sys.Enabled" xml:space="preserve">
+    <data name="Sys.Enabled" xml:space="preserve">
   <value>Enabled</value>
 </data>
-  <data name="Sys.Disabled" xml:space="preserve">
+    <data name="Sys.Disabled" xml:space="preserve">
   <value>Disabled</value>
 </data>
-  <data name="Sys.Description" xml:space="preserve">
+    <data name="Sys.Description" xml:space="preserve">
   <value>Description</value>
 </data>
-  <data name="Sys.Email" xml:space="preserve">
+    <data name="Sys.Email" xml:space="preserve">
   <value>Email</value>
 </data>
-  <data name="Sys.Phone" xml:space="preserve">
+    <data name="Sys.Phone" xml:space="preserve">
   <value>Phone</value>
 </data>
-  <data name="Sys.Captcha" xml:space="preserve">
+    <data name="Sys.Captcha" xml:space="preserve">
   <value>Captcha</value>
 </data>
-  <data name="Sys.CaptchaId" xml:space="preserve">
+    <data name="Sys.CaptchaId" xml:space="preserve">
   <value>Captcha ID</value>
 </data>
 
 
-  <data name="Enum.True" xml:space="preserve">
+    <data name="Enum.True" xml:space="preserve">
   <value>True</value>
 </data>
-  <data name="Enum.False" xml:space="preserve">
+    <data name="Enum.False" xml:space="preserve">
   <value>False</value>
 </data>
-  <data name="Enum.Menu.Catalog" xml:space="preserve">
+    <data name="Enum.Menu.Catalog" xml:space="preserve">
   <value>Catalog</value>
 </data>
-  <data name="Enum.Menu.Menu" xml:space="preserve">
+    <data name="Enum.Menu.Menu" xml:space="preserve">
   <value>Menu</value>
 </data>
-  <data name="Enum.Menu.Button" xml:space="preserve">
+    <data name="Enum.Menu.Button" xml:space="preserve">
   <value>Button</value>
 </data>
-  <data name="Enum.DataScope.All" xml:space="preserve">
+    <data name="Enum.DataScope.All" xml:space="preserve">
   <value>All</value>
 </data>
-  <data name="Enum.DataScope.MySelf" xml:space="preserve">
+    <data name="Enum.DataScope.MySelf" xml:space="preserve">
   <value>Myself</value>
 </data>
-  <data name="Enum.DataScope.MyDept" xml:space="preserve">
+    <data name="Enum.DataScope.MyDept" xml:space="preserve">
   <value>My Department</value>
 </data>
-  <data name="Enum.DataScope.MyDeptAndBelow" xml:space="preserve">
+    <data name="Enum.DataScope.MyDeptAndBelow" xml:space="preserve">
   <value>My Department and Below</value>
 </data>
-  <data name="Enum.DataScope.Customize" xml:space="preserve">
+    <data name="Enum.DataScope.Customize" xml:space="preserve">
   <value>Customize</value>
 </data>
-  <data name="Enum.Tenant.Id" xml:space="preserve">
+    <data name="Enum.Tenant.Id" xml:space="preserve">
   <value>Id Isolation</value>
 </data>
-  <data name="Enum.Tenant.Db" xml:space="preserve">
+    <data name="Enum.Tenant.Db" xml:space="preserve">
   <value>Db Isolation</value>
 </data>
 
-  <data name="Enum.Db.MySql" xml:space="preserve">
+    <data name="Enum.Db.MySql" xml:space="preserve">
       <value>MySql</value>
     </data>
-  <data name="Enum.Db.SqlServer" xml:space="preserve">
+    <data name="Enum.Db.SqlServer" xml:space="preserve">
       <value>SqlServer</value>
     </data>
-  <data name="Enum.Db.Sqlite" xml:space="preserve">
+    <data name="Enum.Db.Sqlite" xml:space="preserve">
       <value>Sqlite</value>
     </data>
-  <data name="Enum.Db.Oracle" xml:space="preserve">
+    <data name="Enum.Db.Oracle" xml:space="preserve">
       <value>Oracle</value>
     </data>
-  <data name="Enum.Db.PostgreSQL" xml:space="preserve">
+    <data name="Enum.Db.PostgreSQL" xml:space="preserve">
       <value>PostgreSQL</value>
     </data>
 
-  <data name="Enum.Dict.System" xml:space="preserve">
+    <data name="Enum.Dict.System" xml:space="preserve">
   <value>System Type</value>
 </data>
-  <data name="Enum.Dict.Business" xml:space="preserve">
+    <data name="Enum.Dict.Business" xml:space="preserve">
   <value>Business Type</value>
 </data>
-  <data name="Enum.Trigger.Cron" xml:space="preserve">
+    <data name="Enum.Trigger.Cron" xml:space="preserve">
   <value>Cron Mode</value>
 </data>
-  <data name="Enum.Trigger.Simple" xml:space="preserve">
+    <data name="Enum.Trigger.Simple" xml:space="preserve">
   <value>Simple Mode</value>
 </data>
 
-  <!-- Api -->
-  <data name="Api.Group" xml:space="preserve">
+    <!-- Api -->
+    <data name="Api.Group" xml:space="preserve">
   <value>API Group</value>
 </data>
-  <data name="Api.Url" xml:space="preserve">
+    <data name="Api.Url" xml:space="preserve">
   <value>API URL</value>
 </data>
-  <data name="Api.Method" xml:space="preserve">
+    <data name="Api.Method" xml:space="preserve">
   <value>API Request Method</value>
 </data>
 
 
-  <!-- 用户 -->
-  <data name="User.Username" xml:space="preserve">
+    <!-- 用户 -->
+    <data name="User.Username" xml:space="preserve">
   <value>Username</value>
 </data>
-  <data name="User.NickName" xml:space="preserve">
+    <data name="User.NickName" xml:space="preserve">
   <value>Nickname</value>
 </data>
-  <data name="User.Email" xml:space="preserve">
+    <data name="User.Email" xml:space="preserve">
   <value>Email</value>
 </data>
-  <data name="User.IsAdmin" xml:space="preserve">
-  <value>Is Administrator</value>
-</data>
-  <data name="User.Enabled" xml:space="preserve">
+    <data name="User.Enabled" xml:space="preserve">
   <value>Is Activated</value>
 </data>
-  <data name="User.Password" xml:space="preserve">
+    <data name="User.Password" xml:space="preserve">
   <value>Password</value>
 </data>
-  <data name="User.DeptId" xml:space="preserve">
+    <data name="User.DeptId" xml:space="preserve">
   <value>Department ID</value>
 </data>
-  <data name="User.AvatarPath" xml:space="preserve">
+    <data name="User.AvatarPath" xml:space="preserve">
   <value>Avatar Path</value>
 </data>
-  <data name="User.Gender" xml:space="preserve">
+    <data name="User.Gender" xml:space="preserve">
   <value>Gender</value>
 </data>
-  <data name="User.PasswordReSetTime" xml:space="preserve">
+    <data name="User.PasswordReSetTime" xml:space="preserve">
   <value>Last Password Reset Time</value>
 </data>
-  <data name="User.OldPassword" xml:space="preserve">
+    <data name="User.OldPassword" xml:space="preserve">
   <value>Old Password</value>
 </data>
-  <data name="User.NewPassword" xml:space="preserve">
+    <data name="User.NewPassword" xml:space="preserve">
   <value>New Password</value>
 </data>
-  <data name="User.ConfirmPassword" xml:space="preserve">
+    <data name="User.ConfirmPassword" xml:space="preserve">
   <value>Confirm New Password</value>
 </data>
 
 
-  <!-- 部门 -->
-  <data name="Dept.Name" xml:space="preserve">
+    <!-- 部门 -->
+    <data name="Dept.Name" xml:space="preserve">
   <value>Department Name</value>
 </data>
-  <data name="Dept.PId" xml:space="preserve">
+    <data name="Dept.PId" xml:space="preserve">
   <value>Parent Department ID</value>
 </data>
-  <data name="Dept.Enabled" xml:space="preserve">
+    <data name="Dept.Enabled" xml:space="preserve">
   <value>Is Enabled</value>
 </data>
-  <data name="Dept.SubCount" xml:space="preserve">
+    <data name="Dept.SubCount" xml:space="preserve">
   <value>Subdepartment Count</value>
 </data>
 
-  <!-- 岗位 -->
-  <data name="Job.Name" xml:space="preserve">
+    <!-- 岗位 -->
+    <data name="Job.Name" xml:space="preserve">
   <value>Job Name</value>
 </data>
-  <data name="Job.Enabled" xml:space="preserve">
+    <data name="Job.Enabled" xml:space="preserve">
   <value>Is Enabled</value>
 </data>
 
-  <!-- 角色 -->
-  <data name="Role.Name" xml:space="preserve">
+    <!-- 角色 -->
+    <data name="Role.Name" xml:space="preserve">
   <value>Role Name</value>
 </data>
-  <data name="Role.Level" xml:space="preserve">
+    <data name="Role.Level" xml:space="preserve">
   <value>Role Level</value>
 </data>
-  <data name="Role.DataScopeType" xml:space="preserve">
+    <data name="Role.DataScopeType" xml:space="preserve">
   <value>Data Scope Type</value>
 </data>
-  <data name="Role.DataDept" xml:space="preserve">
+    <data name="Role.DataDept" xml:space="preserve">
   <value>Data Department</value>
 </data>
-  <data name="Role.Permission" xml:space="preserve">
+    <data name="Role.Permission" xml:space="preserve">
   <value>Permission Identifier</value>
 </data>
 
-  <!-- 菜单 -->
-  <data name="Menu.Title" xml:space="preserve">
+    <!-- 菜单 -->
+    <data name="Menu.Title" xml:space="preserve">
   <value>Menu Title</value>
 </data>
-  <data name="Menu.Path" xml:space="preserve">
+    <data name="Menu.Path" xml:space="preserve">
   <value>Component Path</value>
 </data>
-  <data name="Menu.Permission" xml:space="preserve">
+    <data name="Menu.Permission" xml:space="preserve">
   <value>Permission Identifier</value>
 </data>
-  <data name="Menu.IFrame" xml:space="preserve">
+    <data name="Menu.IFrame" xml:space="preserve">
   <value>Is IFrame</value>
 </data>
-  <data name="Menu.Component" xml:space="preserve">
+    <data name="Menu.Component" xml:space="preserve">
   <value>Component</value>
 </data>
-  <data name="Menu.ComponentName" xml:space="preserve">
+    <data name="Menu.ComponentName" xml:space="preserve">
   <value>Component Name</value>
 </data>
-  <data name="Menu.PId" xml:space="preserve">
+    <data name="Menu.PId" xml:space="preserve">
   <value>Parent Menu ID</value>
 </data>
-  <data name="Menu.Icon" xml:space="preserve">
+    <data name="Menu.Icon" xml:space="preserve">
   <value>Icon</value>
 </data>
-  <data name="Menu.Type" xml:space="preserve">
+    <data name="Menu.Type" xml:space="preserve">
   <value>Menu Type</value>
 </data>
-  <data name="Menu.Cache" xml:space="preserve">
-  <value>Is Cached</value>
+    <data name="Menu.KeepAlive" xml:space="preserve">
+  <value>Is KeepAlive</value>
 </data>
-  <data name="Menu.Hidden" xml:space="preserve">
+    <data name="Menu.Enabled" xml:space="preserve">
+  <value>Is Enabled</value>
+</data>
+    <data name="Menu.Hidden" xml:space="preserve">
   <value>Is Hidden</value>
 </data>
-  <data name="Menu.SubCount" xml:space="preserve">
+    <data name="Menu.SubCount" xml:space="preserve">
   <value>Submenu Count</value>
 </data>
 
-  <!-- 应用 -->
-  <data name="App.AppId" xml:space="preserve">
+    <!-- 应用 -->
+    <data name="App.AppId" xml:space="preserve">
   <value>Application ID</value>
 </data>
-  <data name="App.AppSecretKey" xml:space="preserve">
+    <data name="App.AppSecretKey" xml:space="preserve">
   <value>Application Secret Key</value>
 </data>
-  <data name="App.AppName" xml:space="preserve">
+    <data name="App.AppName" xml:space="preserve">
   <value>Application Name</value>
 </data>
-  <data name="App.Remark" xml:space="preserve">
+    <data name="App.Remark" xml:space="preserve">
   <value>Remark</value>
 </data>
 
-  <!-- 字典 -->
-  <data name="Dict.Type" xml:space="preserve">
+    <!-- 字典 -->
+    <data name="Dict.Type" xml:space="preserve">
   <value>Dictionary Type</value>
 </data>
-  <data name="Dict.Name" xml:space="preserve">
+    <data name="Dict.Name" xml:space="preserve">
   <value>Dictionary Name</value>
 </data>
 
-  <!-- 字典详情 -->
-  <data name="Dict.Detail.DictId" xml:space="preserve">
+    <!-- 字典详情 -->
+    <data name="Dict.Detail.DictId" xml:space="preserve">
   <value>Dictionary ID</value>
 </data>
-  <data name="Dict.Detail.Label" xml:space="preserve">
+    <data name="Dict.Detail.Label" xml:space="preserve">
   <value>Dictionary Label</value>
 </data>
-  <data name="Dict.Detail.Value" xml:space="preserve">
+    <data name="Dict.Detail.Value" xml:space="preserve">
   <value>Dictionary Value</value>
 </data>
 
-  <!-- 文件 -->
-  <data name="File.ContentType" xml:space="preserve">
+    <!-- 文件 -->
+    <data name="File.ContentType" xml:space="preserve">
   <value>Content Type</value>
 </data>
-  <data name="File.ContentTypeName" xml:space="preserve">
+    <data name="File.ContentTypeName" xml:space="preserve">
   <value>Content Type Name</value>
 </data>
-  <data name="File.ContentTypeNameEn" xml:space="preserve">
+    <data name="File.ContentTypeNameEn" xml:space="preserve">
   <value>Content Type (en)</value>
 </data>
-  <data name="File.OriginalName" xml:space="preserve">
+    <data name="File.OriginalName" xml:space="preserve">
   <value>Original Name</value>
 </data>
-  <data name="File.NewName" xml:space="preserve">
+    <data name="File.NewName" xml:space="preserve">
   <value>New Name</value>
 </data>
-  <data name="File.FilePath" xml:space="preserve">
+    <data name="File.FilePath" xml:space="preserve">
   <value>Storage Path</value>
 </data>
-  <data name="File.Size" xml:space="preserve">
+    <data name="File.Size" xml:space="preserve">
   <value>File Size</value>
 </data>
 
-  <!-- 设置 -->
-  <data name="Setting.Name" xml:space="preserve">
-  <value>Setting Name</value>
+    <!-- 参数 -->
+    <data name="Parameter.Name" xml:space="preserve">
+  <value>Parameter Name</value>
 </data>
-  <data name="Setting.Value" xml:space="preserve">
-  <value>Setting Value</value>
+    <data name="Parameter.Value" xml:space="preserve">
+  <value>Parameter Value</value>
 </data>
-  <data name="Setting.Enabled" xml:space="preserve">
+    <data name="Parameter.Enabled" xml:space="preserve">
   <value>Is Enabled</value>
 </data>
 
-  <!-- 任务 -->
-  <data name="Task.TaskName" xml:space="preserve">
+    <!-- 任务 -->
+    <data name="Task.TaskName" xml:space="preserve">
   <value>Task Name</value>
 </data>
-  <data name="Task.TaskGroup" xml:space="preserve">
+    <data name="Task.TaskGroup" xml:space="preserve">
   <value>Task Group</value>
 </data>
-  <data name="Task.Cron" xml:space="preserve">
+    <data name="Task.Cron" xml:space="preserve">
   <value>Cron Expression</value>
 </data>
-  <data name="Task.AssemblyName" xml:space="preserve">
+    <data name="Task.AssemblyName" xml:space="preserve">
   <value>Namespace</value>
 </data>
-  <data name="Task.ClassName" xml:space="preserve">
+    <data name="Task.ClassName" xml:space="preserve">
   <value>Execution Class</value>
 </data>
-  <data name="Task.Principal" xml:space="preserve">
+    <data name="Task.Principal" xml:space="preserve">
   <value>Principal</value>
 </data>
-  <data name="Task.AlertEmail" xml:space="preserve">
+    <data name="Task.AlertEmail" xml:space="preserve">
   <value>Alert Email</value>
 </data>
-  <data name="Task.PauseAfterFailure" xml:space="preserve">
+    <data name="Task.PauseAfterFailure" xml:space="preserve">
   <value>Pause After Failure</value>
 </data>
-  <data name="Task.RunTimes" xml:space="preserve">
+    <data name="Task.RunTimes" xml:space="preserve">
   <value>Execution Count</value>
 </data>
-  <data name="Task.StartTime" xml:space="preserve">
+    <data name="Task.StartTime" xml:space="preserve">
   <value>Start Time</value>
 </data>
-  <data name="Task.EndTime" xml:space="preserve">
+    <data name="Task.EndTime" xml:space="preserve">
   <value>End Time</value>
 </data>
-  <data name="Task.TriggerType" xml:space="preserve">
+    <data name="Task.TriggerType" xml:space="preserve">
   <value>Task Type</value>
 </data>
-  <data name="Task.IntervalSecond" xml:space="preserve">
+    <data name="Task.IntervalSecond" xml:space="preserve">
   <value>Execution Interval Time</value>
 </data>
-  <data name="Task.CycleRunTimes" xml:space="preserve">
+    <data name="Task.CycleRunTimes" xml:space="preserve">
   <value>Cycle Execution Count</value>
 </data>
-  <data name="Task.IsEnable" xml:space="preserve">
+    <data name="Task.IsEnable" xml:space="preserve">
   <value>Is Enabled</value>
 </data>
-  <data name="Task.RunParams" xml:space="preserve">
+    <data name="Task.RunParams" xml:space="preserve">
   <value>Execution Parameters</value>
 </data>
-  <data name="Task.TriggerStatus" xml:space="preserve">
+    <data name="Task.TriggerStatus" xml:space="preserve">
   <value>Trigger Status</value>
 </data>
 
 
-  <!-- 任务日志 -->
-  <data name="TaskLog.TaskId" xml:space="preserve">
+    <!-- 任务日志 -->
+    <data name="TaskLog.TaskId" xml:space="preserve">
   <value>Task ID</value>
 </data>
-  <data name="TaskLog.ExceptionDetail" xml:space="preserve">
+    <data name="TaskLog.ExceptionDetail" xml:space="preserve">
   <value>Exception Details</value>
 </data>
-  <data name="TaskLog.ExecutionDuration" xml:space="preserve">
+    <data name="TaskLog.ExecutionDuration" xml:space="preserve">
   <value>Execution Duration (s)</value>
 </data>
-  <data name="TaskLog.IsSuccess" xml:space="preserve">
+    <data name="TaskLog.IsSuccess" xml:space="preserve">
   <value>Is Successful</value>
 </data>
 
 
-  <!-- 租户 -->
-  <data name="Tenant.Id" xml:space="preserve">
+    <!-- 租户 -->
+    <data name="Tenant.Id" xml:space="preserve">
   <value>Tenant ID</value>
 </data>
-  <data name="Tenant.Name" xml:space="preserve">
+    <data name="Tenant.Name" xml:space="preserve">
   <value>Tenant Name</value>
 </data>
-  <data name="Tenant.TenantType" xml:space="preserve">
+    <data name="Tenant.TenantType" xml:space="preserve">
   <value>Tenant Type</value>
 </data>
-  <data name="Tenant.DbType" xml:space="preserve">
+    <data name="Tenant.DbType" xml:space="preserve">
   <value>Database Type</value>
 </data>
-  <data name="Tenant.ConfigId" xml:space="preserve">
+    <data name="Tenant.ConfigId" xml:space="preserve">
   <value>Database Identifier ID</value>
 </data>
-  <data name="Tenant.Connection" xml:space="preserve">
+    <data name="Tenant.Connection" xml:space="preserve">
   <value>Database Connection String</value>
 </data>
 
 
-  <!-- 电子邮件账户 -->
-  <data name="EmailAccount.Email" xml:space="preserve">
+    <!-- 电子邮件账户 -->
+    <data name="EmailAccount.Email" xml:space="preserve">
   <value>Email</value>
 </data>
-  <data name="EmailAccount.DisplayName" xml:space="preserve">
+    <data name="EmailAccount.DisplayName" xml:space="preserve">
   <value>Display Name</value>
 </data>
-  <data name="EmailAccount.Host" xml:space="preserve">
+    <data name="EmailAccount.Host" xml:space="preserve">
   <value>Host</value>
 </data>
-  <data name="EmailAccount.Port" xml:space="preserve">
+    <data name="EmailAccount.Port" xml:space="preserve">
   <value>Port</value>
 </data>
-  <data name="EmailAccount.Username" xml:space="preserve">
+    <data name="EmailAccount.Username" xml:space="preserve">
   <value>Account Name</value>
 </data>
-  <data name="EmailAccount.Password" xml:space="preserve">
+    <data name="EmailAccount.Password" xml:space="preserve">
   <value>Password</value>
 </data>
-  <data name="EmailAccount.EnableSsl" xml:space="preserve">
+    <data name="EmailAccount.EnableSsl" xml:space="preserve">
   <value>Enable SSL</value>
 </data>
-  <data name="EmailAccount.UseDefaultCredentials" xml:space="preserve">
+    <data name="EmailAccount.UseDefaultCredentials" xml:space="preserve">
   <value>Use Default System Credentials</value>
 </data>
 
-  <!-- 电子邮件账户 -->
-  <data name="EmailTemplate.Name" xml:space="preserve">
+    <!-- 电子邮件账户 -->
+    <data name="EmailTemplate.Name" xml:space="preserve">
       <value>Template Name</value>
     </data>
-  <data name="EmailTemplate.BccEmailAddresses" xml:space="preserve">
+    <data name="EmailTemplate.BccEmailAddresses" xml:space="preserve">
       <value>BCC Email Addresses</value>
     </data>
-  <data name="EmailTemplate.Subject" xml:space="preserve">
+    <data name="EmailTemplate.Subject" xml:space="preserve">
       <value>Subject</value>
     </data>
-  <data name="EmailTemplate.Body" xml:space="preserve">
+    <data name="EmailTemplate.Body" xml:space="preserve">
       <value>Body</value>
     </data>
-  <data name="EmailTemplate.IsActive" xml:space="preserve">
+    <data name="EmailTemplate.IsActive" xml:space="preserve">
       <value>Is Active</value>
     </data>
-  <data name="EmailTemplate.EmailAccountId" xml:space="preserve">
+    <data name="EmailTemplate.EmailAccountId" xml:space="preserve">
       <value>Sender Email Account</value>
     </data>
-  <data name="EmailTemplate.Name" xml:space="preserve">
+    <data name="EmailTemplate.Name" xml:space="preserve">
         <value>Template Name</value>
       </data>
-  <data name="EmailTemplate.BccEmailAddresses" xml:space="preserve">
+    <data name="EmailTemplate.BccEmailAddresses" xml:space="preserve">
         <value>BCC Email Addresses</value>
       </data>
-  <data name="EmailTemplate.Subject" xml:space="preserve">
+    <data name="EmailTemplate.Subject" xml:space="preserve">
         <value>Subject</value>
       </data>
-  <data name="EmailTemplate.Body" xml:space="preserve">
+    <data name="EmailTemplate.Body" xml:space="preserve">
         <value>Body</value>
       </data>
-  <data name="EmailTemplate.IsActive" xml:space="preserve">
+    <data name="EmailTemplate.IsActive" xml:space="preserve">
         <value>Is Active</value>
       </data>
-  <data name="EmailTemplate.EmailAccountId" xml:space="preserve">
+    <data name="EmailTemplate.EmailAccountId" xml:space="preserve">
         <value>Sender Email Account</value>
       </data>
 
-  <!-- 邮件消息队列 -->
-  <data name="QueuedEmail.From" xml:space="preserve">
+    <!-- 邮件消息队列 -->
+    <data name="QueuedEmail.From" xml:space="preserve">
   <value>Sender Email</value>
 </data>
-  <data name="QueuedEmail.FromName" xml:space="preserve">
+    <data name="QueuedEmail.FromName" xml:space="preserve">
   <value>Sender Name</value>
 </data>
-  <data name="QueuedEmail.To" xml:space="preserve">
+    <data name="QueuedEmail.To" xml:space="preserve">
   <value>Recipient Email</value>
 </data>
-  <data name="QueuedEmail.ToName" xml:space="preserve">
+    <data name="QueuedEmail.ToName" xml:space="preserve">
   <value>Recipient Name</value>
 </data>
-  <data name="QueuedEmail.ReplyTo" xml:space="preserve">
+    <data name="QueuedEmail.ReplyTo" xml:space="preserve">
   <value>Reply-To Email</value>
 </data>
-  <data name="QueuedEmail.ReplyToName" xml:space="preserve">
+    <data name="QueuedEmail.ReplyToName" xml:space="preserve">
   <value>Reply-To Name</value>
 </data>
-  <data name="QueuedEmail.Priority" xml:space="preserve">
+    <data name="QueuedEmail.Priority" xml:space="preserve">
   <value>Priority</value>
 </data>
-  <data name="QueuedEmail.CC" xml:space="preserve">
+    <data name="QueuedEmail.CC" xml:space="preserve">
   <value>CC</value>
 </data>
-  <data name="QueuedEmail.Bcc" xml:space="preserve">
+    <data name="QueuedEmail.Bcc" xml:space="preserve">
   <value>BCC</value>
 </data>
-  <data name="QueuedEmail.Subject" xml:space="preserve">
+    <data name="QueuedEmail.Subject" xml:space="preserve">
   <value>Subject</value>
 </data>
-  <data name="QueuedEmail.Body" xml:space="preserve">
+    <data name="QueuedEmail.Body" xml:space="preserve">
   <value>Body</value>
 </data>
-  <data name="QueuedEmail.SentTries" xml:space="preserve">
+    <data name="QueuedEmail.SentTries" xml:space="preserve">
   <value>Max Send Attempts</value>
 </data>
-  <data name="QueuedEmail.SendTime" xml:space="preserve">
+    <data name="QueuedEmail.SendTime" xml:space="preserve">
   <value>Send Time</value>
 </data>
-  <data name="QueuedEmail.EmailAccountId" xml:space="preserve">
+    <data name="QueuedEmail.EmailAccountId" xml:space="preserve">
   <value>Sender Email ID</value>
 </data>
 
 
-  <!-- 在线用户 -->
-  <data name="Online.Account" xml:space="preserve">
+    <!-- 在线用户 -->
+    <data name="Online.Account" xml:space="preserve">
   <value>Login Account</value>
 </data>
-  <data name="Online.NickName" xml:space="preserve">
+    <data name="Online.NickName" xml:space="preserve">
   <value>User Nickname</value>
 </data>
-  <data name="Online.Dept" xml:space="preserve">
+    <data name="Online.Dept" xml:space="preserve">
   <value>User Department</value>
 </data>
-  <data name="Online.LoginIp" xml:space="preserve">
+    <data name="Online.LoginIp" xml:space="preserve">
   <value>Login IP</value>
 </data>
-  <data name="Online.IpAddress" xml:space="preserve">
+    <data name="Online.IpAddress" xml:space="preserve">
   <value>IP Address</value>
 </data>
-  <data name="Online.OperatingSystem" xml:space="preserve">
+    <data name="Online.OperatingSystem" xml:space="preserve">
   <value>Operating System</value>
 </data>
-  <data name="Online.DeviceType" xml:space="preserve">
+    <data name="Online.DeviceType" xml:space="preserve">
   <value>Device Type</value>
 </data>
-  <data name="Online.BrowserName" xml:space="preserve">
+    <data name="Online.BrowserName" xml:space="preserve">
   <value>Browser Name</value>
 </data>
-  <data name="Online.Version" xml:space="preserve">
+    <data name="Online.Version" xml:space="preserve">
   <value>Version</value>
 </data>
-  <data name="Online.LoginTime" xml:space="preserve">
+    <data name="Online.LoginTime" xml:space="preserve">
   <value>Login Time</value>
 </data>
-  <data name="Online.Onlinekey" xml:space="preserve">
+    <data name="Online.Onlinekey" xml:space="preserve">
   <value>Token</value>
 </data>
 
-  <!-- 控制器区描述 -->
-  <data name="Area.AuthorizationManagement" xml:space="preserve">
+    <!-- 控制器区描述 -->
+    <data name="Area.AuthorizationManagement" xml:space="preserve">
   <value>Authorization Management</value>
 </data>
-  <data name="Area.EmailAccountManagement" xml:space="preserve">
+    <data name="Area.EmailAccountManagement" xml:space="preserve">
   <value>Email Account Management</value>
 </data>
-  <data name="Area.EmailMessageTemplateManagement" xml:space="preserve">
+    <data name="Area.EmailMessageTemplateManagement" xml:space="preserve">
   <value>Email Template Management</value>
 </data>
-  <data name="Area.AuditLogManagement" xml:space="preserve">
-  <value>Audit Log Management</value>
+    <data name="Area.OperateLogManagement" xml:space="preserve">
+  <value>Operate Log Management</value>
 </data>
-  <data name="Area.ExceptionLogManagement" xml:space="preserve">
+    <data name="Area.ExceptionLogManagement" xml:space="preserve">
   <value>Exception Log Management</value>
 </data>
-  <data name="Area.ServerResourceManagement" xml:space="preserve">
+    <data name="Area.TaskLogManagement" xml:space="preserve">
+    <value>Job log management</value>
+  </data>
+    <data name="Area.ServerResourceManagement" xml:space="preserve">
   <value>Server Resource Management</value>
 </data>
-  <data name="Area.ApiManagement" xml:space="preserve">
+    <data name="Area.ApiManagement" xml:space="preserve">
   <value>API Management</value>
 </data>
-  <data name="Area.DepartmentManagement" xml:space="preserve">
+    <data name="Area.DepartmentManagement" xml:space="preserve">
   <value>Department Management</value>
 </data>
-  <data name="Area.JobManagement" xml:space="preserve">
+    <data name="Area.JobManagement" xml:space="preserve">
   <value>Position Management</value>
 </data>
-  <data name="Area.MenuManagement" xml:space="preserve">
+    <data name="Area.MenuManagement" xml:space="preserve">
   <value>Menu Management</value>
 </data>
-  <data name="Area.RoleAuthorizationManagement" xml:space="preserve">
+    <data name="Area.RoleAuthorizationManagement" xml:space="preserve">
   <value>Role Authorization Management</value>
 </data>
-  <data name="Area.RoleManagement" xml:space="preserve">
+    <data name="Area.RoleManagement" xml:space="preserve">
   <value>Role Management</value>
 </data>
-  <data name="Area.UserManagement" xml:space="preserve">
+    <data name="Area.UserManagement" xml:space="preserve">
   <value>User Management</value>
 </data>
-  <data name="Area.MailQueueManagement" xml:space="preserve">
+    <data name="Area.MailQueueManagement" xml:space="preserve">
   <value>Mail Queue Management</value>
 </data>
-  <data name="Area.ApplicationKeyManagement" xml:space="preserve">
+    <data name="Area.ApplicationKeyManagement" xml:space="preserve">
   <value>Application Key Management</value>
 </data>
-  <data name="Area.DictionaryManagement" xml:space="preserve">
+    <data name="Area.DictionaryManagement" xml:space="preserve">
   <value>Dictionary Management</value>
 </data>
-  <data name="Area.DictionaryDetailManagement" xml:space="preserve">
+    <data name="Area.DictionaryDetailManagement" xml:space="preserve">
   <value>Dictionary Detail Management</value>
 </data>
-  <data name="Area.FileStorageManagement" xml:space="preserve">
+    <data name="Area.FileStorageManagement" xml:space="preserve">
   <value>File Storage Management</value>
 </data>
-  <data name="Area.JobSchedulingManagement" xml:space="preserve">
-  <value>Job Scheduling Management</value>
+    <data name="Area.JobSchedulingManagement" xml:space="preserve">
+  <value>Job Management</value>
 </data>
-  <data name="Area.GlobalSettingsManagement" xml:space="preserve">
-  <value>Global Settings Management</value>
+    <data name="Area.GlobalSettingManagement" xml:space="preserve">
+  <value>Setting Management</value>
 </data>
-  <data name="Area.TenantManagement" xml:space="preserve">
+    <data name="Area.TenantManagement" xml:space="preserve">
   <value>Tenant Management</value>
 </data>
 
 
-  <!-- 控制器方法描述 -->
-  <data name="Action.GetEmailVerificationCode" xml:space="preserve">
+    <!-- 控制器方法描述 -->
+    <data name="Action.GetEmailVerificationCode" xml:space="preserve">
   <value>Get Email Verification Code</value>
 </data>
-  <data name="Action.GetVerificationCode" xml:space="preserve">
+    <data name="Action.GetVerificationCode" xml:space="preserve">
   <value>Get Verification Code</value>
 </data>
-  <data name="Action.UserLogin" xml:space="preserve">
+    <data name="Action.UserLogin" xml:space="preserve">
   <value>User Login</value>
 </data>
-  <data name="Action.UserLogOut" xml:space="preserve">
+    <data name="Action.UserLogOut" xml:space="preserve">
   <value>User Logout</value>
 </data>
-  <data name="Action.RefreshToken" xml:space="preserve">
+    <data name="Action.RefreshToken" xml:space="preserve">
   <value>Refresh Token</value>
 </data>
-  <data name="Action.PersonalInfo" xml:space="preserve">
+    <data name="Action.PersonalInfo" xml:space="preserve">
   <value>Personal Information</value>
 </data>
-  <data name="Action.UserConduct" xml:space="preserve">
+    <data name="Action.UserConduct" xml:space="preserve">
   <value>User Conduct</value>
 </data>
-  <data name="Action.ServerResourceInfo" xml:space="preserve">
+    <data name="Action.ServerResourceInfo" xml:space="preserve">
   <value>Server Resource Information</value>
 </data>
-  <data name="Action.RefreshApi" xml:space="preserve">
+    <data name="Action.RefreshApi" xml:space="preserve">
   <value>Refresh API</value>
 </data>
-  <data name="Action.ApiRefresh.Success" xml:space="preserve">
+    <data name="Action.GetApiGroup" xml:space="preserve">
+      <value>Get API Group</value>
+</data>
+    <data name="Action.ApiRefresh.Success" xml:space="preserve">
   <value>API Refresh Successful</value>
 </data>
-  <data name="Action.ApiRefresh.Fail" xml:space="preserve">
+    <data name="Action.ApiRefresh.Fail" xml:space="preserve">
   <value>API Refresh Failed</value>
 </data>
-  <data name="Action.GetDepartmentTreeData" xml:space="preserve">
+    <data name="Action.GetDepartmentTreeData" xml:space="preserve">
   <value>Get Department Tree Data</value>
 </data>
-  <data name="Action.GetSiblingAndParentDepartments" xml:space="preserve">
+    <data name="Action.GetSiblingAndParentDepartments" xml:space="preserve">
   <value>Get Sibling and Parent Departments</value>
 </data>
-  <data name="Action.GetAllJobs" xml:space="preserve">
+    <data name="Action.GetAllJobs" xml:space="preserve">
   <value>Get All Positions</value>
 </data>
-  <data name="Action.BuildLoginMenu" xml:space="preserve">
+    <data name="Action.BuildLoginMenu" xml:space="preserve">
   <value>Build Login Menu</value>
 </data>
-  <data name="Action.GetSubMenu" xml:space="preserve">
+    <data name="Action.GetSubMenu" xml:space="preserve">
   <value>Get Submenu</value>
 </data>
-  <data name="Action.GetSiblingAndParentMenus" xml:space="preserve">
+    <data name="Action.GetSiblingAndParentMenus" xml:space="preserve">
   <value>Get Sibling and Parent Menus</value>
 </data>
-  <data name="Action.GetAllSubMenu" xml:space="preserve">
+    <data name="Action.GetAllSubMenu" xml:space="preserve">
   <value>Get All Submenus</value>
 </data>
-  <data name="Action.GetAllMenu" xml:space="preserve">
+    <data name="Action.GetAllMenu" xml:space="preserve">
   <value>Get All Menus</value>
 </data>
-  <data name="Action.GetAllApi" xml:space="preserve">
+    <data name="Action.GetAllApi" xml:space="preserve">
   <value>Get All APIs</value>
 </data>
-  <data name="Action.UpdateRoleMenu" xml:space="preserve">
+    <data name="Action.UpdateRoleMenu" xml:space="preserve">
   <value>Update Role Menu</value>
 </data>
-  <data name="Action.UpdateRoleApi" xml:space="preserve">
+    <data name="Action.UpdateRoleApi" xml:space="preserve">
   <value>Update Role API</value>
 </data>
-  <data name="Action.ViewSingleRole" xml:space="preserve">
+    <data name="Action.ViewSingleRole" xml:space="preserve">
   <value>View Single Role Information</value>
 </data>
-  <data name="Action.GetAllRole" xml:space="preserve">
+    <data name="Action.GetAllRole" xml:space="preserve">
   <value>Get All Roles</value>
 </data>
-  <data name="Action.GetRoleLevel" xml:space="preserve">
+    <data name="Action.GetRoleLevel" xml:space="preserve">
   <value>Get Role Level</value>
 </data>
-  <data name="Action.UpdatePersonalInfo" xml:space="preserve">
+    <data name="Action.UpdatePersonalInfo" xml:space="preserve">
   <value>Update Personal Information</value>
 </data>
-  <data name="Action.UpdatePassword" xml:space="preserve">
+    <data name="Action.UpdatePassword" xml:space="preserve">
   <value>Update Password</value>
 </data>
-  <data name="Action.UpdateEmail" xml:space="preserve">
+    <data name="Action.UpdateEmail" xml:space="preserve">
   <value>Update Email</value>
 </data>
-  <data name="Action.UpdateAvatar" xml:space="preserve">
+    <data name="Action.UpdateAvatar" xml:space="preserve">
   <value>Update Avatar</value>
 </data>
-  <data name="Action.ExecuteJob" xml:space="preserve">
+    <data name="Action.ExecuteJob" xml:space="preserve">
   <value>Execute Job</value>
 </data>
-  <data name="Action.PauseJob" xml:space="preserve">
+    <data name="Action.PauseJob" xml:space="preserve">
   <value>Pause Job</value>
 </data>
-  <data name="Action.ResumeJob" xml:space="preserve">
+    <data name="Action.ResumeJob" xml:space="preserve">
   <value>Resume Job</value>
 </data>
-  <data name="Action.ExecutionLogJob" xml:space="preserve">
+    <data name="Action.ExecutionLogJob" xml:space="preserve">
   <value>Job Execution Log</value>
 </data>
-  <data name="Action.GetAllTenant" xml:space="preserve">
+    <data name="Action.GetAllTenant" xml:space="preserve">
   <value>Get All Tenants</value>
 </data>
-  <data name="Action.StartupSSuccess" xml:space="preserve">
+    <data name="Action.StartupSuccess" xml:space="preserve">
   <value>Startup Successful</value>
 </data>
-  <data name="Action.StartupFailure" xml:space="preserve">
+    <data name="Action.StartupFailure" xml:space="preserve">
   <value>Startup Failed</value>
 </data>
 
-  <!-- 错误 -->
-  <data name="Error.DataAssociationExists" xml:space="preserve">
+    <!-- 错误 -->
+    <data name="Error.DataAssociationExists" xml:space="preserve">
   <value>Data association exists, please remove it and try again!</value>
 </data>
-  <data name="Error.PermissionDenied.HigherRoleData" xml:space="preserve">
+    <data name="Error.PermissionDenied.HigherRoleData" xml:space="preserve">
   <value>You are not authorized to modify or delete data with a higher role level than yours!</value>
 </data>
-  <data name="Error.DataNotExist" xml:space="preserve">
+    <data name="Error.DataNotExist" xml:space="preserve">
   <value>Data does not exist</value>
 </data>
-  <data name="Error.DuplicateCallNotAllowed" xml:space="preserve">
+    <data name="Error.DuplicateCallNotAllowed" xml:space="preserve">
   <value>Duplicate call is not allowed</value>
 </data>
-  <data name="Error.UserNotFound" xml:space="preserve">
+    <data name="Error.UserNotFound" xml:space="preserve">
   <value>User not found</value>
 </data>
-  <data name="Error.UserNotActivated" xml:space="preserve">
+    <data name="Error.UserNotActivated" xml:space="preserve">
   <value>User is not activated</value>
 </data>
-  <data name="Error.AccountLockedWithUnlockTime{0}" xml:space="preserve">
+    <data name="Error.AccountLockedWithUnlockTime{0}" xml:space="preserve">
   <value>Account is locked, please try again later. Unlock time: {0}</value>
 </data>
-  <data name="Error.VerificationCodeExpired" xml:space="preserve">
+    <data name="Error.VerificationCodeExpired" xml:space="preserve">
   <value>Verification code has expired</value>
 </data>
-  <data name="Error.InvalidVerificationCode" xml:space="preserve">
+    <data name="Error.InvalidVerificationCode" xml:space="preserve">
   <value>Verification code has expired</value>
 </data>
-  <data name="Error.InvalidPassword" xml:space="preserve">
+    <data name="Error.InvalidPassword" xml:space="preserve">
   <value>Incorrect password</value>
 </data>
-  <data name="Error.InvalidPasswordWithLockWarning" xml:space="preserve">
+    <data name="Error.InvalidPasswordWithLockWarning" xml:space="preserve">
   <value>Incorrect password, the account will be locked after three consecutive incorrect attempts!</value>
 </data>
-  <data name="Error.TokenRevoked" xml:space="preserve">
+    <data name="Error.TokenRevoked" xml:space="preserve">
   <value>Token has been revoked, please log in again!</value>
 </data>
-  <data name="Error.TokenParseFailed" xml:space="preserve">
+    <data name="Error.TokenParseFailed" xml:space="preserve">
   <value>Token parsing failed, please log in again!</value>
 </data>
-  <data name="Error.TokenExpired" xml:space="preserve">
+    <data name="Error.TokenExpired" xml:space="preserve">
   <value>Token has expired, please log in again!</value>
 </data>
-  <data name="Error.FileTooLarge{0}" xml:space="preserve">
+    <data name="Error.FileTooLarge{0}" xml:space="preserve">
   <value>File is too large, please select a file smaller than or equal to {0}MB and try again!</value>
 </data>
-  <data name="Error.SetIntervalSeconds" xml:space="preserve">
+    <data name="Error.SetIntervalSeconds" xml:space="preserve">
   <value>Please set job interval execution seconds in simple mode!</value>
 </data>
-  <data name="Error.ExecutionFailed" xml:space="preserve">
+    <data name="Error.ExecutionFailed" xml:space="preserve">
   <value>Execution failed, please try again!</value>
 </data>
-  <data name="Error.AlreadyRunning" xml:space="preserve">
+    <data name="Error.AlreadyRunning" xml:space="preserve">
   <value>Already running, do not start it again!</value>
 </data>
-  <data name="Error.PauseFailed" xml:space="preserve">
+    <data name="Error.PauseFailed" xml:space="preserve">
   <value>Pause failed, please try again!</value>
 </data>
-  <data name="Error.RestoreFailed" xml:space="preserve">
+    <data name="Error.RestoreFailed" xml:space="preserve">
   <value>Restore failed, please try again!</value>
 </data>
-  <data name="Error.AppSettings.DataConnection" xml:space="preserve">
+    <data name="Error.AppSettings.DataConnection" xml:space="preserve">
   <value>AppSetting.json DataConnection configuration error, please check!</value>
 </data>
-  <data name="Error.Database.EnsureEnabled{0}" xml:space="preserve">
+    <data name="Error.Database.EnsureEnabled{0}" xml:space="preserve">
   <value>Please ensure that the Enabled for the main database ID:{0} is set to true</value>
 </data>
-  <data name="Error.LogDatabase.EnsureEnabled{0}" xml:space="preserve">
+    <data name="Error.LogDatabase.EnsureEnabled{0}" xml:space="preserve">
   <value>Please ensure that the Enabled for the log database ID:{0} is set to true</value>
 </data>
-  <data name="Error.Database.SlaveEnsureEnabled{0}" xml:space="preserve">
+    <data name="Error.Database.SlaveEnsureEnabled{0}" xml:space="preserve">
   <value>Please ensure that the Enabled for the slave database corresponding to ID:{0} is set to true</value>
 </data>
-  <data name="Error.PasswordSameAsOld" xml:space="preserve">
+    <data name="Error.PasswordSameAsOld" xml:space="preserve">
   <value>The new password cannot be the same as the old password</value>
 </data>
-  <data name="Error.InputsDoNotMatch" xml:space="preserve">
+    <data name="Error.InputsDoNotMatch" xml:space="preserve">
   <value>The inputs do not match</value>
 </data>
-  <data name="Error.IncorrectOldPassword" xml:space="preserve">
+    <data name="Error.IncorrectOldPassword" xml:space="preserve">
   <value>Incorrect old password</value>
 </data>
-  <data name="Error.InvalidPassword" xml:space="preserve">
+    <data name="Error.InvalidPassword" xml:space="preserve">
   <value>Incorrect password</value>
 </data>
-  <data name="Error.InvalidVerificationCode" xml:space="preserve">
+    <data name="Error.InvalidVerificationCode" xml:space="preserve">
   <value>Incorrect verification code</value>
 </data>
-  <data name="Error.ForbidToDeleteYourself" xml:space="preserve">
+    <data name="Error.ForbidToDeleteYourself" xml:space="preserve">
   <value>Deleting yourself is forbidden</value>
 </data>
 
-  <!-- 验证 -->
-  <data name="{0}{1}NotExist" xml:space="preserve">
+    <!-- 验证 -->
+    <data name="{0}{1}NotExist" xml:space="preserve">
   <value>{0}=>{1}=>Does not exist!</value>
 </data>
-  <data name="{0}{1}IsExist" xml:space="preserve">
+    <data name="{0}{1}IsExist" xml:space="preserve">
   <value>{0}=>{1}=>Already exists!</value>
 </data>
-  <data name="{0}NotActivated" xml:space="preserve">
+    <data name="{0}NotActivated" xml:space="preserve">
   <value>{0} is not activated</value>
 </data>
-  <data name="{0}required" xml:space="preserve">
+    <data name="{0}required" xml:space="preserve">
   <value>{0} is required</value>
 </data>
-  <data name="{0}AtLeastOne" xml:space="preserve">
+    <data name="{0}AtLeastOne" xml:space="preserve">
   <value>{0} collection must contain at least one item.</value>
 </data>
-  <data name="{0}Error.Format" xml:space="preserve">
+    <data name="{0}Error.Format" xml:space="preserve">
   <value>{0} format is incorrect</value>
 </data>
-  <data name="{0}number" xml:space="preserve">
+    <data name="{0}number" xml:space="preserve">
   <value>{0} must be a number</value>
 </data>
-  <data name="{0}range{1}" xml:space="preserve">
+    <data name="{0}range{1}" xml:space="preserve">
   <value>{0} must be at least {1}</value>
 </data>
-  <data name="{0}range{1}{2}" xml:space="preserve">
+    <data name="{0}range{1}{2}" xml:space="preserve">
   <value>{0} must be a number between {1} and {2}</value>
 </data>
-  <data name="{0}range{2}" xml:space="preserve">
+    <data name="{0}range{2}" xml:space="preserve">
   <value>{0} must be at most {1}</value>
 </data>
-  <data name="{0}stringmax{1}" xml:space="preserve">
+    <data name="{0}stringmax{1}" xml:space="preserve">
   <value>{0} must not exceed {1} characters</value>
 </data>
-  <data name="Enum.Trigger.Blocked" xml:space="preserve">
+    <data name="Enum.Trigger.Blocked" xml:space="preserve">
     <value>Blocking</value>
   </data>
-  <data name="Enum.Trigger.Complete" xml:space="preserve">
+    <data name="Enum.Trigger.Complete" xml:space="preserve">
     <value>Completed</value>
   </data>
-  <data name="Enum.Trigger.Error" xml:space="preserve">
+    <data name="Enum.Trigger.Error" xml:space="preserve">
     <value>Error</value>
   </data>
-  <data name="Enum.Trigger.None" xml:space="preserve">
+    <data name="Enum.Trigger.None" xml:space="preserve">
     <value>Blocking</value>
   </data>
-  <data name="Enum.Trigger.Normal" xml:space="preserve">
+    <data name="Enum.Trigger.Normal" xml:space="preserve">
     <value>Running</value>
   </data>
-  <data name="Enum.Trigger.NotRunning" xml:space="preserve">
+    <data name="Enum.Trigger.NotRunning" xml:space="preserve">
     <value>Not running</value>
   </data>
-  <data name="Enum.Trigger.Paused" xml:space="preserve">
+    <data name="Enum.Trigger.Paused" xml:space="preserve">
     <value>Pause</value>
   </data>
-  <data name="Error.ConditionConflict" xml:space="preserve">
+    <data name="Error.ConditionConflict" xml:space="preserve">
     <value>Conditional expressions and conditional models cannot be used simultaneously.</value>
   </data>
-  <data name="Error.PageNumberExceedsLimit" xml:space="preserve">
+    <data name="Error.PageNumberExceedsLimit" xml:space="preserve">
     <value>The current page number exceeds the maximum page number of the table.</value>
   </data>
-  <data name="Error.PageNumberInvalid" xml:space="preserve">
+    <data name="Error.PageNumberInvalid" xml:space="preserve">
     <value>The page number must be an integer &gt;= 1.</value>
   </data>
-  <data name="Error.PageSizeInvalid" xml:space="preserve">
+    <data name="Error.PageSizeInvalid" xml:space="preserve">
     <value>The number of items per page must be an integer &gt;= 1 and &lt;= 100.</value>
   </data>
-  <data name="Error.UpdateAndExcludeConflict" xml:space="preserve">
+    <data name="Error.UpdateAndExcludeConflict" xml:space="preserve">
     <value>Update columns and exclude columns cannot be used simultaneously.</value>
   </data>
 </root>

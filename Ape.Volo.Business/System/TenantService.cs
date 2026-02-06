@@ -51,7 +51,7 @@ public class TenantService : BaseServices<Tenant>, ITenantService
                     App.L.R("Tenant.ConfigId")));
             }
 
-            if (createUpdateTenantDtoDto.Connection.IsNullOrEmpty())
+            if (createUpdateTenantDtoDto.ConnectionString.IsNullOrEmpty())
             {
                 return OperateResult.Error(App.L.R("{0}required",
                     App.L.R("Tenant.Connection")));
@@ -105,7 +105,7 @@ public class TenantService : BaseServices<Tenant>, ITenantService
                     App.L.R("Tenant.ConfigId")));
             }
 
-            if (createUpdateTenantDtoDto.Connection.IsNullOrEmpty())
+            if (createUpdateTenantDtoDto.ConnectionString.IsNullOrEmpty())
             {
                 return OperateResult.Error(App.L.R("{0}required",
                     App.L.R("Tenant.Connection")));

@@ -17,12 +17,14 @@ public class MenuMetaVo
     /// </summary>
     /// <param name="title"></param>
     /// <param name="icon"></param>
-    /// <param name="noCache"></param>
-    public MenuMetaVo(string title, string icon, bool noCache)
+    /// <param name="keepAlive"></param>
+    public MenuMetaVo(string title, string icon, bool keepAlive)
     {
         Title = title;
         Icon = icon;
-        NoCache = noCache;
+        KeepAlive = keepAlive;
+        CloseTab = false;
+        ActiveName = "";
     }
 
     /// <summary>
@@ -36,7 +38,17 @@ public class MenuMetaVo
     public string Icon { get; set; }
 
     /// <summary>
-    /// 不缓存
+    /// 缓存
     /// </summary>
-    public bool NoCache { get; set; }
+    public bool KeepAlive { get; set; }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public bool CloseTab { get; set; }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public string ActiveName { get; set; }
 }

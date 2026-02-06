@@ -5,6 +5,7 @@ using Ape.Volo.Api.Controllers.Base;
 using Ape.Volo.Common.Extensions;
 using Ape.Volo.Common.Helper;
 using Ape.Volo.Common.Model;
+using Ape.Volo.Core;
 using Ape.Volo.IBusiness.System;
 using Ape.Volo.SharedModel.Dto.Core.System;
 using Ape.Volo.SharedModel.Queries.Common;
@@ -19,7 +20,7 @@ namespace Ape.Volo.Api.Controllers.System;
 /// 应用密钥管理
 /// </summary>
 [Area("Area.ApplicationKeyManagement")]
-[Route("/api/appSecret", Order = 11)]
+[Route("/appSecret", Order = 11)]
 public class AppSecretController : BaseApiController
 {
     #region 字段
@@ -136,10 +137,7 @@ public class AppSecretController : BaseApiController
     {
         var appSecretExports = await _appSecretService.DownloadAsync(appsecretQueryCriteria);
         var data = new ExcelHelper().GenerateExcel(appSecretExports, out var mimeType, out var fileName);
-        return new FileContentResult(data, mimeType)
-        {
-            FileDownloadName = fileName
-        };
+        return new FileContentResult(data, mimeType) { FileDownloadName = App.L.R("Sys.AppSecret") + fileName };
     }
 
     #endregion

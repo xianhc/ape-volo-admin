@@ -45,12 +45,12 @@ public static class GlobalConstants
         /// <summary>
         /// 用户权限标识
         /// </summary>
-        public const string UserPermissionRoles = "user:permissionRole:id:";
+        public const string UserAuthCodes = "user:authCode:id:";
 
         /// <summary>
         /// 用户权限Url
         /// </summary>
-        public const string UserPermissionUrls = "user:permissionUrl:id:";
+        public const string UserAuthUrls = "user:authUrl:id:";
 
         /// <summary>
         /// 加载菜单根据PID
@@ -82,5 +82,10 @@ public static class GlobalConstants
         /// 加载字典详情信息
         /// </summary>
         public const string LoadDictDetailByDictId = "dict:detail:dictid:";
+
+        /// <summary>
+        /// 加载字典详情信息
+        /// </summary>
+        public const string LoadDictByName = "dict:name:";
     }
 }

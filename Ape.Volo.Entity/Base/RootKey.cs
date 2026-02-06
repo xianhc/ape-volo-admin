@@ -13,6 +13,6 @@ namespace Ape.Volo.Entity.Base
         /// 主键
         /// </summary>
         [SugarColumn(IsPrimaryKey = true)]
-        public TKey Id { get; set; }
+        public TKey? Id { get; set; }
     }
 }

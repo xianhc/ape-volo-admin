@@ -1,0 +1,290 @@
+[
+  {
+    "Id": 163519427764326,
+    "DictId": 163519427764325,
+    "Label": "系统类",
+    "Value": "1",
+    "DictSort": 2,
+    "CreateBy": "apevolo"
+  },
+  {
+    "Id": 163519427764327,
+    "DictId": 163519427764325,
+    "Label": "业务类",
+    "Value": "2",
+    "DictSort": 1,
+    "CreateBy": "apevolo"
+  },
+  {
+    "Id": 163519427764330,
+    "DictId": 163519427764328,
+    "Label": "已启用",
+    "Value": "true",
+    "DictSort": 1,
+    "CreateBy": "apevolo"
+  },
+  {
+    "Id": 163519427764329,
+    "DictId": 163519427764328,
+    "Label": "已禁用",
+    "Value": "false",
+    "DictSort": 2,
+    "CreateBy": "apevolo"
+  },
+  {
+    "Id": 163519427764344,
+    "DictId": 163519427764343,
+    "Label": "cron",
+    "Value": "1",
+    "DictSort": 1,
+    "CreateBy": "apevolo"
+  },
+  {
+    "Id": 163519427764345,
+    "DictId": 163519427764343,
+    "Label": "simple",
+    "Value": "0",
+    "DictSort": 2,
+    "CreateBy": "apevolo"
+  },
+  {
+    "Id": 163519427764347,
+    "DictId": 163519427764346,
+    "Label": "ID隔离",
+    "Value": "1",
+    "DictSort": 1,
+    "CreateBy": "apevolo"
+  },
+  {
+    "Id": 163519427764348,
+    "DictId": 163519427764346,
+    "Label": "库隔离",
+    "Value": "2",
+    "DictSort": 2,
+    "CreateBy": "apevolo"
+  },
+  {
+    "Id": 163519427764350,
+    "DictId": 163519427764349,
+    "Label": "MySql",
+    "Value": "0",
+    "DictSort": 1,
+    "CreateBy": "apevolo"
+  },
+  {
+    "Id": 163519427764351,
+    "DictId": 163519427764349,
+    "Label": "SqlServer",
+    "Value": "1",
+    "DictSort": 2,
+    "CreateBy": "apevolo"
+  },
+  {
+    "Id": 163519427768389,
+    "DictId": 163519427764349,
+    "Label": "Sqlite",
+    "Value": "2",
+    "DictSort": 3,
+    "CreateBy": "apevolo"
+  },
+  {
+    "Id": 163519427768390,
+    "DictId": 163519427764349,
+    "Label": "Oracle",
+    "Value": "3",
+    "DictSort": 4,
+    "CreateBy": "apevolo"
+  },
+  {
+    "Id": 163519427768392,
+    "DictId": 163519427768391,
+    "Label": "全部",
+    "Value": "1",
+    "DictSort": 1,
+    "CreateBy": "apevolo"
+  },
+  {
+    "Id": 163519427768393,
+    "DictId": 163519427768391,
+    "Label": "本人",
+    "Value": "2",
+    "DictSort": 2,
+    "CreateBy": "apevolo"
+  },
+  {
+    "Id": 163519427768394,
+    "DictId": 163519427768391,
+    "Label": "本部门",
+    "Value": "3",
+    "DictSort": 3,
+    "CreateBy": "apevolo"
+  },
+  {
+    "Id": 163519427768395,
+    "DictId": 163519427768391,
+    "Label": "本部门及以下",
+    "Value": "4",
+    "DictSort": 4,
+    "CreateBy": "apevolo"
+  },
+  {
+    "Id": 163519427768396,
+    "DictId": 163519427768391,
+    "Label": "自定义",
+    "Value": "5",
+    "DictSort": 5,
+    "CreateBy": "apevolo"
+  },
+  {
+    "Id": 163519427768397,
+    "DictId": 163519427768392,
+    "Label": "GET(查询)",
+    "Value": "GET",
+    "DictSort": 1,
+    "CreateBy": "apevolo"
+  },
+  {
+    "Id": 163519427768398,
+    "DictId": 163519427768392,
+    "Label": "POST(创建)",
+    "Value": "POST",
+    "DictSort": 2,
+    "CreateBy": "apevolo"
+  },
+  {
+    "Id": 163519427768399,
+    "DictId": 163519427768392,
+    "Label": "PUT(更新)",
+    "Value": "PUT",
+    "DictSort": 3,
+    "CreateBy": "apevolo"
+  },
+  {
+    "Id": 163519427768410,
+    "DictId": 163519427768392,
+    "Label": "DELETE(删除)",
+    "Value": "DELETE",
+    "DictSort": 4,
+    "CreateBy": "apevolo"
+  },
+  {
+    "Id": 163519427868411,
+    "DictId": 163519427768393,
+    "Label": "目录",
+    "Value": "1",
+    "DictSort": 1,
+    "CreateBy": "apevolo"
+  },
+  {
+    "Id": 163519427868412,
+    "DictId": 163519427768393,
+    "Label": "菜单",
+    "Value": "2",
+    "DictSort": 2,
+    "CreateBy": "apevolo"
+  },
+  {
+    "Id": 163519427868413,
+    "DictId": 163519427768393,
+    "Label": "按钮",
+    "Value": "3",
+    "DictSort": 3,
+    "CreateBy": "apevolo"
+  },
+  {
+    "Id": 163519427868414,
+    "DictId": 163519427768393,
+    "Label": "内嵌",
+    "Value": "4",
+    "DictSort": 4,
+    "CreateBy": "apevolo"
+  },
+  {
+    "Id": 163519427868415,
+    "DictId": 163519427768393,
+    "Label": "外链",
+    "Value": "5",
+    "DictSort": 5,
+    "CreateBy": "apevolo"
+  },
+  {
+    "Id": 163519427868416,
+    "DictId": 163519427768394,
+    "Label": "点",
+    "Value": "1",
+    "DictSort": 1,
+    "CreateBy": "apevolo"
+  },
+  {
+    "Id": 163519427868417,
+    "DictId": 163519427768394,
+    "Label": "文字",
+    "Value": "2",
+    "DictSort": 2,
+    "CreateBy": "apevolo"
+  },
+  {
+    "Id": 163519427868418,
+    "DictId": 163519427768395,
+    "Label": "男",
+    "Value": "1",
+    "DictSort": 1,
+    "CreateBy": "apevolo"
+  },
+  {
+    "Id": 163519427868419,
+    "DictId": 163519427768395,
+    "Label": "女",
+    "Value": "2",
+    "DictSort": 2,
+    "CreateBy": "apevolo"
+  },
+  {
+    "Id": 163519427868420,
+    "DictId": 183847050895429,
+    "Label": "正常",
+    "Value": "0",
+    "DictSort": 1,
+    "CreateBy": "apevolo"
+  },
+  {
+    "Id": 163519427868421,
+    "DictId": 183847050895429,
+    "Label": "暂停",
+    "Value": "1",
+    "DictSort": 2,
+    "CreateBy": "apevolo"
+  },
+  {
+    "Id": 163519427868422,
+    "DictId": 183847050895429,
+    "Label": "完成",
+    "Value": "2",
+    "DictSort": 3,
+    "CreateBy": "apevolo"
+  },
+  {
+    "Id": 163519427868423,
+    "DictId": 183847050895429,
+    "Label": "错误",
+    "Value": "3",
+    "DictSort": 4,
+    "CreateBy": "apevolo"
+  },
+  {
+    "Id": 163519427868424,
+    "DictId": 183847050895429,
+    "Label": "阻塞",
+    "Value": "4",
+    "DictSort": 5,
+    "CreateBy": "apevolo"
+  },
+  {
+    "Id": 163519427868425,
+    "DictId": 183847050895429,
+    "Label": "不存在",
+    "Value": "5",
+    "DictSort": 6,
+    "CreateBy": "apevolo"
+  }
+]

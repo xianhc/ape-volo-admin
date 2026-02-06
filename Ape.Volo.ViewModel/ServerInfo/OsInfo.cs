@@ -41,6 +41,9 @@ public class OsInfo
     /// </summary>
     public int LogicProcessorCount { get; set; }
 
+    /// <summary>
+    /// 处理器利用率
+    /// </summary>
     public int ProcessorUtilizationRate { get; set; }
 
     /// <summary>
@@ -366,6 +369,10 @@ public class OsInfo
             return count;
         }
 
+        /// <summary>
+        /// 获取处理器利用率
+        /// </summary>
+        /// <returns></returns>
         public static int ProcessorUtilizationRate()
         {
             int rate = 0;
@@ -387,6 +394,10 @@ public class OsInfo
             return rate;
         }
 
+        /// <summary>
+        /// 获取本地IP地址
+        /// </summary>
+        /// <returns></returns>
         public static string GetLocalIp()
         {
             string localIp = "";
@@ -549,9 +560,16 @@ public class OsInfo
 /// </summary>
 public class DiskInfo
 {
+    /// <summary>
+    ///  名称
+    /// </summary>
     public string Name { get; set; }
-
+    /// <summary>
+    ///  总大小 
+    /// </summary>
     public long Size { get; set; }
-
+    /// <summary>
+    ///  可用空间 
+    /// </summary>
     public long FreeSpace { get; set; }
 }

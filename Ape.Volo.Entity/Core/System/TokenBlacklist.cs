@@ -12,6 +12,6 @@ namespace Ape.Volo.Entity.Core.System
         /// <summary>
         /// 令牌 登录token的MD5值
         /// </summary>
-        public string AccessToken { get; set; }
+        public string AccessToken { get; set; } = string.Empty;
     }
 }

@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using Ape.Volo.Common.Attributes;
-using Ape.Volo.Common.Model;
 using SqlSugar;
 
 namespace Ape.Volo.Common.Extensions;
@@ -69,35 +68,36 @@ public static class ConditionalModelExtensions
         var conditionalModels = new List<IConditionalModel>();
 
         //处理时间范围
-        if (propertyType == typeof(List<DateTime>) && propertyInfo.DeclaringType != null &&
-            propertyInfo.DeclaringType.FullName == typeof(DateRange).FullName)
-        {
-            var dateTimeList = (List<DateTime>)fieldValue;
-            if (dateTimeList.Count != 2)
-            {
-                throw new ArgumentException(
-                    "Range condition requires a list with exactly two DateTime values.");
-            }
-
-            conditionalModels.Add(new ConditionalModel()
-            {
-                FieldName = UtilMethods.ToUnderLine(fieldName),
-                ConditionalType = ConditionalType.GreaterThanOrEqual,
-                FieldValue = dateTimeList[0].ToString("yyyy-MM-dd HH:mm:ss")
-            });
-            conditionalModels.Add(new ConditionalModel()
-            {
-                FieldName = UtilMethods.ToUnderLine(fieldName),
-                ConditionalType = ConditionalType.LessThanOrEqual,
-                FieldValue = dateTimeList[1].ToString("yyyy-MM-dd HH:mm:ss")
-            });
-            return conditionalModels;
-        }
+        // if (propertyType == typeof(List<DateTime>) && propertyInfo.DeclaringType != null &&
+        //     propertyInfo.DeclaringType.FullName == typeof(DateRange).FullName)
+        // {
+        //     var dateTimeList = (List<DateTime>)fieldValue;
+        //     if (dateTimeList.Count != 2)
+        //     {
+        //         throw new ArgumentException(
+        //             "Range condition requires a list with exactly two DateTime values.");
+        //     }
+        //
+        //     conditionalModels.Add(new ConditionalModel()
+        //     {
+        //         FieldName = UtilMethods.ToUnderLine(fieldName),
+        //         ConditionalType = ConditionalType.GreaterThanOrEqual,
+        //         FieldValue = dateTimeList[0].ToString("yyyy-MM-dd HH:mm:ss")
+        //     });
+        //     conditionalModels.Add(new ConditionalModel()
+        //     {
+        //         FieldName = UtilMethods.ToUnderLine(fieldName),
+        //         ConditionalType = ConditionalType.LessThanOrEqual,
+        //         FieldValue = dateTimeList[1].ToString("yyyy-MM-dd HH:mm:ss")
+        //     });
+        //     return conditionalModels;
+        // }
 
 
         var cSharpTypeName = ""; //指定类型  默认为String
         if (propertyType == typeof(bool?) || propertyType == typeof(bool) || propertyType == typeof(int?) ||
-            propertyType == typeof(int) || propertyType == typeof(long?) || propertyType == typeof(long))
+            propertyType == typeof(int) || propertyType == typeof(long?) || propertyType == typeof(long)
+            || propertyType == typeof(DateTime?) || propertyType == typeof(DateTime))
         {
             var underlyingType = Nullable.GetUnderlyingType(propertyType) ?? propertyType;
             cSharpTypeName = underlyingType.Name;
@@ -121,7 +121,7 @@ public static class ConditionalModelExtensions
                 conditionalCollections.ConditionalList.Add(
                     new KeyValuePair<WhereType, ConditionalModel>(
                         WhereType.Or,
-                        new ConditionalModel()
+                        new ConditionalModel
                         {
                             FieldName = UtilMethods.ToUnderLine(itemStr),
                             ConditionalType = queryConditionAttribute.ConditionType, FieldValue = fieldValue.ToString()
@@ -135,7 +135,7 @@ public static class ConditionalModelExtensions
         }
 
         // 属性一对一
-        conditionalModels.Add(new ConditionalModel()
+        conditionalModels.Add(new ConditionalModel
         {
             FieldName = UtilMethods.ToUnderLine(fieldName), // 字段名要跟SqlSugarSetup配置的一致
             ConditionalType = queryConditionAttribute.ConditionType,

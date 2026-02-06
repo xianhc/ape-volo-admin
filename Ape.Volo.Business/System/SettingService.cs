@@ -58,7 +58,8 @@ public class SettingService : BaseServices<Setting>, ISettingService
         var oldSetting = await TableWhere(x => x.Id == createUpdateSettingDto.Id).FirstAsync();
         if (oldSetting.IsNull())
         {
-            return OperateResult.Error(ValidationError.NotExist(createUpdateSettingDto, LanguageKeyConstants.Setting,
+            return OperateResult.Error(ValidationError.NotExist(createUpdateSettingDto,
+                LanguageKeyConstants.Parameter,
                 nameof(createUpdateSettingDto.Id)));
         }
 
@@ -103,15 +104,15 @@ public class SettingService : BaseServices<Setting>, ISettingService
     /// <summary>
     /// 查询
     /// </summary>
-    /// <param name="settingQueryCriteria"></param>
+    /// <param name="parameterQueryCriteria"></param>
     /// <param name="pagination"></param>
     /// <returns></returns>
-    public async Task<List<SettingVo>> QueryAsync(SettingQueryCriteria settingQueryCriteria, Pagination pagination)
+    public async Task<List<SettingVo>> QueryAsync(ParameterQueryCriteria parameterQueryCriteria,
+        Pagination pagination)
     {
         var queryOptions = new QueryOptions<Setting>
         {
-            Pagination = pagination,
-            ConditionalModels = settingQueryCriteria.ApplyQueryConditionalModel()
+            Pagination = pagination, ConditionalModels = parameterQueryCriteria.ApplyQueryConditionalModel()
         };
         return App.Mapper.MapTo<List<SettingVo>>(await TablePageAsync(queryOptions));
     }
@@ -119,11 +120,11 @@ public class SettingService : BaseServices<Setting>, ISettingService
     /// <summary>
     /// 下载
     /// </summary>
-    /// <param name="settingQueryCriteria"></param>
+    /// <param name="parameterQueryCriteria"></param>
     /// <returns></returns>
-    public async Task<List<ExportBase>> DownloadAsync(SettingQueryCriteria settingQueryCriteria)
+    public async Task<List<ExportBase>> DownloadAsync(ParameterQueryCriteria parameterQueryCriteria)
     {
-        var settings = await TableWhere(settingQueryCriteria.ApplyQueryConditionalModel()).ToListAsync();
+        var settings = await TableWhere(parameterQueryCriteria.ApplyQueryConditionalModel()).ToListAsync();
         List<ExportBase> settingExports = new List<ExportBase>();
         settingExports.AddRange(settings.Select(x => new SettingExport
         {

@@ -33,7 +33,7 @@ public class EmailAccountVo : BaseEntityDto<long>
     /// <summary>
     /// 电子邮件用户名
     /// </summary>
-    public string Username { get; set; }
+    public string UserName { get; set; }
 
     /// <summary>
     /// 电子邮件密码

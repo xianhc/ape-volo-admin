@@ -8,6 +8,10 @@
     <ProjectReference Include="..\Ape.Volo.SharedModel\Ape.Volo.SharedModel.csproj" />
     <ProjectReference Include="..\Ape.Volo.ViewModel\Ape.Volo.ViewModel.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Test\IApeDataService.cs" />
+  </ItemGroup>
   
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DocumentationFile>Ape.Volo.IBusiness.xml</DocumentationFile>
