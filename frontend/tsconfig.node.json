@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "composite": true,
+    "skipLibCheck": true,
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "types": ["node"]
+  },
+  "include": [
+    "*.config.ts",
+    "*.js",
+    "componentNameMap.ts",
+    "iconAssets.ts",
+    "openWebsite.ts",
+    "welcome.ts"
+  ]
+}

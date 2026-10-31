@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>Ape.Volo.Entity</RootNamespace>
+    <Nullable>enable</Nullable>
+    <!-- SqlSugar CodeFirst 从程序集同目录的 XML 文档读取表和字段注释，Debug/Release 均需生成。 -->
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="SqlSugarCore" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Ape.Volo.Shared\Ape.Volo.Shared.csproj" />
+  </ItemGroup>
+
+</Project>

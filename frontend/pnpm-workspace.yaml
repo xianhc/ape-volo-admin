@@ -1,0 +1,15 @@
+allowBuilds:
+  # 需要执行 install 脚本：安装/链接平台原生二进制
+  esbuild: true
+  '@parcel/watcher': true
+  # 需要执行 install 脚本：按当前 Vue 版本切换 vue2 / vue3 入口文件
+  vue-demi: true
+  # postinstall 仅打印赞助信息，无需执行
+  core-js: false
+
+minimumReleaseAgeExclude:
+  - eslint@10.14.0
+
+overrides:
+  # eslint-plugin-vue 传递依赖的老版本存在 ReDoS（GHSA-rj75-hqrm-r3gf），7.1.6 起修复
+  postcss-selector-parser: ^7.1.6

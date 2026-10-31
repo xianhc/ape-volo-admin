@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>%(DocumentTitle)</title>
+    <link rel="stylesheet" type="text/css" href="./swagger-ui.css">
+    <link rel="icon" type="image/png" href="./favicon-32x32.png" sizes="32x32" />
+    <link rel="icon" type="image/png" href="./favicon-16x16.png" sizes="16x16" />
+    <style>
+        html {
+            box-sizing: border-box;
+            overflow: -moz-scrollbars-vertical;
+            overflow-y: scroll;
+        }
+
+        *,
+        *:before,
+        *:after {
+            box-sizing: inherit;
+        }
+
+        body {
+            margin: 0;
+            background: #fafafa;
+        }
+
+    </style>
+    %(HeadContent)
+</head>
+
+<body>
+    <div id="swagger-ui"></div>
+
+    <!-- Workaround for https://github.com/swagger-api/swagger-editor/issues/1371 -->
+    <script>
+        if (window.navigator.userAgent.indexOf("Edge") > -1) {
+            console.log("Removing native Edge fetch in favor of swagger-ui's polyfill")
+            window.fetch = undefined;
+        }
+    </script>
+
+    <script src="./swagger-ui-bundle.js"></script>
+    <script src="./swagger-ui-standalone-preset.js"></script>
+    <script>
+        function KeepRequestSchemaPlugin() {
+            return {
+                wrapComponents: {
+                    RequestBody: function (Original, system) {
+                        var React = system.React;
+                        var nextId = 0;
+                        return class RequestBodyWithSchema extends React.Component {
+                            constructor(props) {
+                                super(props);
+                                this.state = { activeTab: "edit" };
+                                this.panelId = "request-body-schema-" + (++nextId);
+                            }
+
+                            componentDidUpdate(previousProps) {
+                                if (this.props.isExecute && !previousProps.isExecute) {
+                                    this.setState({ activeTab: "edit" });
+                                }
+                            }
+
+                            render() {
+                                var props = this.props;
+                                var editor = React.createElement(Original, props);
+                                if (!props.isExecute || !props.requestBody) return editor;
+
+                                var content = props.requestBody.get("content");
+                                var contentType = props.contentType || (content && content.keySeq().first());
+                                var schema = content && content.getIn([contentType, "schema"]);
+                                if (!schema || !schema.size) return editor;
+
+                                var activeTab = this.state.activeTab;
+                                var panelId = this.panelId;
+                                var ModelWrapper = props.getComponent("ModelWrapper");
+                                var tabs = [["edit", "Edit Value"], ["schema", "Schema"]];
+
+                                return React.createElement("div", { className: "model-example request-body-tabs" },
+                                    React.createElement("ul", { className: "tab", role: "tablist" },
+                                        tabs.map(([name, label]) => React.createElement("li", {
+                                            key: name,
+                                            className: "tabitem" + (activeTab === name ? " active" : ""),
+                                            role: "presentation"
+                                        }, React.createElement("button", {
+                                            type: "button",
+                                            className: "tablinks",
+                                            id: panelId + "-" + name + "-tab",
+                                            role: "tab",
+                                            "aria-selected": activeTab === name,
+                                            "aria-controls": panelId + "-" + name,
+                                            onClick: () => this.setState({ activeTab: name })
+                                        }, label)))),
+                                    // 两个面板保持挂载，切换 Schema 不会重建编辑器或丢失未完成的正文。
+                                    React.createElement("div", {
+                                        id: panelId + "-edit",
+                                        role: "tabpanel",
+                                        "aria-labelledby": panelId + "-edit-tab",
+                                        hidden: activeTab !== "edit",
+                                        style: { display: activeTab === "edit" ? "block" : "none" }
+                                    }, editor),
+                                    React.createElement("div", {
+                                        id: panelId + "-schema",
+                                        role: "tabpanel",
+                                        "aria-labelledby": panelId + "-schema-tab",
+                                        hidden: activeTab !== "schema",
+                                        style: { display: activeTab === "schema" ? "block" : "none" },
+                                        tabIndex: 0
+                                    }, React.createElement(ModelWrapper, {
+                                        schema: schema,
+                                        getComponent: props.getComponent,
+                                        getConfigs: props.getConfigs,
+                                        specSelectors: props.specSelectors,
+                                        expandDepth: 2,
+                                        specPath: props.specPath.push("content", contentType),
+                                        includeWriteOnly: true
+                                    })));
+                            }
+                        };
+                    }
+                }
+            };
+        }
+
+        window.onload = function () {
+            var configObject = JSON.parse('%(ConfigObject)');
+            var oauthConfigObject = JSON.parse('%(OAuthConfigObject)');
+
+            // If validatorUrl is not explicitly provided, disable the feature by setting to null
+            if (!configObject.hasOwnProperty("validatorUrl"))
+                configObject.validatorUrl = null
+
+            // If oauth2RedirectUrl isn't specified, use the built-in default
+            if (!configObject.hasOwnProperty("oauth2RedirectUrl"))
+                configObject.oauth2RedirectUrl = window.location.href.replace("index.html", "oauth2-redirect.html").split('#')[0];
+
+            // Apply mandatory parameters
+            configObject.dom_id = "#swagger-ui";
+            configObject.presets = [SwaggerUIBundle.presets.apis, SwaggerUIStandalonePreset];
+            configObject.plugins = (configObject.plugins || []).concat([KeepRequestSchemaPlugin]);
+            configObject.layout = "StandaloneLayout";
+
+            // Begin Swagger UI call region
+
+            const ui = SwaggerUIBundle(configObject);
+
+            ui.initOAuth(oauthConfigObject);
+
+            // End Swagger UI call region
+
+            window.ui = ui
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,270 @@
+@use '@/style/main.scss';
+@use '@/style/reset';
+
+.layout-main {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  width: 0;
+  min-width: 0;
+  min-height: 0;
+  height: 100%;
+  padding-inline: 0;
+}
+
+.layout-content {
+  flex: 1;
+  min-height: 0;
+  min-width: 0;
+  overflow: auto;
+  padding-inline: var(--app-space-3);
+}
+
+.layout-route {
+  min-height: 100%;
+  height: 100%;
+  color: var(--app-text-primary);
+  background: var(--app-canvas);
+}
+
+/*
+ * 页面组件是多根节点（表格外壳 + 表单面板）时，<transition> 会自动包一层无 class 的 div。
+ * 这一层不继承高度，会让页面根元素的 height:100% 失效、表格塌缩成一行，
+ * 因此统一把 layout-route 的直接子元素撑满。
+ */
+.layout-route > div {
+  height: 100%;
+  min-height: 0;
+}
+
+.layout-footer {
+  flex: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: var(--app-space-2) var(--app-space-3);
+  color: var(--app-text-secondary);
+  background: var(--app-surface);
+  border-top: 1px solid var(--app-border);
+}
+
+.ape-volo-bg {
+  color: var(--app-text-secondary);
+  background: var(--app-canvas);
+}
+
+.ape-volo-content {
+  color: var(--app-text-primary);
+  background: var(--app-surface);
+}
+
+.navigation-surface {
+  color: var(--app-text-primary);
+  background: var(--app-surface);
+}
+
+.sidebar-column,
+.dual-primary-column {
+  border-right: 1px solid var(--app-border);
+}
+
+.sidebar-column {
+  padding-inline: var(--app-space-2);
+}
+
+.sidebar-column.is-collapsed {
+  padding-inline: 0;
+}
+
+.top-navigation {
+  border-bottom: 1px solid var(--app-border);
+}
+
+.navigation-surface .el-menu {
+  border: 0;
+  background: transparent;
+}
+
+.navigation-surface .el-menu-item:focus-visible,
+.navigation-surface .el-sub-menu__title:focus-visible {
+  outline: 2px solid var(--el-color-primary);
+  outline-offset: -2px;
+}
+
+.ape-volo-btn-list {
+  @apply mb-3 flex items-center;
+}
+
+.ape-volo-table {
+  margin-block: var(--app-space-2);
+  padding: var(--app-surface-padding);
+  color: var(--app-text-primary);
+  background: var(--app-surface);
+  border-radius: var(--app-radius-surface);
+
+  .el-table {
+    border: 1px solid var(--app-border);
+    border-radius: var(--app-radius-surface);
+
+    tr {
+      th {
+        background: var(--app-surface);
+
+        .cell {
+          color: var(--app-text-primary);
+          line-height: 36px;
+        }
+      }
+    }
+
+    .el-table__row {
+      td {
+        background: var(--app-surface);
+
+        .cell {
+          color: var(--app-text-secondary);
+          line-height: 32px;
+        }
+      }
+    }
+    tr {
+      th {
+        &.is-leaf {
+          background: var(--app-surface-subtle) !important;
+        }
+      }
+    }
+  }
+}
+
+.el-button {
+  font-weight: 400 !important;
+}
+
+.sign-out-confirmation {
+  z-index: 21000 !important;
+}
+
+.el-drawer__header {
+  margin-bottom: 0 !important;
+  padding-top: 16px !important;
+  padding-bottom: 16px !important;
+  border: 0;
+  border-bottom: 1px solid var(--app-border);
+}
+
+.el-form--inline {
+  .el-form-item {
+    & > .el-input,
+    .el-cascader,
+    .el-select,
+    .el-date-editor,
+    .el-autocomplete {
+      @apply w-52;
+    }
+  }
+}
+
+.el-dropdown {
+  @apply overflow-hidden;
+}
+
+.el-pagination {
+  margin-top: var(--app-space-5);
+
+  .btn-prev,
+  .btn-next {
+    border: 1px solid var(--app-border);
+    border-radius: var(--ape-volo-radius);
+  }
+
+  .el-pager {
+    li {
+      margin-inline: var(--app-space-1);
+      color: var(--app-text-secondary);
+      font-size: 13px;
+      border: 1px solid var(--app-border);
+      border-radius: var(--ape-volo-radius);
+    }
+  }
+}
+
+.el-menu {
+  li {
+    @apply my-1;
+  }
+}
+
+.el-menu--vertical {
+  .el-menu-item {
+    border-radius: 2px;
+    &.is-active {
+      background-color: var(--app-menu-active-bg) !important;
+      color: var(--app-menu-active-text) !important;
+    }
+  }
+}
+
+.el-sub-menu.el-sub-menu__hide-arrow {
+  height: 44px;
+}
+
+.el-tabs__header {
+  margin: 0 0 1px !important;
+}
+
+.el-sub-menu.is-active {
+  > .el-sub-menu__title {
+    background-color: transparent !important;
+    color: var(--app-menu-active-text) !important;
+  }
+}
+
+.el-sub-menu__title.el-tooltip__trigger,
+.el-menu-item .el-menu-tooltip__trigger {
+  justify-content: center;
+}
+
+.el-menu--horizontal .el-menu .el-sub-menu__title {
+  justify-content: flex-start;
+}
+
+.el-input__wrapper:hover,
+.el-input.is-hover .el-input__wrapper {
+  box-shadow: 0 0 0 1px var(--el-color-primary) !important;
+  border-color: var(--el-color-primary) !important;
+}
+
+.el-select__wrapper:hover,
+.el-select.is-hover .el-select__wrapper {
+  box-shadow: 0 0 0 1px var(--el-color-primary) !important;
+  border-color: var(--el-color-primary) !important;
+}
+
+.el-radio:hover,
+.radio.is-hover {
+  box-shadow: var(--el-color-primary) !important;
+  border-color: var(--el-color-primary) !important;
+}
+
+.el-button,
+.el-radio,
+.el-input__wrapper,
+.el-select__wrapper,
+.el-tabs__item {
+  border-radius: var(--ape-volo-radius) !important;
+}
+
+.table-managed-view {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  min-width: 0;
+  box-sizing: border-box;
+}
+.table-managed-view > .table-page {
+  flex: 1;
+  min-height: 0;
+}
+

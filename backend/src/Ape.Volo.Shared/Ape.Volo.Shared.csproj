@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>Ape.Volo.Shared</RootNamespace>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>Ape.Volo.Shared.xml</DocumentationFile>
+  </PropertyGroup>
+
+  <!--
+    契约基础层：分页/结果模型、查询条件特性与枚举。
+    刻意不引任何第三方包——契约必须能被独立分发给前端 SDK / 其他宿主。
+  -->
+</Project>

@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>Ape.Volo.Application.Contracts</RootNamespace>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>Ape.Volo.Application.Contracts.xml</DocumentationFile>
+  </PropertyGroup>
+
+  <!--
+    契约层只依赖 Shared（纯模型 + 查询条件），不依赖 Common。
+    这样契约程序集可以独立分发给前端 SDK / 其他宿主，不会连带 ORM、Excel、图像、日志等重包。
+    Newtonsoft.Json 仅用于 VO/DTO 上的 [JsonProperty] 字段名映射。
+  -->
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Ape.Volo.Shared\Ape.Volo.Shared.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,13 @@
+<Project>
+
+  <!--
+    所有项目（src/ 与 tests/）的公共编译设置。
+    注意：本文件在项目文件之前导入，项目内的同名属性会覆盖这里的值。
+  -->
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+</Project>

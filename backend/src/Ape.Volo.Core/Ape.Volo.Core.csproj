@@ -1,0 +1,31 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <!--
+    本项目不引用 Microsoft.AspNetCore.App：Web 宿主相关的
+    IWebHostEnvironment / HttpContext 与请求作用域解析全部留在 Ape.Volo.Web。
+  -->
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Authorization" />
+    <PackageReference Include="Autofac.Extensions.DependencyInjection" />
+    <PackageReference Include="Autofac.Extras.DynamicProxy" />
+    <!-- 事务拦截器改为 IAsyncInterceptor，避免同步等待异步方法 -->
+    <PackageReference Include="Castle.Core.AsyncInterceptor" />
+    <PackageReference Include="Mapster" />
+    <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" />
+    <PackageReference Include="Serilog" />
+    <PackageReference Include="Serilog.Sinks.Async" />
+    <PackageReference Include="SqlSugarCore" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Ape.Volo.Common\Ape.Volo.Common.csproj" />
+    <ProjectReference Include="..\Ape.Volo.Entity\Ape.Volo.Entity.csproj" />
+    <ProjectReference Include="..\Ape.Volo.Application.Contracts\Ape.Volo.Application.Contracts.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,29 @@
+﻿<Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+    <File Path=".gitignore" />
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Packages.props" />
+    <File Path="LICENSE" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="src/Ape.Volo.Web/Ape.Volo.Web.csproj" />
+    <Project Path="src/Ape.Volo.Application/Ape.Volo.Application.csproj" />
+    <Project Path="src/Ape.Volo.Application.Contracts/Ape.Volo.Application.Contracts.csproj" />
+    <Project Path="src/Ape.Volo.Common/Ape.Volo.Common.csproj" />
+    <Project Path="src/Ape.Volo.Core/Ape.Volo.Core.csproj" />
+    <Project Path="src/Ape.Volo.Entity/Ape.Volo.Entity.csproj" />
+    <Project Path="src/Ape.Volo.Shared/Ape.Volo.Shared.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Ape.Volo.Web.Tests/Ape.Volo.Web.Tests.csproj" />
+    <Project Path="tests/Ape.Volo.Application.Tests/Ape.Volo.Application.Tests.csproj" />
+    <Project Path="tests/Ape.Volo.Common.Tests/Ape.Volo.Common.Tests.csproj" />
+    <Project Path="tests/Ape.Volo.Core.Tests/Ape.Volo.Core.Tests.csproj" />
+  </Folder>
+</Solution>

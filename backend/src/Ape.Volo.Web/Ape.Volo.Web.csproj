@@ -1,0 +1,63 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <Version>3.6.1</Version>
+    <AssemblyVersion>3.6.1.0</AssemblyVersion>
+    <FileVersion>3.6.1.0</FileVersion>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>Ape.Volo.Web.xml</DocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="index.html" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="index.html" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AspNetCoreRateLimit" />
+    <PackageReference Include="Autofac.Extensions.DependencyInjection" />
+    <PackageReference Include="Autofac.Extras.DynamicProxy" />
+    <!-- 导出（ExcelHelper）与图像（CaptchaImageHelper / ImgHelper）只在宿主层使用，从 Common 外迁而来 -->
+    <PackageReference Include="ClosedXML" />
+    <PackageReference Include="IP2Region.Net" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" />
+    <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" />
+    <PackageReference Include="MiniProfiler.AspNetCore.Mvc" />
+    <PackageReference Include="Quartz" />
+    <PackageReference Include="Serilog.AspNetCore" />
+    <PackageReference Include="Elastic.Serilog.Sinks" />
+    <PackageReference Include="Shyjus.BrowserDetector" />
+    <PackageReference Include="SkiaSharp" />
+    <PackageReference Include="SkiaSharp.NativeAssets.Linux.NoDependencies" />
+    <PackageReference Include="Swashbuckle.AspNetCore" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Filters" />
+  </ItemGroup>
+
+  <!--
+    宿主直接使用的类型必须显式声明引用，不靠传递依赖：
+    Common（HasPermAttribute / GlobalConstants / IdHelper / BCryptHelper / 扩展方法）、
+    Entity（SqlSugarExtensions 的 ICreateByEntity / ISoftDeletedEntity）、
+    Shared（OperateResult / PagedResultDto / ExportBase 等通用模型与枚举）。
+  -->
+  <ItemGroup>
+    <ProjectReference Include="..\Ape.Volo.Application\Ape.Volo.Application.csproj" />
+    <ProjectReference Include="..\Ape.Volo.Application.Contracts\Ape.Volo.Application.Contracts.csproj" />
+    <ProjectReference Include="..\Ape.Volo.Common\Ape.Volo.Common.csproj" />
+    <ProjectReference Include="..\Ape.Volo.Core\Ape.Volo.Core.csproj" />
+    <ProjectReference Include="..\Ape.Volo.Entity\Ape.Volo.Entity.csproj" />
+    <ProjectReference Include="..\Ape.Volo.Shared\Ape.Volo.Shared.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="resources\db\**\*.json" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <None Remove="resources\ip\ip2region.xdb" />
+    <Content Include="resources\ip\ip2region.xdb" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+  </ItemGroup>
+</Project>

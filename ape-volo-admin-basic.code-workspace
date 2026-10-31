@@ -1,0 +1,28 @@
+{
+  "folders": [
+    {
+      "name": "后端",
+      "path": "./backend",
+    },
+    {
+      "name": "前端",
+      "path": "./frontend",
+    },
+    {
+      "name": "工程",
+      "path": ".",
+    },
+  ],
+  "settings": {
+    "dotnet.defaultSolution": "后端/Ape.Volo.Admin.slnx",
+    "files.exclude": {
+      "frontend": true,
+      "backend": true,
+    },
+    "search.exclude": {
+      "**/bin/**": true,
+      "**/obj/**": true,
+      "**/dist/**": true,
+    },
+  },
+}

@@ -1,132 +1,245 @@
-## 📚 项目简介
+<p align="center">
+  <img src="frontend/public/logo.png" width="88" alt="Ape-Volo-Admin Logo" />
+</p>
 
-Ape-Volo-Admin 是一套面向企业场景的 **权限管理 / 后台管理系统解决方案**，帮助你快速搭建：用户、角色、菜单、接口权限、数据权限等通用后台能力，并在此基础上进行二次开发。
+<h1 align="center">Ape-Volo-Admin</h1>
 
-基于 **.NET 8 + SqlSugar + Vue 3 + Element Plus + Vite** 构建，默认开箱即用，同时保留足够的扩展空间，适合绝大多数 **.NET/C#** 项目落地。
+<p align="center">基于 .NET 10、Vue 3 与 TypeScript 的前后端分离后台管理系统</p>
+<p align="center">集成认证授权、组织管理与常用业务模块，为中后台业务开发提供基础。</p>
 
-- 通用能力完备：认证授权、审计日志、缓存、任务调度、限流、数据权限、国际化等
-- 架构清晰可维护：分层模块化（接口层 / 业务层 / 基础设施层…）便于扩展与替换
-- 低侵入易集成：核心能力以通用方式提供，尽量减少对业务代码的“硬绑定”
+<p align="center">
+  <img src="https://img.shields.io/badge/.NET-10-512BD4?style=flat-square" alt=".NET 10" />
+  <img src="https://img.shields.io/badge/Vue-3.5-42b883?style=flat-square" alt="Vue 3.5" />
+  <img src="https://img.shields.io/badge/TypeScript-5.9-3178C6?style=flat-square" alt="TypeScript 5.9" />
+  <img src="https://img.shields.io/badge/Element_Plus-2-409EFF?style=flat-square" alt="Element Plus 2" />
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-Apache--2.0-blue?style=flat-square" alt="Apache License 2.0" /></a>
+</p>
 
-## 🌐 在线体验
+<p align="center">
+  <a href="#版权与授权">版权与授权</a> ·
+  <a href="https://www.apevolo.com">官网与在线文档</a> ·
+  <a href="https://vip.apevolo.com">在线体验</a> ·
+  <a href="#快速开始">快速开始</a> ·
+  <a href="docs/README.md">开发文档</a> ·
+  <a href="https://gitee.com/xianhc/ape-volo-admin">Gitee</a>
+</p>
 
-- 系统官网：<a href="https://www.apevolo.com" target="_blank" rel="noopener noreferrer">https://www.apevolo.com</a>
-- 系统预览：<a href="https://vip.apevolo.com" target="_blank" rel="noopener noreferrer">https://vip.apevolo.com</a>
-- 体验账号：`apevolo / 123456`
+## 项目文档
 
-## 💒 代码仓库
+- **系统官网 / 在线文档**：[https://www.apevolo.com](https://www.apevolo.com)
+- **仓库开发文档**：[开发指南](docs/README.md) · [岗位模块示例](docs/examples/README.md)
+- **软件著作权**：[查看证书](https://www.apevolo.com/copyright.pdf)
 
-### 后端 / API
+## 在线演示
 
-- GitHub：https://www.github.com/xianhc/ape-volo-admin
-- Gitee：https://www.gitee.com/xianhc/ape-volo-admin
+- **系统预览**：[https://vip.apevolo.com](https://vip.apevolo.com)
+- **体验账号**：`apevolo`
+- **体验密码**：`123456`
 
-### 前端 / Web
+## 项目介绍
 
-- GitHub：https://www.github.com/xianhc/ape-volo-web
-- Gitee：https://www.gitee.com/xianhc/ape-volo-web
+Ape-Volo-Admin 是一套基于 .NET 10、Vue 3 和 TypeScript 的前后端分离后台管理系统，面向管理后台与内部业务系统开发。项目内置用户、角色、菜单、部门和岗位管理，集成认证授权、数据权限、文件管理、任务调度、邮件与日志等常用功能。开发者可以复用现有业务模块及 CRUD、表格、表单组件，扩展自己的业务功能。
 
-## ⚙️ 模块说明
+### 项目特点
 
-| #   | 模块功能 | 项目文件                | 说明                                      |
-| --- | -------- | ----------------------- | ----------------------------------------- |
-| 1   | 接口层   | Web API / 控制器层      | 对外提供 REST API、鉴权、限流、审计等入口 |
-| 2   | 业务层   | 业务服务实现层          | 业务编排、领域逻辑、应用服务              |
-| 3   | 通用基础 | 工具与扩展库            | 通用工具类、扩展方法、文件/图像处理等     |
-| 4   | 核心能力 | 核心组件层              | AOP 拦截、系统配置、App 服务等            |
-| 5   | 数据实体 | 实体映射层              | 数据库实体映射、基础实体定义              |
-| 6   | 事件总线 | EventBus 组件           | 事件发布/订阅、集成消息中间件             |
-| 7   | 业务契约 | 业务接口定义层          | 业务服务接口、对外契约定义                |
-| 8   | 基础设施 | Infrastructure 扩展层   | 依赖注入、认证/授权扩展、中间件等         |
-| 9   | 仓储层   | Repository / UoW 层     | 数据访问封装、事务、仓储扩展              |
-| 10  | 共享模型 | DTO / Query / Validator | 请求 DTO、查询参数、校验器等              |
-| 11  | 作业调度 | Job / Scheduler 层      | 定时任务、任务服务实现                    |
-| 12  | 视图模型 | ViewModel 层            | UI/展示层对象、前后端交互模型             |
+- **权限控制**：角色、菜单、按钮权限与五种数据范围。
+- **契约驱动**：服务契约生成 HTTP 接口与 Swagger 文档。
+- **会话认证**：JWT、令牌自动刷新、验证码与登录失败锁定。
+- **界面配置**：7 种导航布局、主题切换、多标签页与移动端适配。
+- **业务复用**：CRUD、分页、表单与导出组件，附岗位模块开发示例。
 
-## 🚀 系统特性
+## 功能模块
 
-- 全面采用 `async/await` 异步编程
-- 基于「仓储 + 服务 + 接口」组织方式，构建 RESTful 风格 API
-- 使用 SqlSugar ORM（CodeFirst），封装 `BaseService` 数据库基础操作
-- 同时支持 Redis 与 `DistributedCache`，并扩展 SqlSugar 二级缓存
-- 使用 Autofac IOC 容器，实现服务批量自动注入
-- 集成 Swagger UI 生成 WebAPI 文档
-- 集成 Serilog 日志（数据库 / 控制台 / 文件 / Elasticsearch）
-- 封装 Quartz.NET 调度中心，支持定时任务
-- 统一异常过滤、审计过滤：集中记录系统异常与接口请求
-- 缓存拦截器：对业务方法结果进行缓存处理
-- 事务拦截器：对业务方法数据库操作自动事务处理
-- 配置集中化：封装 `appsettings.json` 读取与管理
-- 自定义鉴权：重写 ASP.NET Core `AuthorizationHandler` 实现自定义规则
-- 多数据库支持：MySql、SqlServer、Sqlite、Oracle、PostgreSQL、达梦、神通、GaussDB 等
-- 消息队列支持：RabbitMQ、RedisMQ
-- CORS 跨域、接口限流
-- 数据能力：读写分离、多库、分表
-- 多租户：ID 隔离、库隔离
-- 数据权限：全部 / 本人 / 本部门 / 本部门及以下 / 自定义
-- 数据字典、自定义设置、国际化
+| 模块       | 已实现功能                                           |
+| ---------- | ---------------------------------------------------- |
+| 权限与组织 | 用户、角色、菜单、部门、岗位、菜单授权、数据范围配置 |
+| 系统管理   | 字典与字典项、系统参数、应用密钥、文件上传与文件记录 |
+| 运维管理   | 定时任务配置、启停与执行、服务器监控                 |
+| 日志管理   | 操作日志、异常日志、任务执行日志                     |
+| 邮件管理   | 邮件账户、邮件模板、发送队列                         |
+| 会话管理   | 在线用户查询、导出与强制下线，需要启用 Redis         |
+| 个人中心   | 个人资料、头像、密码、邮箱与界面偏好                 |
 
-## ⚡ 快速开始
+## 技术栈
 
-### 环境准备
+| 层次       | 主要技术                                                    |
+| ---------- | ----------------------------------------------------------- |
+| 后端框架   | .NET 10、ASP.NET Core、Autofac                              |
+| 数据与缓存 | SqlSugar、SQLite / MySQL / SQL Server、进程内缓存 / Redis   |
+| 认证与安全 | JWT、BCrypt、RSA、AspNetCoreRateLimit                       |
+| 日志与调度 | Serilog、Quartz.NET，可选 Elasticsearch 日志输出            |
+| 接口与工具 | Swashbuckle、Newtonsoft.Json、Mapster、ClosedXML、SkiaSharp |
+| 前端框架   | Vue 3.5、TypeScript 5.9、Vite 6                             |
+| 界面与样式 | Element Plus、UnoCSS、Sass                                  |
+| 状态与请求 | Pinia、Vue Router、Axios                                    |
+| 图表       | ECharts                                                     |
 
-- .NET SDK：`8.x`
-- 推荐 IDE：JetBrains Rider / Visual Studio / VS Code
+后端依赖版本集中维护在 [Directory.Packages.props](backend/Directory.Packages.props)，前端依赖与脚本维护在 [package.json](frontend/package.json)。
 
-### 运行（默认 Sqlite + DistributedCache）
+## 快速开始
 
-1. 编译通过后启动后端 API 服务（解决方案中的 WebAPI 项目）
-2. 首次运行会自动创建数据库表，并初始化基础数据
+### 1. 环境要求
 
-可选命令行方式启动（在仓库根目录执行）：
+| 工具     | 项目要求                     |
+| -------- | ---------------------------- |
+| .NET SDK | 10，后端目标框架为 `net10.0` |
+| Node.js  | `^24.0.0` 或 `^26.0.0`       |
+| pnpm     | 12，项目指定 `12.15.0`       |
+
+前端版本约束与命令见 [package.json](frontend/package.json)，后端目标框架见 [Directory.Build.props](backend/Directory.Build.props)。
+
+通用配置使用 SQLite 和进程内缓存；启动默认采用 `Development` 环境，环境文件会覆盖通用配置，当前开发配置使用 MySQL 主库和 SQLite 日志库。启动前核对 [通用配置](backend/src/Ape.Volo.Web/appsettings.json) 与 [开发配置](backend/src/Ape.Volo.Web/appsettings.Development.json)，确认目标数据库可用；需要使用 SQLite 主库时，同步调整主库 ID 与启用的连接项。数据库初始化默认开启，首次启动后端会创建表结构并写入种子数据，配置加载与初始化规则见 [后端开发](docs/backend.md#初始化与配置)。
+
+### 2. 检查密码传输密钥
+
+后端通过 `Rsa:PrivateKeyPath` 读取 **4096 位 PKCS#8 PEM 私钥**，前端使用配对公钥加密密码。启动前确认以下文件存在且配对：
+
+| 文件                                                     | 用途                                        |
+| -------------------------------------------------------- | ------------------------------------------- |
+| `backend/src/Ape.Volo.Web/.secrets/password-private.pem` | 后端私钥，默认路径相对于 Web 项目内容根目录 |
+| `frontend/src/assets/.secrets/password-public.pem`       | 前端公钥                                    |
+
+私钥缺失或格式不正确会阻止后端启动。现有密钥用于开发和演示，更换私钥后需同步替换前端公钥。
+
+### 3. 启动后端
+
+在仓库根目录执行：
 
 ```bash
-dotnet restore
-dotnet run --project .\Ape.Volo.Api\Ape.Volo.Api.csproj
+dotnet restore backend/Ape.Volo.Admin.slnx
+dotnet run --project backend/src/Ape.Volo.Web/Ape.Volo.Web.csproj
 ```
 
-## ⭐️ 支持作者
+### 4. 启动前端
 
-如果这个项目对你有帮助，欢迎在 GitHub 或 Gitee 点个 Star：
+另开终端，在仓库根目录执行：
 
-- GitHub：https://www.github.com/xianhc/ape-volo-admin
-- Gitee：https://www.gitee.com/xianhc/ape-volo-admin
+```bash
+cd frontend
+pnpm install
+pnpm dev
+```
 
-## 🙋 反馈交流
+### 5. 访问系统
 
-### QQ群：839263566
+| 服务       | 默认本地地址                                                                                 |
+| ---------- | -------------------------------------------------------------------------------------------- |
+| 管理界面   | [http://localhost:9001](http://localhost:9001)                                               |
+| 后端服务   | [http://localhost:9002](http://localhost:9002)                                               |
+| Swagger UI | [http://localhost:9002/swagger/api/index.html](http://localhost:9002/swagger/api/index.html) |
 
-| QQ 群 |
-| :---: |
+本地种子数据的初始账号为 `apevolo`，密码为 `123456`。前端端口与后端代理配置见 [frontend/.env.development](frontend/.env.development)，后端监听地址见 [launchSettings.json](backend/src/Ape.Volo.Web/Properties/launchSettings.json)；修改后端端口时需同步调整前端代理并重启前端服务。
 
-| <img width="150" src="https://www.apevolo.com/contact/wechat/20230723172503.jpg">
+### VS Code 工作区
 
-### 微信群
+打开根目录的 [ape-volo-admin-basic.code-workspace](ape-volo-admin-basic.code-workspace)，即可按 **前端 / 后端 / 工程** 分组浏览项目。
 
-| 微信 |
-| :--: |
+## 目录结构
 
-| <img width="150" src="https://www.apevolo.com/contact/wechat/20230723172451.jpg">
+```text
+ape-volo-admin/
+├── backend/
+│   ├── src/
+│   │   ├── Ape.Volo.Web/                    HTTP 宿主与基础设施
+│   │   │   ├── Controllers/                 登录、刷新、文件上传等显式接口
+│   │   │   ├── DynamicApi/                  契约扫描、动态路由与参数绑定
+│   │   │   ├── Extensions/                  服务注册、认证与中间件配置
+│   │   │   ├── resources/db/                初始化种子数据，不对外公开
+│   │   │   ├── resources/ip/                IP 归属地离线库，不对外公开
+│   │   │   └── wwwroot/                     静态资源与上传文件
+│   │   ├── Ape.Volo.Application.Contracts/  服务接口、DTO 与业务端口
+│   │   ├── Ape.Volo.Application/            业务服务与对象映射
+│   │   ├── Ape.Volo.Core/                   仓储、事务、缓存、切面与初始化
+│   │   ├── Ape.Volo.Entity/                 实体、审计字段与数据范围标记
+│   │   ├── Ape.Volo.Common/                 特性、转换器与工具
+│   │   └── Ape.Volo.Shared/                 枚举、异常与通用模型
+│   ├── tests/
+│   │   ├── Ape.Volo.Web.Tests/              控制器路由与 JSON 契约基础测试
+│   │   ├── Ape.Volo.Application.Tests/      服务接口基础测试
+│   │   ├── Ape.Volo.Core.Tests/             对象映射基础测试
+│   │   └── Ape.Volo.Common.Tests/           序列化基础测试
+│   ├── Ape.Volo.Admin.slnx                  后端解决方案
+│   ├── Directory.Build.props               目标框架与构建设置
+│   └── Directory.Packages.props            NuGet 版本管理
+├── frontend/
+│   ├── src/
+│   │   ├── api/                            接口封装与传输类型
+│   │   ├── views/                          业务页面与页面私有组件
+│   │   ├── components/                     公共组件与 CRUD
+│   │   ├── composables/                    表格、表单与导出逻辑
+│   │   ├── services/
+│   │   │   ├── http/                       请求处理与错误反馈
+│   │   │   ├── session/                    登录、令牌刷新与会话管理
+│   │   │   ├── appearance/                 主题、布局与界面偏好
+│   │   │   ├── navigation/                 导航与标签页逻辑
+│   │   │   └── logging/                    客户端诊断与日志上报
+│   │   ├── pinia/                          全局状态
+│   │   ├── router/                         路由配置
+│   │   ├── directive/                      权限等自定义指令
+│   │   ├── plugins/                        插件与应用能力注册
+│   │   ├── assets/                         图片、图标与前端公钥
+│   │   ├── style/                          全局样式与设计变量
+│   │   ├── utils/                          通用工具
+│   │   └── main.ts                         应用入口
+│   ├── public/                             公共静态资源
+│   ├── tests/                              部门树与菜单链接基础测试
+│   ├── .env.development                    开发端口与代理配置
+│   ├── package.json                        依赖与开发脚本
+│   └── vite.config.ts                      开发服务与构建配置
+├── docs/
+│   ├── backend.md                          后端开发
+│   ├── frontend.md                         前端开发
+│   ├── contract.md                         接口契约
+│   ├── decisions.md                        架构约定
+│   └── examples/                           岗位模块示例
+├── AGENTS.md                               Agent 工作约定
+├── ape-volo-admin-basic.code-workspace      VS Code 工作区
+├── README.md                               项目说明
+└── LICENSE                                 许可证
+```
 
-添加微信，备注"加群"
+## 开发文档
 
-## 🤟 捐赠
+| 文档                                | 内容                                   |
+| ----------------------------------- | -------------------------------------- |
+| [开发入口](docs/README.md)          | 工作区配置、文档索引与任务查阅顺序     |
+| [后端开发](docs/backend.md)         | 分层职责、数据访问、事务、缓存与配置   |
+| [前端开发](docs/frontend.md)        | 请求、会话、组件与状态管理             |
+| [接口契约](docs/contract.md)        | 动态路由、请求参数、响应格式与字段类型 |
+| [架构约定](docs/decisions.md)       | 接口代理、事务、数据范围等实现约定     |
+| [岗位示例](docs/examples/README.md) | 已有业务模块的前后端调用关系           |
 
-如果你觉得这个项目对你有帮助，你可以请作者喝杯饮料 🍹 <a href="https://www.apevolo.com/donate/" target="_blank" rel="noopener noreferrer">点我</a>
+## 贡献指南
 
-## 💡 其他说明
+欢迎提交问题、功能建议、文档改进和代码修复。
 
-### Go 版本（基于 .NET 版本的复刻实现）
+### Issue 规范
 
-Go 版本属于“无心插柳”的产物，更多是出于个人对编程语言的兴趣（Go 语言爱好/练手）而做的复刻实现。
+- 提交前先搜索已有 Issue，避免重复反馈。
+- Bug 请提供运行环境、复现步骤、预期与实际结果，以及必要的错误信息。
+- 功能建议请说明使用场景、要解决的问题和预期行为。
+- 日志、截图和示例配置请移除密码、令牌、密钥等敏感信息。
 
-它是基于本仓库 **.NET 版本的功能与接口设计** 进行复刻的，整体以 **.NET 版本为主线**；如两者出现差异，请以 **.NET 版本** 为准。
+### Pull Request 规范
 
-- GitHub：https://www.github.com/xianhc/ape-volo-admin-go
-- Gitee：https://www.gitee.com/xianhc/ape-volo-admin-go
+- Fork 仓库后在自己的分支修改，一个 PR 聚焦一个问题或功能。
+- 提交信息简明说明改动；PR 描述包含改动目的、影响范围和验证结果，关联已有 Issue。
+- 遵循现有目录结构与代码风格；修改接口、配置或目录职责时，同步更新文档。
+- 按改动执行[后端检查](docs/backend.md#检查)或[前端检查](docs/frontend.md#检查)。界面改动补充截图与操作验证；未验证的范围请明确说明。
 
-## 📄 许可证
+## 交流与反馈
 
-请严格遵守 Apache 2.0 协议，并保留原作品声明。
-如需移除版权信息，请务必先[获取授权](https://www.apevolo.com/empower/) 。
-未经授权擅自移除版权信息的，我们将依法追究相关法律责任。
+[官方网站](https://www.apevolo.com) · [GitHub](https://github.com/xianhc/ape-volo-admin) · [Gitee](https://gitee.com/xianhc/ape-volo-admin)
+
+QQ 群：`839263566` · 微信：`apevolo`（备注“加群”）
+
+## 版权与授权
+
+**版权所有 © xianhc。**
+
+本项目采用 [Apache License 2.0](LICENSE)，使用、修改与分发请遵循许可证要求。
+
+> [!IMPORTANT]
+> **请保留项目中的版权与署名信息。**
+>
+> **如需移除版权标识，须先购买[商用授权](https://www.apevolo.com/empower/index.html)。**

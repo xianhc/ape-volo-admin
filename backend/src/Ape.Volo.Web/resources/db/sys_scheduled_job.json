@@ -1,0 +1,42 @@
+﻿[
+  {
+    "Id": 163519427764310,
+    "Cron": "*/5 * * * * ?",
+    "AssemblyName": "Ape.Volo.Web",
+    "ClassName": "Ape.Volo.Web.Jobs.TestConsoleWriteJob",
+    "Description": "Test",
+    "Principal": "apevolo",
+    "AlertEmail": null,
+    "PauseAfterFailure": 0,
+    "StartTime": null,
+    "EndTime": null,
+    "TriggerType": 1,
+    "IntervalSecond": 0,
+    "CycleRunTimes": 0,
+    "enabled": false,
+    "RunParams": null,
+    "CreateBy": "apevolo",
+    "JobName": "Console_Write",
+    "JobGroup": "Console"
+  },
+  {
+    "Id": 163519427764311,
+    "Cron": "*/5 * * * * ?",
+    "AssemblyName": "Ape.Volo.Web",
+    "ClassName": "Ape.Volo.Web.Jobs.SendEmailJob",
+    "Description": "执行邮件发送",
+    "Principal": "apevolo",
+    "AlertEmail": null,
+    "PauseAfterFailure": 0,
+    "StartTime": null,
+    "EndTime": null,
+    "TriggerType": 1,
+    "IntervalSecond": 0,
+    "CycleRunTimes": 0,
+    "enabled": false,
+    "RunParams": null,
+    "CreateBy": "apevolo",
+    "JobName": "Email_Send",
+    "JobGroup": "Email"
+  }
+]

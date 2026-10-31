@@ -1,0 +1,120 @@
+:root {
+  color-scheme: light;
+
+  --app-font-sans:
+    'Noto Sans SC Variable', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  --app-font-size-base: 14px;
+
+  --app-color-basalt: #323639;
+  --app-color-steel: #71717a;
+  --app-color-fog: #f1f3f6;
+  --app-color-paper: #ffffff;
+  --app-color-rule: #e4e4e7;
+  --app-color-signal: #006be6;
+
+  --app-canvas: var(--app-color-fog);
+  --app-surface: var(--app-color-paper);
+  --app-surface-subtle: #f4f4f5;
+  --app-surface-raised: var(--app-color-paper);
+  --app-border: var(--app-color-rule);
+  --app-border-strong: #d4d4d8;
+  --app-text-primary: var(--app-color-basalt);
+  --app-text-secondary: var(--app-color-steel);
+  --app-text-muted: #a1a1aa;
+  --app-primary-on: #ffffff;
+  --app-menu-active-bg: color-mix(
+    in srgb,
+    var(--el-color-primary) 14%,
+    var(--app-surface)
+  );
+  --app-menu-active-text: var(--el-color-primary);
+  --app-tab-active-bg: var(--app-menu-active-bg);
+  --app-tab-active-text: var(--app-menu-active-text);
+
+  --app-space-1: 4px;
+  --app-space-2: 8px;
+  --app-space-3: 12px;
+  --app-space-4: 16px;
+  --app-space-5: 20px;
+  --app-surface-padding: var(--app-space-4);
+
+  --app-header-height: 56px;
+  --app-tabs-height: 40px;
+  --app-radius-surface: min(var(--ape-volo-radius), 8px);
+  --app-shadow-overlay: 0 18px 50px rgb(31 41 46 / 16%);
+
+  --el-color-primary: var(--app-color-signal);
+  --el-font-family: var(--app-font-sans);
+  --el-font-size-base: var(--app-font-size-base);
+  --el-border-radius-base: var(--ape-volo-radius);
+  --el-box-shadow-light: var(--app-shadow-overlay);
+}
+
+html.dark {
+  color-scheme: dark;
+
+  --app-canvas: #14161a;
+  --app-surface: #1c1e23;
+  --app-surface-subtle: #2e3033;
+  --app-surface-raised: #27272a;
+  --app-border: #36363a;
+  --app-border-strong: #52525b;
+  --app-text-primary: #f2f2f2;
+  --app-text-secondary: #d4d4d8;
+  --app-text-muted: #a1a1aa;
+  --app-menu-active-bg: #333438;
+  --app-menu-active-text: var(--app-text-primary);
+  --app-shadow-overlay: 0 20px 56px rgb(0 0 0 / 38%);
+}
+
+// 深色规则比组件库的 .dark 更具体，让控件与页面使用同一组表面色。
+:root,
+html.dark {
+  --el-bg-color: var(--app-surface);
+  --el-bg-color-page: var(--app-canvas);
+  --el-bg-color-overlay: var(--app-surface-raised);
+  --el-fill-color-blank: var(--app-surface);
+  --el-fill-color-light: var(--app-surface-subtle);
+  --el-fill-color-lighter: color-mix(
+    in srgb,
+    var(--app-surface-subtle) 64%,
+    var(--app-surface)
+  );
+  --el-border-color: var(--app-border);
+  --el-border-color-light: color-mix(
+    in srgb,
+    var(--app-border) 72%,
+    var(--app-surface)
+  );
+  --el-border-color-lighter: color-mix(
+    in srgb,
+    var(--app-border) 48%,
+    var(--app-surface)
+  );
+  --el-text-color-primary: var(--app-text-primary);
+  --el-text-color-regular: var(--app-text-secondary);
+  --el-text-color-secondary: var(--app-text-muted);
+  --el-menu-hover-bg-color: var(--app-surface-subtle);
+}
+
+html.theme-transition::view-transition-old(root),
+html.theme-transition::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+html.theme-transition::view-transition-old(root),
+html.theme-transition.dark::view-transition-new(root) {
+  z-index: 1;
+}
+
+html.theme-transition::view-transition-new(root),
+html.theme-transition.dark::view-transition-old(root) {
+  z-index: 2;
+}
+
+@media (max-width: 640px) {
+  :root {
+    --app-surface-padding: var(--app-space-3);
+  }
+}

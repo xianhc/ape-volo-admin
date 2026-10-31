@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+  </PropertyGroup>
+  
+  
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>Ape.Volo.Application.xml</DocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Authorization" />
+  </ItemGroup>
+
+  <!--
+    显式声明直接使用的项目，不靠传递依赖：
+    Contracts（VO/DTO/接口）、Entity（实体与仓储泛型）、Core（SqlSugar/缓存/AOP）、
+    Common（Attributes / GlobalConstants / Helper / Extensions）。
+  -->
+  <ItemGroup>
+    <ProjectReference Include="..\Ape.Volo.Application.Contracts\Ape.Volo.Application.Contracts.csproj" />
+    <ProjectReference Include="..\Ape.Volo.Common\Ape.Volo.Common.csproj" />
+    <ProjectReference Include="..\Ape.Volo.Core\Ape.Volo.Core.csproj" />
+    <ProjectReference Include="..\Ape.Volo.Entity\Ape.Volo.Entity.csproj" />
+  </ItemGroup>
+
+</Project>

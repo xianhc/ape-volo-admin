@@ -1,0 +1,56 @@
+.header-tool-button {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--app-text-primary);
+  font-size: 20px;
+  cursor: pointer;
+  transition: color 150ms ease, background-color 150ms ease;
+
+  .el-icon { width: 20px; height: 20px; font-size: 20px; }
+  &:not(:disabled):hover { background: var(--app-surface-subtle); color: var(--el-color-primary); }
+  &:focus-visible { outline: 2px solid var(--el-color-primary); outline-offset: 2px; }
+  &:disabled { color: var(--app-text-muted); cursor: not-allowed; }
+}
+
+@keyframes app-icon-pop {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(0.9); }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  :is(.header-tool-button, .menu-search-trigger, .sidebar-toggle, .sidebar-footer__button, .tab-tool-button, .tab-pin):not(:disabled):is(:hover, :focus-visible),
+  .el-button:not(.is-disabled):is(:hover, :focus-visible),
+  .el-dropdown-menu__item:not(.is-disabled):is(:hover, :focus-visible),
+  .tab-actions-menu button:not(:disabled):is(:hover, :focus-visible) {
+    .app-icon:not(.app-icon--spin, [aria-busy='true']) {
+      animation: app-icon-pop 300ms cubic-bezier(0.4, 0, 0.2, 1);
+    }
+  }
+
+  .el-menu-item:not(.is-disabled):is(:hover, :focus-visible),
+  .el-sub-menu:not(.is-disabled) > .el-sub-menu__title:is(:hover, :focus-visible),
+  .el-tabs__item:is(:hover, :focus-visible) {
+    > .el-icon .app-icon,
+    > .menu-node-label > .el-icon .app-icon,
+    > .dual-top-menu-item__content > .el-icon .app-icon {
+      animation: app-icon-pop 300ms cubic-bezier(0.4, 0, 0.2, 1);
+    }
+  }
+}
+
+@media (max-width: 991px) {
+  .header-tool-button { width: 32px; height: 32px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .header-tool-button { transition: none; }
+}

@@ -1,0 +1,100 @@
+:root .el-loading-mask {
+  background-color: color-mix(in srgb, var(--app-canvas) 45%, transparent);
+  backdrop-filter: blur(4px);
+}
+
+.el-loading-mask .el-loading-spinner {
+  top: 50%;
+  margin-top: 0;
+  transform: translateY(-50%);
+}
+
+// 仅替换遮罩的默认圆环，保留按钮中的加载图标。
+.el-loading-mask .el-loading-spinner .circular {
+  box-sizing: border-box;
+  width: 56px;
+  height: 56px;
+  vertical-align: middle;
+  visibility: hidden;
+  animation: none;
+}
+
+// SVG 保留布局空间，圆点及其三个阴影独立变换明暗并统一跟随系统主题色。
+.el-loading-mask .el-loading-spinner::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: calc(50% - 28px);
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  color: var(--el-color-primary);
+  background-color: currentColor;
+  box-shadow:
+    0 40px color-mix(in srgb, currentColor 75%, transparent),
+    40px 0 color-mix(in srgb, currentColor 50%, transparent),
+    40px 40px color-mix(in srgb, currentColor 75%, transparent);
+  transform-origin: 28px 28px;
+  animation:
+    app-loading-dots 1s linear infinite,
+    app-loading-pulse 2s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.el-loading-mask .el-loading-spinner .circular .path {
+  display: none;
+}
+
+.el-loading-mask .el-loading-spinner .el-loading-text {
+  margin: 12px 0 0;
+  color: var(--app-text-secondary);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+@keyframes app-loading-dots {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes app-loading-pulse {
+  0%, 100% {
+    background-color: currentColor;
+    box-shadow:
+      0 40px color-mix(in srgb, currentColor 75%, transparent),
+      40px 0 color-mix(in srgb, currentColor 50%, transparent),
+      40px 40px color-mix(in srgb, currentColor 75%, transparent);
+  }
+  25% {
+    background-color: color-mix(in srgb, currentColor 75%, transparent);
+    box-shadow:
+      0 40px currentColor,
+      40px 0 color-mix(in srgb, currentColor 75%, transparent),
+      40px 40px color-mix(in srgb, currentColor 50%, transparent);
+  }
+  50% {
+    background-color: color-mix(in srgb, currentColor 50%, transparent);
+    box-shadow:
+      0 40px color-mix(in srgb, currentColor 75%, transparent),
+      40px 0 currentColor,
+      40px 40px color-mix(in srgb, currentColor 75%, transparent);
+  }
+  75% {
+    background-color: color-mix(in srgb, currentColor 75%, transparent);
+    box-shadow:
+      0 40px color-mix(in srgb, currentColor 50%, transparent),
+      40px 0 color-mix(in srgb, currentColor 75%, transparent),
+      40px 40px currentColor;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root .el-loading-mask {
+    transition: none;
+  }
+
+  .el-loading-mask .el-loading-spinner::before {
+    animation: none;
+  }
+}
