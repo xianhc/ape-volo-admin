@@ -1,8 +1,8 @@
-﻿using System.Reflection;
+using System.Reflection;
 using Ape.Volo.Common.Extensions;
 using Ape.Volo.Common.Helper;
-using Ape.Volo.Common.IdGenerator;
-using Ape.Volo.Common.Logging;
+using Ape.Volo.Application.Contracts.Abstractions;
+using Ape.Volo.Application.Contracts.Abstractions.Logging;
 using Ape.Volo.Core.ConfigOptions;
 using Ape.Volo.Core.Repository.UnitOfWork;
 using Ape.Volo.Entity.Attributes;
@@ -22,6 +22,7 @@ public class LoggerToDbSink : IBatchedLogEventSink
     private readonly IServiceScopeFactory _scopeFactory;
     private readonly LogDataConnectionOptions _logDataConnectionOptions;
     private readonly IFallbackLogWriter _fallbackLogWriter;
+    private readonly IIdGenerator _idGenerator;
 
     /// <summary>
     /// 初始化 <see cref="LoggerToDbSink"/> 的新实例。
@@ -29,12 +30,15 @@ public class LoggerToDbSink : IBatchedLogEventSink
     /// <param name="scopeFactory">作用域工厂。Sink 是单例，不能直接持有 scoped 的 IUnitOfWork</param>
     /// <param name="logDataConnectionOptions">日志库连接配置</param>
     /// <param name="fallbackLogWriter">独立兜底输出</param>
+    /// <param name="idGenerator">唯一 ID 生成器</param>
     public LoggerToDbSink(IServiceScopeFactory scopeFactory,
-        IOptions<LogDataConnectionOptions> logDataConnectionOptions, IFallbackLogWriter fallbackLogWriter)
+        IOptions<LogDataConnectionOptions> logDataConnectionOptions, IFallbackLogWriter fallbackLogWriter,
+        IIdGenerator idGenerator)
     {
         _scopeFactory = scopeFactory;
         _logDataConnectionOptions = logDataConnectionOptions.Value;
         _fallbackLogWriter = fallbackLogWriter;
+        _idGenerator = idGenerator;
     }
 
     public async Task EmitBatchAsync(IReadOnlyCollection<LogEvent> batch)
@@ -100,7 +104,7 @@ public class LoggerToDbSink : IBatchedLogEventSink
 
         var logs = logEvents.Select(logEvent => new TLog
         {
-            Id = IdHelper.NextId(),
+            Id = _idGenerator.NewId(),
             CreationTime = logEvent.Timestamp.DateTime,
             Level = logEvent.Level.ToString(),
             Message = logEvent.RenderMessage(),

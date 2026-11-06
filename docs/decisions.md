@@ -30,7 +30,7 @@ SqlSugar 的连接上下文依赖 `AsyncLocal`。如果在另一个 `async` 方�
 
 软删除和数据范围使用不同的标记接口，实体可以保留软删除而不参与组织数据范围过滤。选择实体基类时，应根据数据的访问范围判断是否需要 `IDataScopedEntity`；日志等不需要该限制的实体使用不带此标记的基类。
 
-跨数据范围的内部读取使用 [SugarQueryProvider](../backend/src/Ape.Volo.Core/Repository/SugarHandler/SugarQueryProvider.cs)。它在独立客户端上移除数据范围过滤，保留软删除过滤，避免改变普通业务查询的过滤器状态。
+跨数据范围的内部读取使用 [SugarQueryProvider](../backend/src/Ape.Volo.Core/Repository/SugarHandler/SugarQueryProvider.cs)。它为独立客户端复制过滤器集合，再移除数据范围过滤并保留软删除过滤，避免改变普通业务查询的过滤器状态；不能直接对 `CopyNew()` 共用的过滤器实例执行清理。
 
 ## Element Plus 全量注册
 

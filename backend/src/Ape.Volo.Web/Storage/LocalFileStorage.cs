@@ -1,4 +1,4 @@
-﻿using Ape.Volo.Common.IdGenerator;
+using Ape.Volo.Application.Contracts.Abstractions;
 using System.Globalization;
 
 namespace Ape.Volo.Web.Storage;
@@ -9,7 +9,9 @@ namespace Ape.Volo.Web.Storage;
 /// <param name="environment">宿主环境，提供 Web 根目录</param>
 /// <param name="clock">时间提供者</param>
 /// <param name="logger">日志记录器</param>
-public sealed class LocalFileStorage(IWebHostEnvironment environment, TimeProvider clock, ILogger<LocalFileStorage> logger) : IFileStorage
+/// <param name="idGenerator">唯一 ID 生成器</param>
+public sealed class LocalFileStorage(IWebHostEnvironment environment, TimeProvider clock,
+    ILogger<LocalFileStorage> logger, IIdGenerator idGenerator) : IFileStorage
 {
     private string Root => Path.GetFullPath(environment.WebRootPath
         ?? throw new InvalidOperationException("宿主未配置 Web 根目录。"));
@@ -20,7 +22,7 @@ public sealed class LocalFileStorage(IWebHostEnvironment environment, TimeProvid
         ct.ThrowIfCancellationRequested();
         if (string.IsNullOrWhiteSpace(category) || category.Any(character => !char.IsAsciiLetterOrDigit(character) && character is not '-' and not '_'))
             throw new ArgumentException("存储类别不能包含路径分隔符。", nameof(category));
-        var name = clock.GetLocalNow().ToString("yyyyMMddHHmmss", CultureInfo.InvariantCulture) + "_" + IdHelper.NextId() + Path.GetExtension(file.FileName);
+        var name = clock.GetLocalNow().ToString("yyyyMMddHHmmss", CultureInfo.InvariantCulture) + "_" + idGenerator.NewId() + Path.GetExtension(file.FileName);
         var relative = $"/uploads/file/{category}/{name}";
         var fullPath = Resolve(relative);
         Directory.CreateDirectory(Path.GetDirectoryName(fullPath)!);

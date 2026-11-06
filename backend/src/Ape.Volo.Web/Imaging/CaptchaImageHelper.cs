@@ -34,49 +34,23 @@ public static class CaptchaImageHelper
     #region 验证码生成
 
     /// <summary>
-    /// 生成数字或算术验证码及其 JPEG 图片
+    /// 配置未给出有效长度时使用的默认验证码长度
+    /// </summary>
+    private const int DefaultLength = 4;
+
+    /// <summary>
+    /// 生成数字验证码及其 JPEG 图片
     /// </summary>
     /// <param name="width">图像宽度</param>
     /// <param name="height">图像高度</param>
     /// <param name="fontSize">字体大小</param>
-    /// <param name="length">验证码长度；为 0 时生成算术验证码</param>
+    /// <param name="length">验证码长度，取自 <c>Captcha:KeyLength</c>；小于等于 0 时使用默认长度</param>
     /// <returns>图片字节与验证码答案</returns>
     public static (byte[] imgBytes, string code) BuildVerifyCode(int width, int height, int fontSize,
         int length = 0)
     {
-        var random = Random.Shared;
-        string expression;
-        string verifyCode;
-
-        var operator1 = random.Next(0, 10);
-        var operator2 = random.Next(0, 10);
-
-        if (length > 0)
-        {
-            expression = CaptchaHelper.CreateValidateCode(length);
-            verifyCode = expression;
-        }
-        else
-        {
-            // 随机组合运算顺序 + - *
-            switch (random.Next(0, 3))
-            {
-                case 0:
-                    verifyCode = (operator1 + operator2).ToString();
-                    expression = $"{operator1} + {operator2} = ?";
-                    break;
-                case 1:
-                    verifyCode = (operator1 - operator2).ToString();
-                    expression = $"{operator1} - {operator2} = ?";
-                    break;
-                default:
-                    verifyCode = (operator1 * operator2).ToString();
-                    expression = $"{operator1} x {operator2} = ?";
-                    break;
-            }
-        }
-
-        return (DrawCaptchaCore(expression, width, height, fontSize), verifyCode);
+        var code = CaptchaHelper.CreateValidateCode(length > 0 ? length : DefaultLength);
+        return (DrawCaptchaCore(code, width, height, fontSize), code);
     }
 
     #endregion

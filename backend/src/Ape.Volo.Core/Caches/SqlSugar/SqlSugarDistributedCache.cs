@@ -44,12 +44,11 @@ public class SqlSugarDistributedCache : ICacheService
         return _caching.Get(key) != null;
     }
 
-    [return: System.Diagnostics.CodeAnalysis.MaybeNull]
     public TV Get<TV>(string key)
     {
         var val = _caching.GetString(key);
-        if (val == null) return default;
-        return JsonConvert.DeserializeObject<TV>(val);
+        if (val == null) return default!;
+        return JsonConvert.DeserializeObject<TV>(val)!;
     }
 
     public IEnumerable<string> GetAllKey<TV>()
@@ -61,7 +60,6 @@ public class SqlSugarDistributedCache : ICacheService
         return new[] { "" };
     }
 
-    [return: System.Diagnostics.CodeAnalysis.MaybeNull]
     public TV GetOrCreate<TV>(string cacheKey, Func<TV> create, int cacheDurationInSeconds = int.MaxValue)
     {
         if (ContainsKey<TV>(cacheKey))

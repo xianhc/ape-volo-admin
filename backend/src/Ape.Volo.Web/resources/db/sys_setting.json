@@ -1,7 +1,7 @@
 [
   {
     "Id": 163536122468375,
-    "Name": "DefaultEmailAccountId",
+    "Name": "App.Email.DefaultAccountId",
     "Value": "163519427764308",
     "Enabled": true,
     "Description": "默认系统邮件发送账户",
@@ -9,7 +9,7 @@
   },
   {
     "Id": 163536122468377,
-    "Name": "IsExceptionLogSaveDB",
+    "Name": "App.Logging.ExceptionLog.SaveToDatabase",
     "Value": "true",
     "Enabled": true,
     "Description": "异常日志是否保存到数据库",
@@ -17,7 +17,7 @@
   },
   {
     "Id": 163536122468378,
-    "Name": "IsOperateLogSaveDB",
+    "Name": "App.Logging.OperateLog.SaveToDatabase",
     "Value": "true",
     "Enabled": true,
     "Description": "操作日志是否保存到数据库",

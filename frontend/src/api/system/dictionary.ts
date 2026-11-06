@@ -95,8 +95,8 @@ export const single = (
   params: DictionaryQueryParams
 ): Promise<AxiosResponse<Dictionary>> => {
   return request({
-    url: '/dict/query-by-name',
-    method: 'post',
+    url: '/dict/get-by-name',
+    method: 'get',
     params
   })
 }

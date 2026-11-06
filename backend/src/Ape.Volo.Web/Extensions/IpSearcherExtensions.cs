@@ -1,6 +1,5 @@
 ﻿using Ape.Volo.Common.Extensions;
-using IP2Region.Net.Abstractions;
-using IP2Region.Net.XDB;
+using Ape.Volo.Web.Services;
 
 namespace Ape.Volo.Web.Extensions
 {
@@ -17,9 +16,14 @@ namespace Ape.Volo.Web.Extensions
         public static void AddIpSearcherService(this IServiceCollection services)
         {
             if (services.IsNull()) throw new ArgumentNullException(nameof(services));
-            services.AddSingleton<ISearcher>(provider => new Searcher(CachePolicy.Content,
-                Path.Combine(provider.GetRequiredService<IWebHostEnvironment>().ContentRootPath,
-                    "resources", "ip", "ip2region.xdb")));
+            services.AddSingleton<IIpLocationService>(provider =>
+            {
+                var directory = Path.Combine(provider.GetRequiredService<IWebHostEnvironment>().ContentRootPath,
+                    "resources", "ip");
+                return new IpLocationService(Path.Combine(directory, "ip2region_v4.xdb"),
+                    Path.Combine(directory, "ip2region_v6.xdb"),
+                    provider.GetRequiredService<ILogger<IpLocationService>>());
+            });
         }
     }
 }

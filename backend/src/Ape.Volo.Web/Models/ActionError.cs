@@ -18,8 +18,7 @@ public class ActionError
     /// <returns></returns>
     public string GetFirstError()
     {
-        return Errors != null && Errors.Any()
-            ? Errors.First().Value
-            : "";
+        return Errors?.Values.FirstOrDefault(message => !string.IsNullOrWhiteSpace(message))
+               ?? "请求参数校验失败。";
     }
 }

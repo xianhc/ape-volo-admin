@@ -19,6 +19,7 @@ public static class LogQueueExtensions
         services.AddSingleton(typeof(ILogQueue<>), typeof(LogQueue<>));
         services.AddHostedService<OperateLogWriteService>();
         services.AddHostedService<ExceptionLogWriteService>();
+        services.AddHostedService<ScheduledJobLogWriteService>();
 
         return services;
     }

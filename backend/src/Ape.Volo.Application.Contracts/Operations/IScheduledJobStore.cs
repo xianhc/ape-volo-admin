@@ -12,13 +12,13 @@ public interface IScheduledJobStore
     /// <param name="id">作业 ID</param>
     /// <param name="ct">取消令牌</param>
     /// <returns>作业配置</returns>
-    Task<ScheduledJobVo> QueryByIdAsync(long id, CancellationToken ct = default);
+    Task<ScheduledJobVo> GetByIdAsync(long id, CancellationToken ct = default);
 
     /// <summary>批量读取作业。</summary>
     /// <param name="ids">作业 ID 集合</param>
     /// <param name="ct">取消令牌</param>
     /// <returns>作业配置集合</returns>
-    Task<List<ScheduledJobVo>> QueryByIdsAsync(IEnumerable<long> ids, CancellationToken ct = default);
+    Task<List<ScheduledJobVo>> GetByIdsAsync(IEnumerable<long> ids, CancellationToken ct = default);
 
     /// <summary>读取启动加载的全部作业。</summary>
     /// <param name="ct">取消令牌</param>

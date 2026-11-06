@@ -2,6 +2,7 @@
 using Ape.Volo.Core.ConfigOptions;
 using Ape.Volo.Core.Repository.SugarHandler;
 using Ape.Volo.Core.Repository.UnitOfWork;
+using Ape.Volo.Core.System.ServerInfo;
 using Autofac;
 using Autofac.Extras.DynamicProxy;
 using Castle.DynamicProxy;
@@ -48,7 +49,7 @@ public class AutofacExtensions(IConfiguration configuration) : Module
         //注册业务层（全部走构造函数注入，不再使用属性注入）
         var contracts = typeof(IScheduledJobService).Assembly;
         var applicationTypes = typeof(Ape.Volo.Application.BaseService<>).Assembly.GetExportedTypes()
-            .Concat(typeof(Ape.Volo.Core.SystemManagement.ServerInfo.ServerResourcesService).Assembly.GetExportedTypes()
+            .Concat(typeof(ServerResourcesService).Assembly.GetExportedTypes()
                 .Where(type => typeof(IRemoteService).IsAssignableFrom(type)))
             .Where(type => type.IsClass && !type.IsAbstract && type.GetInterfaces().Any(contract => contract.Assembly == contracts))
             .ToArray();

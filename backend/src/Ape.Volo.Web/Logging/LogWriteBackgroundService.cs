@@ -147,7 +147,14 @@ public abstract class LogWriteBackgroundService<T> : BackgroundService where T :
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "异步写入 {LogType} 日志失败，本批 {Count} 条", typeof(T).Name, batch.Count);
+            try
+            {
+                _logger.LogError(ex, "异步写入 {LogType} 日志失败，本批 {Count} 条", typeof(T).Name, batch.Count);
+            }
+            catch (Exception)
+            {
+                // 日志允许丢失，错误日志输出失败也不能使后台服务退出并影响宿主运行。
+            }
         }
     }
 }

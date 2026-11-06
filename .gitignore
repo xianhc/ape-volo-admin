@@ -4,8 +4,7 @@
 # IDE / 编辑器
 .vs/
 .idea/
-**/.vscode/*
-!**/.vscode/extensions.json
+.vscode/
 *.suo
 *.user
 *.userosscache

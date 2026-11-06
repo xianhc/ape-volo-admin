@@ -6,7 +6,7 @@ using Newtonsoft.Json.Linq;
 namespace Ape.Volo.Web.DynamicApi;
 
 /// <summary>
-/// 正文集合参数绑定：支持 <c>{ "ids": [1,2] }</c> 与裸数组 <c>[1,2]</c> 两种写法
+/// 正文集合参数绑定：仅支持按参数名包装的对象，如 <c>{ "ids": [1,2] }</c>
 /// </summary>
 public sealed class DynamicApiBodyCollectionModelBinder : IModelBinder
 {
@@ -39,14 +39,14 @@ public sealed class DynamicApiBodyCollectionModelBinder : IModelBinder
 
         try
         {
-            var token = JToken.Parse(body);
+            var jsonObject = JObject.Parse(body);
             var fieldName = bindingContext.FieldName ?? bindingContext.ModelName;
-            var value = token is JObject jsonObject
-                ? jsonObject.GetValue(fieldName, StringComparison.OrdinalIgnoreCase)
-                : token;
+            var value = jsonObject.GetValue(fieldName, StringComparison.OrdinalIgnoreCase);
 
-            if (value is null || value.Type == JTokenType.Null)
+            if (value is not JArray)
             {
+                bindingContext.ModelState.TryAddModelError(bindingContext.ModelName,
+                    $"请求正文必须包含数组字段 {fieldName}。");
                 bindingContext.Result = ModelBindingResult.Failed();
                 return;
             }

@@ -4,14 +4,14 @@
 
 | 职责 | 文件 |
 | --- | --- |
-| 请求封装 | [positions.ts](../../frontend/src/api/organization/positions.ts) |
-| 类型 | [position.types.ts](../../frontend/src/api/organization/types/position.types.ts) |
+| 请求封装 | [index.ts](../../frontend/src/api/organization/position/index.ts) |
+| 类型 | [types.ts](../../frontend/src/api/organization/position/types.ts) |
 | 列表与状态切换 | [index.vue](../../frontend/src/views/organization/position/index.vue) |
 | 新增与编辑表单 | [formPanel.vue](../../frontend/src/views/organization/position/module/formPanel.vue) |
 | CRUD 协调 | [UseCrud.ts](../../frontend/src/components/crud/UseCrud.ts) |
 | 表单上下文 | [crudContext.ts](../../frontend/src/components/crud/crudContext.ts) |
 | 状态字典 | [useDictionary.ts](../../frontend/src/composables/useDictionary.ts) 中的 `getDict`、`showDictLabel` |
-| 用户岗位选择 | [用户管理页面](../../frontend/src/views/permission/user/index.vue) |
+| 用户岗位选择 | [用户管理页面](../../frontend/src/views/identity/user/index.vue) |
 
 ## 页面调用顺序
 

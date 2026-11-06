@@ -17,7 +17,9 @@ public interface IScheduledJobService : IApplicationService
     /// <param name="ct">取消令牌</param>
     /// <returns>作业</returns>
     /// <exception cref="Ape.Volo.Shared.Exceptions.BadRequestException">作业不存在</exception>
-    Task<ScheduledJobVo> QueryByIdAsync(long id, CancellationToken ct = default);
+    // 仅供进程内 IScheduledJobStore 读取，不对外暴露。
+    [RemoteService(false)]
+    Task<ScheduledJobVo> GetByIdAsync(long id, CancellationToken ct = default);
 
     /// <summary>
     /// 按主键批量查询
@@ -25,7 +27,8 @@ public interface IScheduledJobService : IApplicationService
     /// <param name="ids">主键集合</param>
     /// <param name="ct">取消令牌</param>
     /// <returns>作业集合，主键集合为空时返回空集合</returns>
-    Task<List<ScheduledJobVo>> QueryByIdsAsync(IEnumerable<long> ids, CancellationToken ct = default);
+    [RemoteService(false)]
+    Task<List<ScheduledJobVo>> GetByIdsAsync(IEnumerable<long> ids, CancellationToken ct = default);
 
     /// <summary>
     /// 查询全部
@@ -78,21 +81,6 @@ public interface IScheduledJobService : IApplicationService
     /// <param name="ct">取消令牌</param>
     /// <returns></returns>
     Task<PagedResultDto<ScheduledJobVo>> GetListAsync(ScheduledJobQueryCriteria scheduledJobQueryCriteria, CancellationToken ct = default);
-
-    /// <summary>
-    /// 查询全部作业名称
-    /// </summary>
-    /// <param name="ct">取消令牌</param>
-    /// <returns></returns>
-    Task<List<ScheduledJobSmallVo>> QueryAllJobNameAsync(CancellationToken ct = default);
-
-    /// <summary>
-    /// 按作业名称查询
-    /// </summary>
-    /// <param name="jobName">作业名称</param>
-    /// <param name="ct">取消令牌</param>
-    /// <returns>作业，不存在时返回 null</returns>
-    Task<ScheduledJobVo?> QueryByJobNameAsync(string jobName, CancellationToken ct = default);
 
     /// <summary>
     /// 下载

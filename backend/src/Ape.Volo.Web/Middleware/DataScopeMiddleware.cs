@@ -27,7 +27,7 @@ public sealed class DataScopeMiddleware(RequestDelegate next, ILogger<DataScopeM
             }
             catch (Exception exception)
             {
-                logger.LogError(exception, "加载数据权限失败，本次请求仅允许访问本人数据。");
+                logger.LogError(exception, "加载数据权限失败，本次请求不授予受限数据访问权。");
             }
         }
 

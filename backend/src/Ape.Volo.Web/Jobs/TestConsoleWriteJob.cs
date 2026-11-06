@@ -1,4 +1,7 @@
 using Ape.Volo.Web.Quartz;
+using Ape.Volo.Web.Logging;
+using Ape.Volo.Entity.Log;
+using Ape.Volo.Application.Contracts.Abstractions.Logging;
 using Quartz;
 
 namespace Ape.Volo.Web.Jobs;
@@ -13,14 +16,17 @@ public class TestConsoleWriteJob : JobBase<TestConsoleWriteJob>, IJob
     /// </summary>
     /// <param name="schedulerCenterService">调度中心服务</param>
     /// <param name="scheduledJobService">作业配置服务</param>
-    /// <param name="scheduledJobLogService">作业日志服务</param>
+    /// <param name="scheduledJobLogQueue">作业日志队列</param>
     /// <param name="logger">日志记录器</param>
+    /// <param name="idGenerator">唯一 ID 生成器</param>
+    /// <param name="fallbackLogWriter">独立文本兜底输出</param>
     public TestConsoleWriteJob(ISchedulerCenterService schedulerCenterService,
-        IScheduledJobStore scheduledJobService, IScheduledJobLogService scheduledJobLogService,
-        ILogger<TestConsoleWriteJob> logger)
+        IScheduledJobStore scheduledJobService, ILogQueue<ScheduledJobLog> scheduledJobLogQueue,
+        ILogger<TestConsoleWriteJob> logger, IIdGenerator idGenerator, IFallbackLogWriter fallbackLogWriter)
+        : base(idGenerator, fallbackLogWriter)
     {
         ScheduledJobService = scheduledJobService;
-        ScheduledJobLogService = scheduledJobLogService;
+        ScheduledJobLogQueue = scheduledJobLogQueue;
         SchedulerCenterService = schedulerCenterService;
         Logger = logger;
     }

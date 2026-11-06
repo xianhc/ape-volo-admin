@@ -1,6 +1,6 @@
 using System.Globalization;
 using System.Text;
-using Ape.Volo.Common.Logging;
+using Ape.Volo.Application.Contracts.Abstractions.Logging;
 using Microsoft.Extensions.Hosting;
 
 namespace Ape.Volo.Core.Serilog;
@@ -12,7 +12,7 @@ namespace Ape.Volo.Core.Serilog;
 /// <param name="clock">时间提供者</param>
 public sealed class FallbackLogWriter(IHostEnvironment environment, TimeProvider clock) : IFallbackLogWriter, IDisposable
 {
-    private readonly string _directory = Path.Combine(environment.ContentRootPath, "Logs");
+    private readonly string _directory = Path.Combine(environment.ContentRootPath, "logs");
     private readonly SemaphoreSlim _gate = new(1, 1);
 
     public async Task WriteAsync(string message, CancellationToken ct = default)
@@ -20,11 +20,13 @@ public sealed class FallbackLogWriter(IHostEnvironment environment, TimeProvider
         await _gate.WaitAsync(ct);
         try
         {
-            Directory.CreateDirectory(_directory);
             var now = clock.GetLocalNow();
-            var file = Path.Combine(_directory, now.ToString("yyyyMMdd", CultureInfo.InvariantCulture) + ".log");
-            var expired = Path.Combine(_directory, now.AddDays(-30).ToString("yyyyMMdd", CultureInfo.InvariantCulture) + ".log");
-            File.Delete(expired);
+            var directory = Path.Combine(_directory, now.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture));
+            Directory.CreateDirectory(directory);
+            var file = Path.Combine(directory, "Fallback.log");
+            var expired = Path.Combine(_directory, now.AddDays(-30).ToString("yyyy-MM-dd", CultureInfo.InvariantCulture), "Fallback.log");
+            if (File.Exists(expired))
+                File.Delete(expired);
             var text = now.ToString("yyyy-MM-dd HH:mm:ss fff", CultureInfo.InvariantCulture) + Environment.NewLine +
                        message + Environment.NewLine + Environment.NewLine;
             await File.AppendAllTextAsync(file, text, Encoding.UTF8, ct);

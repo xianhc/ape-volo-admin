@@ -1,6 +1,7 @@
 using Ape.Volo.Common.Attributes;
 using Ape.Volo.Common.Extensions;
 using System.Reflection;
+using System.Globalization;
 using Ape.Volo.Core.Caches;
 using Ape.Volo.Core.Repository.UnitOfWork;
 using Castle.DynamicProxy;
@@ -110,7 +111,7 @@ public class CacheAop : IInterceptor, IAsyncInterceptor
         var typeName = invocation.TargetType.Name;
         var methodName = invocation.Method.Name;
 
-        //支持多参数包括实体类，建议不要超过三个， 避免产生的redis key过长
+        // 简单值直接拼接，复杂查询参数序列化后计算摘要。
         var methodArguments = invocation.Arguments.Where(arg => arg is not CancellationToken)
             .Select(GetArgumentValue).ToList();
 
@@ -128,17 +129,20 @@ public class CacheAop : IInterceptor, IAsyncInterceptor
     /// </summary>
     /// <param name="arg"></param>
     /// <returns></returns>
-    private static string GetArgumentValue(object arg)
+    private static string GetArgumentValue(object? arg)
     {
         if (arg == null) return string.Empty;
 
         switch (arg)
         {
-            case string:
-            case long:
-                return (arg.ToString() ?? string.Empty).ToMd5String16();
-            case DateTime:
-                return arg.ToString("yyyyMMddHHmmss").ToMd5String16();
+            case string text:
+                return text;
+            case DateTime date:
+                return date.ToString("O", CultureInfo.InvariantCulture);
+            case DateTimeOffset date:
+                return date.ToString("O", CultureInfo.InvariantCulture);
+            case ValueType when arg.GetType().IsPrimitive || arg is decimal or Guid or Enum:
+                return Convert.ToString(arg, CultureInfo.InvariantCulture) ?? string.Empty;
             default:
             {
                 return arg.ToJson().ToMd5String16();

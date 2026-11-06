@@ -16,7 +16,9 @@ public interface IEmailAccountService : IApplicationService
     /// <param name="id">主键</param>
     /// <param name="ct">取消令牌</param>
     /// <returns>邮箱账户，不存在时返回 null</returns>
-    Task<EmailAccountVo?> QueryByIdAsync(long id, CancellationToken ct = default);
+    // 仅供进程内 IEmailAccountLookupService 读取，不对外暴露。
+    [RemoteService(false)]
+    Task<EmailAccountVo?> GetByIdAsync(long id, CancellationToken ct = default);
 
     /// <summary>
     /// 创建
@@ -56,15 +58,6 @@ public interface IEmailAccountService : IApplicationService
     /// <param name="ct">取消令牌</param>
     /// <returns></returns>
     Task<List<EmailAccountVo>> GetAllAsync(CancellationToken ct = default);
-
-
-    /// <summary>
-    /// 下载
-    /// </summary>
-    /// <param name="emailAccountQueryCriteria"></param>
-    /// <param name="ct">取消令牌</param>
-    /// <returns></returns>
-    Task<List<ExportBase>> DownloadAsync(EmailAccountQueryCriteria emailAccountQueryCriteria, CancellationToken ct = default);
 
     #endregion
 }

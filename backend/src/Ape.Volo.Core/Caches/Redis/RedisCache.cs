@@ -69,7 +69,7 @@ public class RedisCache : ICache, ICacheKeyCatalog
     {
         if (!systemOptions.Value.UseRedisCache)
         {
-            throw new System.Exception("UseRedisCache is not set to True, please check！");
+            throw new Exception("UseRedisCache is not set to True, please check！");
         }
 
         var redis = redisOptions.Value;

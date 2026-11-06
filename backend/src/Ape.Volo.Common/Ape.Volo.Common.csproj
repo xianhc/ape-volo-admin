@@ -3,13 +3,12 @@
   <!--
     Common 只保留「任何宿主都可能用到、且不绑定具体框架」的基础能力：
     密码哈希、JSON、日期、基础算法与通用扩展。
-    导出（ClosedXML）、图像（SkiaSharp）已外迁到 Api，条件查询扩展已外迁到 Core。
+    导出（ClosedXML）、图像（SkiaSharp）已外迁到 Web，条件查询扩展已外迁到 Core。
     SqlSugar 相关能力已全部迁至 Core/Entity，本层不再引用 ORM。
   -->
   <ItemGroup>
     <PackageReference Include="BCrypt.Net-Next" />
     <PackageReference Include="Newtonsoft.Json" />
-    <PackageReference Include="NodaTime" />
   </ItemGroup>
 
   <!-- 契约基础层：通用特性与查询条件模型 -->

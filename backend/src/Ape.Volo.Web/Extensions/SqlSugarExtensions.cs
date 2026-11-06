@@ -1,7 +1,7 @@
 using System.Reflection;
 using Ape.Volo.Common.Enums;
 using Ape.Volo.Common.Extensions;
-using Ape.Volo.Common.IdGenerator;
+using Ape.Volo.Application.Contracts.Abstractions;
 using Ape.Volo.Core.Caches.SqlSugar;
 using Ape.Volo.Core.Caches;
 using Ape.Volo.Core.ConfigOptions;
@@ -76,10 +76,12 @@ public static class SqlSugarExtensions
     {
         var logConnId = logOptions.ConnId;
         var contextAccessor = provider.GetRequiredService<IHttpContextAccessor>();
+        var idGenerator = provider.GetRequiredService<IIdGenerator>();
         var serilogOptions = provider.GetRequiredService<IOptions<SerilogOptions>>().Value;
         var middlewareOptions = provider.GetRequiredService<IOptions<MiddlewareOptions>>().Value;
         // 业务库来自 DataConnection.ConnectionItem，日志库来自独立的 LogDataConnection 节点
         var allConnectionConfig = allConnectionItem
+            .OrderByDescending(connectionItem => connectionItem.ConnId == systemOptions.MainDataBase)
             .Select(connectionItem => BuildConnectionConfig(connectionItem, systemOptions, provider))
             .ToList();
         allConnectionConfig.Add(BuildConnectionConfig(logOptions, systemOptions, provider));
@@ -104,7 +106,7 @@ public static class SqlSugarExtensions
                     #region 读写事件
 
                     sugarScopeProvider.Aop.DataExecuting = (value, entityInfo) => DataExecuting(value, entityInfo,
-                        contextAccessor.HttpContext?.RequestServices.GetRequiredService<ICurrentUser>());
+                        contextAccessor.HttpContext?.RequestServices.GetRequiredService<ICurrentUser>(), idGenerator);
 
                     #endregion
 
@@ -144,8 +146,10 @@ public static class SqlSugarExtensions
         var connectionString = connectionItem.ConnectionString;
         if (connectionItem.DbType == DbType.Sqlite)
         {
-            connectionString = "DataSource=" + Path.Combine(
+            var databasePath = Path.Combine(
                 provider.GetRequiredService<IHostEnvironment>().ContentRootPath, connectionString ?? string.Empty);
+            Directory.CreateDirectory(Path.GetDirectoryName(databasePath)!);
+            connectionString = "DataSource=" + databasePath;
         }
 
         return new ConnectionConfig
@@ -159,7 +163,9 @@ public static class SqlSugarExtensions
             MoreSettings = new ConnMoreSettings
             {
                 IsAutoRemoveDataCache = true,
-                SqlServerCodeFirstNvarchar = true //sqlserver默认使用nvarchar
+                SqlServerCodeFirstNvarchar = true, //sqlserver默认使用nvarchar
+                PgSqlIsAutoToLower = true,
+                PgSqlIsAutoToLowerCodeFirst = true
             },
             ConfigureExternalServices = new ConfigureExternalServices
             {
@@ -196,13 +202,15 @@ public static class SqlSugarExtensions
     /// <param name="value"></param>
     /// <param name="entityInfo"></param>
     /// <param name="currentUser">执行时的请求用户；后台工作为 null</param>
-    private static void DataExecuting(object value, DataFilterModel entityInfo, ICurrentUser? currentUser)
+    /// <param name="idGenerator">唯一 ID 生成器</param>
+    private static void DataExecuting(object value, DataFilterModel entityInfo, ICurrentUser? currentUser,
+        IIdGenerator idGenerator)
     {
         // 主键只在插入时生成；更新语句里的实体模板不参与主键分配。
         if (entityInfo.OperationType == DataFilterType.InsertByObject &&
             entityInfo.EntityValue is IEntity<long> { Id: 0 } entity)
         {
-            entity.Id = IdHelper.NextId();
+            entity.Id = idGenerator.NewId();
         }
 
         // 审计字段由契约驱动：实现哪个接口就填哪些字段，与继承哪个基类无关。

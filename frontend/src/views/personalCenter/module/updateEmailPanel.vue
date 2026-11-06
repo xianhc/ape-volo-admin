@@ -49,7 +49,7 @@
   import { onBeforeUnmount, reactive, ref } from 'vue'
   import { ElMessage } from 'element-plus'
   import type { FormInstance } from 'element-plus'
-  import { editUserEmail } from '@/api/permission/user'
+  import { editUserEmail } from '@/api/identity/user'
   import { getResetEmailCode } from '@/api/verificationCode'
   import { useUserStore } from '@/pinia/modules/user'
   import { validEmail } from '@/utils/validate'

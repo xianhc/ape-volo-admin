@@ -6,7 +6,7 @@
  * - 登录会话标识使用稳定的 sessionId，刷新访问令牌不会改变会话；
  * - 错误提示由 request.ts 统一处理，这里只记录保存状态。
  */
-import { editPreferencesConfig } from '@/api/permission/user'
+import { editPreferencesConfig } from '@/api/identity/user'
 import { useAppStore, useUserStore } from '@/pinia'
 import { appLogger } from '@/services/logging/appLogger'
 import {

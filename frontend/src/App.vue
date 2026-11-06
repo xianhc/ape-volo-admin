@@ -24,6 +24,8 @@
   import { usePreferencesPersistence } from '@/composables/usePreferencesPersistence'
   import { useGlobalShortcuts } from '@/composables/useGlobalShortcuts'
   import { menuTitle } from '@/utils/menuTitle'
+  import { resetApplicationSession } from '@/services/session/applicationSession'
+  import { isSessionIdentityChange } from '@/services/session/tokenStorage'
   import setting from '@/setting'
 
   defineOptions({
@@ -42,7 +44,15 @@
 
   // 锁屏状态跟随登录用户，多标签页之间同步
   watch(() => user.userInfo.id, screenLock.syncSession, { immediate: true })
-  useEventListener(window, 'storage', screenLock.syncSession)
+  useEventListener(window, 'storage', (event) => {
+    if (event.storageArea === localStorage && isSessionIdentityChange(event)) {
+      resetApplicationSession()
+      // 重新挂载页面，丢弃旧账号的表单、列表及 KeepAlive 实例。
+      window.location.reload()
+      return
+    }
+    screenLock.syncSession()
+  })
 
   // 动态页面标题
   const title = useTitle()

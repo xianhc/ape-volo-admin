@@ -1,111 +1,64 @@
-using System.ComponentModel.DataAnnotations;
+using System.Linq.Expressions;
 using System.Reflection;
+using Ape.Volo.Common.Reflection;
 
 namespace Ape.Volo.Core.Utils;
 
 /// <summary>
-/// 数据错误
+/// 根据实体和字段说明生成业务校验提示
 /// </summary>
 public static class ValidationError
 {
     /// <summary>
-    /// 数据已存在
+    /// 根据字段表达式生成重复数据提示
     /// </summary>
-    /// <param name="instance">类型</param>
-    /// <param name="propertyName">值</param>
-    /// <returns></returns>
-    public static string IsExist<T>(T instance, string propertyName)
+    /// <param name="field">DTO 或实体的字段访问表达式</param>
+    /// <param name="entityType">服务对应的实体类型</param>
+    /// <returns>字段重复提示</returns>
+    public static string IsExist<T>(Expression<Func<T>> field, Type? entityType = null)
     {
-        // 获取属性元数据
-        var property = typeof(T).GetProperty(propertyName,
-            BindingFlags.Public | BindingFlags.Instance | BindingFlags.FlattenHierarchy);
-        if (property == null)
-        {
-            throw new ArgumentException($"属性 '{propertyName}' 在类型 '{typeof(T).Name}' 中不存在。");
-        }
-
-        // 获取属性值
-        var value = property.GetValue(instance);
-
-        // 获取 Display 特性
-        var display = property.GetCustomAttribute<DisplayAttribute>();
-        var displayName = display == null ? property.Name : display.Name;
-
-        // 返回本地化字符串
-        return $"{displayName}=>{value}=>已存在!";
+        var (modelType, propertyName) = GetField(field);
+        var name = ModelDescription.GetName(entityType ?? modelType, propertyName, modelType);
+        return $"{name}“{field.Compile().Invoke()}”已存在。";
     }
 
     /// <summary>
-    /// 数据不存在
+    /// 根据实体类型和可选标识生成数据不存在提示
     /// </summary>
-    /// <returns></returns>
-    public static string NotExist()
+    /// <param name="value">记录标识或查询字段的值</param>
+    /// <param name="propertyName">查询字段，默认主键</param>
+    /// <returns>数据不存在提示</returns>
+    public static string NotExist<TEntity>(object? value = null, string propertyName = "Id")
     {
-        // 返回本地化字符串
-        return "数据不存在";
+        var name = ModelDescription.GetName(typeof(TEntity));
+        return value == null ? $"{name}不存在。"
+            : $"{name}（{ModelDescription.GetName(typeof(TEntity), propertyName)}：{value}）不存在。";
     }
 
     /// <summary>
-    /// 数据不存在
+    /// 生成存在数据关联的提示
     /// </summary>
-    /// <param name="instance">类型</param>
-    /// <param name="displayName">占位符</param>
-    /// <param name="propertyName">值</param>
-    /// <returns></returns>
-    public static string NotExist<T>(T instance, string displayName, string propertyName)
-    {
-        // 获取属性元数据
-        var property = typeof(T).GetProperty(propertyName,
-            BindingFlags.Public | BindingFlags.Instance | BindingFlags.FlattenHierarchy);
-        if (property == null)
-        {
-            throw new ArgumentException($"属性 '{propertyName}' 在类型 '{typeof(T).Name}' 中不存在。");
-        }
-
-        // 获取属性值
-        var value = property.GetValue(instance);
-
-        // 获取 Display 特性
-        // var display = property.GetCustomAttribute<DisplayAttribute>();
-        // var displayName = display == null ? property.Name : display.Name;
-
-        // 返回本地化字符串
-        return $"{displayName}=>{value}=>不存在!";
-    }
+    /// <returns>数据关联提示</returns>
+    public static string DataAssociationExists() => "存在数据关联，请解除后再试。";
 
     /// <summary>
-    /// 数据存在关联
+    /// 根据字段表达式生成必填提示
     /// </summary>
-    /// <returns></returns>
-    public static string DataAssociationExists()
+    /// <param name="field">DTO 或实体的字段访问表达式</param>
+    /// <param name="entityType">服务对应的实体类型</param>
+    /// <returns>字段必填提示</returns>
+    public static string Required<T>(Expression<Func<T>> field, Type? entityType = null)
     {
-        // 返回本地化字符串
-        return "存在数据关联，请解除后再试！";
+        var (modelType, propertyName) = GetField(field);
+        return $"{ModelDescription.GetName(entityType ?? modelType, propertyName, modelType)}不能为空。";
     }
 
-    /// <summary>
-    /// 必填项
-    /// </summary>
-    /// <param name="instance"></param>
-    /// <param name="propertyName"></param>
-    /// <typeparam name="T"></typeparam>
-    /// <returns></returns>
-    /// <exception cref="ArgumentException"></exception>
-    public static string Required<T>(T instance, string propertyName)
+    private static (Type ModelType, string PropertyName) GetField(LambdaExpression field)
     {
-        // 获取属性元数据
-        var property = typeof(T).GetProperty(propertyName,
-            BindingFlags.Public | BindingFlags.Instance | BindingFlags.FlattenHierarchy);
-        if (property == null)
-        {
-            throw new ArgumentException($"属性 '{propertyName}' 在类型 '{typeof(T).Name}' 中不存在。");
-        }
-
-        // 获取 Display 特性
-        var display = property.GetCustomAttribute<DisplayAttribute>();
-        var displayName = display == null ? property.Name : display.Name;
-
-        // 返回本地化字符串
-        return $"{displayName} 是必填项";
+        ArgumentNullException.ThrowIfNull(field);
+        var body = field.Body is UnaryExpression unary ? unary.Operand : field.Body;
+        if (body is not MemberExpression { Member: PropertyInfo property })
+            throw new ArgumentException("请使用 DTO 或实体的属性访问表达式。", nameof(field));
+        return (property.DeclaringType!, property.Name);
     }
 }

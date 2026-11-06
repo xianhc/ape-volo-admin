@@ -4,15 +4,15 @@
 
 | 职责 | 文件 |
 | --- | --- |
-| 实体 | [Position.cs](../../backend/src/Ape.Volo.Entity/Organization/Position.cs) |
-| 用户岗位关联 | [UserPosition.cs](../../backend/src/Ape.Volo.Entity/Organization/UserPosition.cs) |
-| 服务契约 | [IPositionService.cs](../../backend/src/Ape.Volo.Application.Contracts/Organization/IPositionService.cs) |
-| 创建与编辑参数 | [CreateUpdatePositionDto.cs](../../backend/src/Ape.Volo.Application.Contracts/Organization/Models/CreateUpdatePositionDto.cs) |
-| 查询参数 | [PositionQueryCriteria.cs](../../backend/src/Ape.Volo.Application.Contracts/Organization/Models/PositionQueryCriteria.cs) |
-| 返回模型 | [PositionVo.cs](../../backend/src/Ape.Volo.Application.Contracts/Organization/Models/PositionVo.cs) |
-| 导出模型 | [PositionExport.cs](../../backend/src/Ape.Volo.Application.Contracts/Organization/Models/PositionExport.cs) |
-| 服务实现 | [PositionService.cs](../../backend/src/Ape.Volo.Application/Organization/PositionService.cs) |
-| 映射声明 | [OrganizationMapping.cs](../../backend/src/Ape.Volo.Application/Mapping/Organization/OrganizationMapping.cs) |
+| 实体 | [Position.cs](../../backend/src/Ape.Volo.Entity/Organization/Positions/Position.cs) |
+| 用户岗位关联 | [UserPosition.cs](../../backend/src/Ape.Volo.Entity/Identity/Users/UserPosition.cs) |
+| 服务契约 | [IPositionService.cs](../../backend/src/Ape.Volo.Application.Contracts/Organization/Positions/IPositionService.cs) |
+| 创建与编辑参数 | [CreateUpdatePositionDto.cs](../../backend/src/Ape.Volo.Application.Contracts/Organization/Positions/Models/CreateUpdatePositionDto.cs) |
+| 查询参数 | [PositionQueryCriteria.cs](../../backend/src/Ape.Volo.Application.Contracts/Organization/Positions/Models/PositionQueryCriteria.cs) |
+| 返回模型 | [PositionVo.cs](../../backend/src/Ape.Volo.Application.Contracts/Organization/Positions/Models/PositionVo.cs) |
+| 导出模型 | [PositionExport.cs](../../backend/src/Ape.Volo.Application.Contracts/Organization/Positions/Models/PositionExport.cs) |
+| 服务实现 | [PositionService.cs](../../backend/src/Ape.Volo.Application/Organization/Positions/PositionService.cs) |
+| 映射声明 | [PositionsMapping.cs](../../backend/src/Ape.Volo.Application/Mapping/Organization/Positions/PositionsMapping.cs) |
 | 权限码 | [SystemPermissions.cs](../../backend/src/Ape.Volo.Application.Contracts/Authorization/SystemPermissions.cs) 中的 `Positions` |
 
 ## 字段与服务行为
@@ -22,7 +22,7 @@
 `PositionService` 继承 `BaseService<Position>`，通过构造函数取得仓储和映射器：
 
 - 新增检查名称重复；编辑先检查记录存在，名称变化时再检查重复。
-- 删除先读取当前查询范围内的岗位；没有匹配记录时返回业务错误，存在 `UserPosition` 关联时拒绝删除，否则执行逻辑删除。
+- 删除先读取当前查询范围内的岗位；没有匹配记录时返回业务错误，存在 `UserPosition` 关联时拒绝删除，否则执行带过滤器的逻辑删除；混入范围外 ID 不会删除对应记录。
 - 分页使用 `PageAsync<PositionVo>`；导出按查询条件读取数据并转换为 `PositionExport`。
 - `GetAllAsync` 只返回启用岗位，按 `Sort` 升序排列，供用户管理等场景选择岗位；返回类型为 `List<PositionVo>`。
 
@@ -45,7 +45,7 @@
 
 - 新增或调整字段：依次核对实体、创建与编辑 DTO、查询参数、返回模型和映射，再同步 [前端类型与表单](frontend-page-example.md)。实体变动涉及表结构时，还需按 [初始化约定](../backend.md#初始化与配置) 检查数据库结果。
 - 调整增删改查：核对实现方法权限与 `SystemPermissions.Positions`，检查名称重复、排序校验、关联删除限制和分页行为。
-- 修改启用状态或岗位选项：同时核对 `GetAllAsync` 的筛选、排序和权限，以及 [用户管理页面](../../frontend/src/views/permission/user/index.vue) 对 `getAll` 的调用。
-- 修改用户岗位关系：联查 `UserPosition` 和 [UserService](../../backend/src/Ape.Volo.Application/Permission/Users/UserService.cs)，避免只更新岗位页面而遗漏用户分配入口。
+- 修改启用状态或岗位选项：同时核对 `GetAllAsync` 的筛选、排序和权限，以及 [用户管理页面](../../frontend/src/views/identity/user/index.vue) 对 `getAll` 的调用。
+- 修改用户岗位关系：联查 `UserPosition` 和 [UserService](../../backend/src/Ape.Volo.Application/Identity/Users/UserService.cs)，避免只更新岗位页面而遗漏用户分配入口。
 
 后端检查命令见 [后端开发](../backend.md#检查)；接口改动还需实际核对上述动词、路径与响应。

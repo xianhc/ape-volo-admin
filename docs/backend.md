@@ -2,56 +2,45 @@
 
 ## 分层
 
-项目代码位于 `backend/src/`。
+代码位于 `backend/src/`，项目均使用 `Ape.Volo.` 前缀。
 
-| 项目                            | 直接项目依赖                                         |
-| ------------------------------- | ---------------------------------------------------- |
-| `Web`                           | Application、Contracts、Core、Common、Entity、Shared |
-| `Application`                   | Contracts、Core、Common、Entity                      |
-| `Core`                          | Contracts、Common、Entity                            |
-| `Contracts`、`Common`、`Entity` | Shared                                               |
-| `Shared`                        | 无                                                   |
+| 项目 | 职责与直接依赖 |
+| --- | --- |
+| Web | HTTP、认证、上传、调度和日志宿主；依赖 Application、Contracts、Core、Common、Entity、Shared |
+| Application | 业务服务与映射；依赖 Contracts、Core、Common、Entity |
+| Core | 数据访问、事务、缓存等基础设施；依赖 Contracts、Common、Entity |
+| Contracts、Common、Entity | 分别承载服务契约、通用工具、实体；依赖 Shared |
+| Shared | 跨层常量和基础类型，无项目依赖 |
 
-表中的 `Contracts` 为 `Ape.Volo.Application.Contracts`，其余项目使用 `Ape.Volo.` 前缀。
+`Contracts` 指 `Application.Contracts`。Application 不使用 `HttpContext`、`IFormFile` 或 `ActionResult`，上传使用 `UploadFile` 契约，由 Web 适配。新增模块参考 [岗位示例](examples/backend-module-example.md)。
 
-`Web` 处理 HTTP、认证、上传、文件存储和调度宿主。`Application` 实现业务服务，不使用 `HttpContext`、`IFormFile`、`ActionResult`；服务授权特性可使用 `Authorize`。
+`Identity` 管理用户、角色、认证、会话和权限；`Organization` 在契约、实体、服务和映射各层统一使用 `Departments/`、`Positions/` 子目录。
 
-新增模块时联查 [接口契约](contract.md) 与 [岗位模块示例](examples/backend-module-example.md)；通用修改范围和验证要求见 [Agent 工作约定](../AGENTS.md)。
+## 契约与授权
 
-上传契约使用 `UploadFile`，HTTP 文件类型由宿主适配。
+- 对外接口继承 `IApplicationService`，与 DTO 一起放在 Contracts；契约不引用实体。实现和映射放在 Application。
+- 创建、修改 DTO 使用带 `init` 属性的 `sealed record`，只声明业务字段及所需的 `Id`，不继承审计基类。
+- 普通校验失败返回 `OperateResult.Error(...)`。常见错误使用 `BaseService` 的 `NotFound`、`AlreadyExists`、`Required`；字段说明来自实体或 DTO 的 XML 注释，缺失时回退到代码名称。发布时保留 Entity、Contracts 的 XML 文档。
+- 传递 `CancellationToken`；提交后的必要清理不随客户端断开取消。
+- 契约、DTO 和控制器保留必要 XML 注释，实现成员使用 `inheritdoc`。
 
-## 契约与实现
+`HasPerm`、`HasRole` 写在实现方法上，权限码使用 `SystemPermissions`。通过注入的接口调用服务，切面顺序为授权、事务、缓存；授权始终启用，后两项分别由 `Aop:Transactions`、`Aop:Cache` 控制。角色和权限满足任意一项即通过，额外的管理员要求在方法内调用 `IApplicationAuthorizationService.CheckAsync`。
 
-- 对外服务接口继承 `IApplicationService`，接口和 DTO 放在 `Application.Contracts`。
-- 实现类按模块放在 `Application`，映射声明放在 `Application/Mapping/`。
-- 契约不出现实体类型；DTO、VO 和查询参数放在模块的 `Models/`。
-- 业务校验失败返回 `OperateResult.Error(...)`，不要依靠异常表达普通操作失败。
-- 方法传递 `CancellationToken`，不在内部丢弃请求取消信号；提交后的必要清理不随客户端断开取消。
-- 实现成员使用 `inheritdoc`；契约、DTO 和控制器补齐 XML 注释。
-
-`HasPerm`、`HasRole` 写在实现方法上，权限码由 `SystemPermissions` 定义。服务通过 Autofac 接口代理调用；授权拦截器始终注册，事务和缓存切面分别受 `Aop:Transactions`、`Aop:Cache` 控制。注册顺序为授权、事务、缓存。
-
-未声明具体权限码不表示可匿名访问；动态端点默认校验登录，接口生成与请求约定见 [接口契约](contract.md)。
-
-源码入口：[服务注册与拦截顺序](../backend/src/Ape.Volo.Web/Extensions/AutofacExtensions.cs)、[服务授权](../backend/src/Ape.Volo.Core/Aop/AuthorizationAop.cs)、[权限码](../backend/src/Ape.Volo.Application.Contracts/Authorization/SystemPermissions.cs)。
+动态端点默认要求登录，未声明具体权限不代表匿名访问。路由、请求与敏感字段授权见 [接口契约](contract.md)。
 
 ## 数据访问
 
-- 实体主键为 `long`，新增时由雪花 ID 生成；部署实例使用不同的 `IdGenerator:WorkerId`。
-- `AuditedEntity` 包含审计与软删除字段，`DataScopedEntity` 额外声明数据范围标记。
-- 请求新增数据时，创建人和创建时间由服务端覆盖；无请求身份的初始化保留种子数据审计值。
-- 全局过滤器处理软删除；实现 `IDataScopedEntity` 的实体参与数据范围过滤。
-- 跨数据范围的内部查询使用 `ISugarQueryProvider.QueryWithoutDataScopeAsync`，该入口保留软删除过滤。
-- 查询条件使用 `QueryCondition`；分页使用 `PageAsync`，返回 `PagedResultDto<T>`。
-- `QueryOptions` 支持投影 `SelectExpression`、锁提示 `LockString`（默认 `SqlWith.NoLock`）和 SqlSugar 查询缓存 `CacheDurationInSeconds`（秒，默认 0，不启用）；同时保留条件、导航加载及分表配置。
-- 导航优先使用 `IncludePropertyNameList = [nameof(实体.导航)]` 白名单，按 SqlSugar 的 `IncludesByNameString` 加载指定一级导航。非空白名单优先于 `IsIncludes` 和排除名单；未提供或为空时，仍由 `IsIncludes` 开启 `IncludesAllFirstLayer` 并应用 `IgnorePropertyNameList`。用户、角色和字典列表已显式声明所需导航，避免新增实体导航自动扩大查询范围。
-- 树节点父 ID 使用 `long?`，顶级为 `null`；根查询使用 `IsRoot`。
+- 主键为 `long`，通过注入的单例 `IIdGenerator.NewId()` 生成。
+- `AuditedEntity` 含审计和软删除字段；`DataScopedEntity` 额外参与数据范围过滤。请求新增时，创建人和创建时间由服务端覆盖。
+- 普通查询和写入保留软删除、数据范围过滤，空范围不授予访问权。内部跨范围读取使用 `ISugarQueryProvider.QueryWithoutDataScopeAsync`，仍保留软删除过滤。
+- 分页使用 `PageAsync` 和 `PagedResultDto<T>`。`QueryOptions` 包含分页、条件、导航白名单和分表配置；不使用 `NoLock` 或 ORM 查询缓存。
+- 导航通过 `IncludePropertyNameList` 显式加载；未指定时不加载。树顶级 `ParentId` 为 `null`，根查询使用 `IsRoot`。
 
-源码入口：[全局过滤器](../backend/src/Ape.Volo.Web/Extensions/SqlSugarExtensions.cs)、[跨数据范围查询](../backend/src/Ape.Volo.Core/Repository/SugarHandler/SugarQueryProvider.cs)。
+入口：[BaseService](../backend/src/Ape.Volo.Application/BaseService.cs)、[全局过滤器](../backend/src/Ape.Volo.Web/Extensions/SqlSugarExtensions.cs)、[跨范围查询](../backend/src/Ape.Volo.Core/Repository/SugarHandler/SugarQueryProvider.cs)。
 
 ## 事务与缓存
 
-显式事务在调用方同步开启：
+显式事务在调用方同步开启，原因见 [架构约定](decisions.md#同步开启事务)：
 
 ```csharp
 await using var transaction = unitOfWork.BeginTransaction(Propagation.Required);
@@ -59,59 +48,75 @@ await using var transaction = unitOfWork.BeginTransaction(Propagation.Required);
 await transaction.CommitAsync(ct);
 ```
 
-不要把事务开启封装到另一个异步方法中，原因见 [同步开启事务](decisions.md#同步开启事务)。`UseTran` 仅用于返回 `Task` 或 `Task<T>` 的业务方法。
+`AfterCommitAsync` 登记提交后动作：无事务时立即执行，有事务时等待根事务提交，回滚丢弃对应动作。动作失败不回滚已提交的数据，也不持久化重试。`UseTran` 仅用于返回 `Task` 或 `Task<T>` 的方法。
 
-`IUnitOfWork.AfterCommitAsync` 登记提交后动作：没有事务时立即执行，有事务时等待根事务提交。保存点回滚丢弃该范围内的动作，根事务回滚丢弃全部动作。动作失败会继续执行其他已登记动作并返回异常，不回滚已提交的数据。该机制不持久化动作，进程中断后不会自动补偿。
+- `UseCache.Expiration` 单位为分钟，缓存键不包含取消令牌。ID、名称等简单值直接拼接，仅 AOP 的复杂查询参数序列化后计算 MD5。依赖当前用户的结果必须使用用户缓存键；事务内直接查询，不读写共享结果。
+- 缓存键直接按 `auth:`、`identity:`、`setting:`、`dict:` 等业务前缀分组，不添加公共目录前缀。
+- 权限缓存统一由 `PermissionCacheService` 管理，键使用 `identity:` 前缀，不添加版本号。用户、角色、菜单变更提交后失效关联缓存；组织成员与部门树变更同时推进数据范围修订。会话撤销也在提交后执行。
+- 菜单管理查询直接读取数据库并保留数据范围，用户路由菜单按用户缓存。
+- 字典变更失效名称与明细缓存；设置改名失效新旧名称缓存。内部 `GetSettingValue<T>` 跨数据范围读取全局参数，保留软删除过滤。
+- 缓存契约为 `ICache`，可选键枚举能力为 `ICacheKeyCatalog`，目前仅 Redis 支持；在线用户枚举要求 Redis。
 
-`UseCache.Expiration` 单位为分钟。通用缓存键由前缀和方法参数生成，不包含 `CancellationToken`；依赖当前用户、但没有用户参数的方法必须显式构造用户缓存键。
+入口：[工作单元](../backend/src/Ape.Volo.Core/Repository/UnitOfWork/UnitOfWork.cs)、[权限缓存](../backend/src/Ape.Volo.Application/Identity/PermissionCacheService.cs)。
 
-用户资料、角色代码、权限代码、数据范围和用户菜单缓存统一由 `PermissionCacheService` 管理，保留逻辑键前缀、用户 ID 后缀和有效期。用户、角色、菜单变更通过该入口登记提交后失效。`UseCache` 和权限缓存在事务内直接查询，不读取或回填共享结果。原 `Aop:Cache` 开关继续控制此前由切面缓存的内容。
+内置设置名称统一使用 [SettingNames](../backend/src/Ape.Volo.Shared/Settings/SettingNames.cs)。已有环境升级需保留原值并改名，种子不会更新已有记录：
 
-缓存存储契约为 `Application.Contracts/Abstractions/Caching/ICache`，仅由 Core 提供具体实现。可选键枚举使用 `ICacheKeyCatalog`，仅 Redis 注册此能力；Redis 原生连接只供基础设施使用。
-
-[CacheEntries](../backend/src/Ape.Volo.Core/Caches/CacheEntries.cs) 使用原子比较交换协调加载与失效。加载开始时观察缓存修订，回填失败则重新读取，防止旧查询覆盖失效后的修订。物理键使用 `cache:entries:` 前缀。登录会话使用独立的会话键。
-
-字典及明细变更失效名称和所属字典明细缓存；系统参数更新或改名失效新旧名称缓存。这些清理均通过 `AfterCommitAsync` 登记，回滚不清理。
-
-菜单管理缓存和用户会话撤销也通过 `AfterCommitAsync` 登记，等待最外层事务提交；回滚不触发清理或撤销。菜单树与权限码查询排除禁用菜单。
-
-菜单管理仅缓存全量快照；祖先和直属子节点查询直接读取数据库，避免移动、删除节点后维护多份依赖树的失效关系。全量快照同样使用原子回填协议。
-
-源码入口：[工作单元契约](../backend/src/Ape.Volo.Core/Repository/UnitOfWork/IUnitOfWork.cs)、[事务与提交后动作](../backend/src/Ape.Volo.Core/Repository/UnitOfWork/UnitOfWork.cs)、[权限缓存](../backend/src/Ape.Volo.Application/Permission/PermissionCacheService.cs)。
+| 旧名称 | 新名称 |
+| --- | --- |
+| `DefaultEmailAccountId` | `App.Email.DefaultAccountId` |
+| `IsExceptionLogSaveDB` | `App.Logging.ExceptionLog.SaveToDatabase` |
+| `IsOperateLogSaveDB` | `App.Logging.OperateLog.SaveToDatabase` |
 
 ## 初始化与配置
 
-- 配置顺序：`appsettings.json` → 环境文件 → `IpRateLimit.json` → 环境变量 → 命令行。
-- 当前配置链没有加载 User Secrets。
-- `System:IsInitDb` 控制启动时的数据库初始化，先日志库、后主库；主库同步结构并写入种子数据，实体通过 `CodeFirst.InitTables` 同步，禁止删除已有列。已有日志表仍受实体上的 `IsDisabledUpdateAll` 限制。
-- 表和字段注释由 SqlSugar 从实体的 XML `summary` 读取；Entity 项目在 Debug/Release 均生成 `Ape.Volo.Entity.xml`，部署时须与实体程序集放在同一目录。已有主库表补齐注释需开启 `System:IsInitDb` 后重启；声明 `IsDisabledUpdateAll = true` 的已有日志分表不会更新，新建分表会读取注释。
-- 种子 JSON 位于 Web 内容根目录的 `resources/db/`，随构建和发布复制，不由静态文件中间件公开。
-- IP 归属地离线库位于 Web 内容根目录的 `resources/ip/ip2region.xdb`，随构建和发布复制，仅供后端读取。
-- `System:UseRedisCache` 选择 Redis 或内存分布式缓存；内存缓存不跨进程共享。
-- 在线用户枚举要求 Redis。
-- 静态上传文件由 `wwwroot` 下的 `/uploads/file/` 提供，不带 `/api` 前缀。
-- 限流使用连接 IP，不接受 `X-ClientId` 白名单或客户端自报的 `X-Real-IP`。转发头由 ASP.NET Core 处理，默认仅信任回环代理；代理位于其他主机时，用 `ForwardedHeaders:KnownProxies` 配置代理 IP 数组。显式配置后替换默认信任范围，只处理一层转发。
-- MiniProfiler 仅在 `Development` 且 `Middleware:MiniProfiler` 开启时挂载；`/profiler` 的结果和列表仅已登录的 `admin` 角色可访问。
+配置按 `appsettings.json` → 环境文件 → `ipratelimit.json` → 环境变量 → 命令行覆盖，当前不加载 User Secrets。入口为 [Program.cs](../backend/src/Ape.Volo.Web/Program.cs) 与 [环境配置](../backend/src/Ape.Volo.Web/appsettings.Development.json)。
 
-源码入口：[配置与宿主启动](../backend/src/Ape.Volo.Web/Program.cs)、[初始化开关与顺序](../backend/src/Ape.Volo.Web/Extensions/DataSeederExtensions.cs)、[表结构和种子数据初始化](../backend/src/Ape.Volo.Core/SeedData/SeedService.cs)。
+VS Code 的 [.vscode/settings.json](../.vscode/settings.json) 和[工作区](../ape-volo-admin-basic.code-workspace)均为 `appsettings*.json` 内联配置通用对象 Schema，直接打开仓库根目录或使用工作区时均生效，覆盖 C# 扩展的公共 Schema 关联，避免在线加载失败及自定义 `SerilogOptions` 字段误报。JSON 语法检查保留，不提供字段级类型校验。
 
-## 任务调度
+- SQLite 路径相对于 Web 内容根目录，默认主库、日志库在 `data/`，不对外公开。旧根目录数据库不会自动迁移；保留数据时停机移动数据库及其 `-wal`、`-shm` 文件。
+- `System:IsInitDb` 控制启动初始化，先日志库后主库；主库同步表结构并写入种子，禁止自动删列。已有日志表受 `IsDisabledUpdateAll` 限制。
+- Oracle 需预先准备服务/PDB、Schema 和建表权限，程序只检查连接并初始化表结构。
+- 种子位于 `resources/db/`，IP 离线库位于 `resources/ip/ip2region_v4.xdb`、`ip2region_v6.xdb`，随发布复制。归属地通过 `IIpLocationService` 查询，更新离线库后重启。
+- `System:UseRedisCache` 选择 Redis 或进程内缓存；后者不跨进程共享。
+- `SnowflakeId:WorkerId` 默认 1（0–63），`DataCenterId` 默认 0（0–31）。部署节点组合必须唯一；旧 `IdGenerator:WorkerId` 不再读取。新 ID 已加入数据中心位，时间戳左移 17 位，依赖旧位布局的解析代码需调整。
+- Swagger 联系人使用 `Swagger:ContactName`、`ContactEmail`、`ContactUrl`。
+- MiniProfiler 仅在 Development 且 `Middleware:MiniProfiler` 开启时挂载，结果仅已登录的 `admin` 可访问。
 
-配置实体为 `ScheduledJob`，表名为 `sys_scheduled_job`。查询接口为 `scheduled-job`，增删改及运行控制由 `scheduled-job-manager` 提供。数据库配置和调度器状态由 `ScheduledJobManager` 协调。
+### PostgreSQL
 
-## Elasticsearch 日志
+两份环境配置均提供默认关闭的 `Ape.Volo.Admin.PostgreSQL` 连接（`DBType: 4`）。填写连接字符串、启用连接，并将 `System:MainDatabase` 设为该 ID。首次自动建库需 `CREATEDB` 权限，也可预建数据库。日志库通过 `LogDataConnection` 独立配置，可与其他数据库类型组合。
 
-使用官方维护的 `Elastic.Serilog.Sinks` 9，要求 Elasticsearch 8.15 及以上，日志分别写入 `logs-ape-volo-application` 和 `logs-ape-volo-sql` 数据流。仅同时启用 `Serilog:ToElasticsearch` 与 `Middleware:Elasticsearch` 时连接服务器。
+PostgreSQL 查询及 CodeFirst 使用小写命名，大文本使用 `CodeFirst_BigString`。已有环境如需数据库类型字典项，通过字典管理补充 `PostgreSQL / 4`。
 
-`Serilog:ElasticsearchEndpoint` 默认 `http://127.0.0.1:9200`；认证 API Key 通过环境变量 `Serilog__ElasticsearchApiKey` 提供。启动时安装 ECS 模板失败会阻止启动，避免日志输出静默失效。数据库日志批处理使用 Serilog 内置批处理，每批最多 500 条，缓冲上限 10000 条。
+## IP 限流
+
+规则见 [IpRateLimit.json](../backend/src/Ape.Volo.Web/IpRateLimit.json)，由 `Middleware:IpLimit` 启用，修改后重启。按连接 IP、动词和实际路径计数，查询参数不拆分额度，超限返回 429 和 `Retry-After`。同一出口 IP 共享额度，部署时按并发量调整。
+
+转发头默认仅信任回环代理，其他代理通过 `ForwardedHeaders:KnownProxies` 配置，仅处理一层转发。修改 API 前缀时同步修改限流路径。
+
+## 上传与日志
+
+上传由 [FileUploadPolicy](../backend/src/Ape.Volo.Application/System/FileRecords/FileUploadPolicy.cs) 判断允许规则；Web 的 `FileTypeResolver` 按扩展名解析 MIME，应用层 `FileCategory` 决定显示分类和目录。未知类型为 `application/octet-stream`，不信任客户端 MIME，也不验证实际内容。文件由 `/uploads/file/` 提供，不带 `/api`。
+
+异常、操作和作业日志由 Web 构建实体，经独立内存队列写入日志库月分表；Application 日志服务仅查询、统计或导出。队列满、写入失败或进程退出可能丢日志。日志失败不改变作业执行结果。
+
+文件日志由 `Serilog:ToFile` 控制，按本地日期写入 `logs/yyyy-MM-dd/`，各级别独立文件，SQL 为 `AopSql.log`，每类最多保留 31 个日期文件。兜底为 `Fallback.log`，清理 30 天前同类文件；旧目录不自动迁移。
+
+Elasticsearch 输出需同时启用 `Serilog:ToElasticsearch` 与 `Middleware:Elasticsearch`，使用 `Elastic.Serilog.Sinks` 9，要求 Elasticsearch 8.15+。地址由 `Serilog:ElasticsearchEndpoint` 指定，API Key 使用环境变量 `Serilog__ElasticsearchApiKey`。
+
+## VS Code 调试
+
+安装 .NET 10 SDK 和 Microsoft C# 扩展（`ms-dotnettools.csharp`），使用 VS Code 打开仓库根目录或现有工作区。调试入口位于 [.vscode/launch.json](../.vscode/launch.json)，构建任务位于 [.vscode/tasks.json](../.vscode/tasks.json)。在“运行和调试”中选择“后端：Ape.Volo.Web”，按 F5 自动构建 Debug 版本并启动，F9 设置断点，Shift+F5 停止调试。
+
+调试复用 [launchSettings.json](../backend/src/Ape.Volo.Web/Properties/launchSettings.json) 的 `Ape.Volo.Web` 配置：环境为 Development，地址为 `http://localhost:9002`，Swagger 入口为 `http://localhost:9002/swagger/api`。工作目录设为 Web 项目目录，确保相对路径配置、私钥和资源可正确加载；启动前按 [快速开始](../README.md#快速开始) 核对数据库与密钥。
 
 ## 检查
 
-修改后端代码后，在 `backend/` 执行：
+在 `backend/` 执行：
 
 ```bash
 dotnet build Ape.Volo.Admin.slnx
 dotnet test Ape.Volo.Admin.slnx
 ```
 
-基础测试位于 [tests/](../backend/tests/)，保留 Web、Application、Core、Common 四个项目，共 9 个用例，分别检查控制器路由与 JSON 契约、服务接口约定、对象映射和序列化，测试方法使用英文命名。修改业务行为、HTTP 契约或表结构时，仍需验证对应流程、实际请求响应和目标数据库初始化结果；基础测试不覆盖完整业务功能。
+[tests/](../backend/tests/) 保留契约、安全、事务和关键行为回归。PostgreSQL 集成测试默认跳过；设置 `APEVOLO_TEST_POSTGRES` 指向一次性 PostgreSQL 13+ 实例后运行，会创建并删除独立测试库。业务流程、实际 HTTP 响应和目标数据库初始化仍需按改动验证。

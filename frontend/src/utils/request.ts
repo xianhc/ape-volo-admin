@@ -4,7 +4,6 @@ import { refreshToken } from '@/api/authClient'
 import { createTokenRefresher } from '@/services/session/tokenRefresh'
 import { clearToken, getApeToken, setApeToken } from '@/services/session/tokenStorage'
 import setting from '@/setting'
-import { reportServerError } from '@/services/logging/appLogger'
 
 const refresh = createTokenRefresher({
   read: getApeToken,
@@ -19,14 +18,12 @@ const refresh = createTokenRefresher({
 export default createHttpClient({
   config: {
     baseURL: import.meta.env.VITE_BASE_API,
-    timeout: setting.timeout,
-    headers: import.meta.env.VITE_BUILD_TAG ? { 'X-Client-Build': import.meta.env.VITE_BUILD_TAG } : {}
+    timeout: setting.timeout
   },
   session: {
     read: getApeToken,
     refresh,
     invalidate: (sessionId) => { if (getApeToken().sessionId === sessionId) clearToken() }
   },
-  feedback: httpFeedback,
-  onServerError: reportServerError
+  feedback: httpFeedback
 })

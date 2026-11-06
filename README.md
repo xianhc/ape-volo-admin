@@ -38,10 +38,16 @@
 
 ## 项目介绍
 
-Ape-Volo-Admin 是一套基于 .NET 10、Vue 3 和 TypeScript 的前后端分离后台管理系统，面向管理后台与内部业务系统开发。项目内置用户、角色、菜单、部门和岗位管理，集成认证授权、数据权限、文件管理、任务调度、邮件与日志等常用功能。开发者可以复用现有业务模块及 CRUD、表格、表单组件，扩展自己的业务功能。
+Ape-Volo-Admin 是面向管理后台与企业内部业务系统的开源项目系列，覆盖 **C#、Go、Java 三大主流后端语言**，并提供基于 **Vue 3 + Element Plus** 的 **TypeScript 与 JavaScript 双前端版本**。团队可以结合现有技术栈与开发习惯，选择适合自己的版本。
+
+项目内置用户、角色、菜单、部门和岗位管理，集成认证授权、数据权限、文件管理、任务调度、邮件与日志等常用能力。开发者可以复用已有业务模块及 CRUD、表格、表单组件，把精力集中在业务功能开发上。
+
+**本仓库为主仓库**，包含 .NET 10 后端与 TypeScript 前端；Go、Java 后端及 JavaScript 前端的独立仓库见[项目系列](#项目系列)。
 
 ### 项目特点
 
+- **三种后端选择**：C# / .NET、Go / Gin、Java / Spring Boot，适应不同团队的技术积累。
+- **双前端版本**：TypeScript 与 JavaScript 两种选择，均基于 Vue 3 + Element Plus。
 - **权限控制**：角色、菜单、按钮权限与五种数据范围。
 - **契约驱动**：服务契约生成 HTTP 接口与 Swagger 文档。
 - **会话认证**：JWT、令牌自动刷新、验证码与登录失败锁定。
@@ -65,7 +71,7 @@ Ape-Volo-Admin 是一套基于 .NET 10、Vue 3 和 TypeScript 的前后端分离
 | 层次       | 主要技术                                                    |
 | ---------- | ----------------------------------------------------------- |
 | 后端框架   | .NET 10、ASP.NET Core、Autofac                              |
-| 数据与缓存 | SqlSugar、SQLite / MySQL / SQL Server、进程内缓存 / Redis   |
+| 数据与缓存 | SqlSugar、SQLite / MySQL / SQL Server / PostgreSQL、进程内缓存 / Redis   |
 | 认证与安全 | JWT、BCrypt、RSA、AspNetCoreRateLimit                       |
 | 日志与调度 | Serilog、Quartz.NET，可选 Elasticsearch 日志输出            |
 | 接口与工具 | Swashbuckle、Newtonsoft.Json、Mapster、ClosedXML、SkiaSharp |
@@ -86,22 +92,9 @@ Ape-Volo-Admin 是一套基于 .NET 10、Vue 3 和 TypeScript 的前后端分离
 | Node.js  | `^24.0.0` 或 `^26.0.0`       |
 | pnpm     | 12，项目指定 `12.15.0`       |
 
-前端版本约束与命令见 [package.json](frontend/package.json)，后端目标框架见 [Directory.Build.props](backend/Directory.Build.props)。
+默认使用 SQLite 和进程内缓存，首次启动自动初始化数据库。切换数据库等配置见[后端开发](docs/backend.md#初始化与配置)。
 
-通用配置使用 SQLite 和进程内缓存；启动默认采用 `Development` 环境，环境文件会覆盖通用配置，当前开发配置使用 MySQL 主库和 SQLite 日志库。启动前核对 [通用配置](backend/src/Ape.Volo.Web/appsettings.json) 与 [开发配置](backend/src/Ape.Volo.Web/appsettings.Development.json)，确认目标数据库可用；需要使用 SQLite 主库时，同步调整主库 ID 与启用的连接项。数据库初始化默认开启，首次启动后端会创建表结构并写入种子数据，配置加载与初始化规则见 [后端开发](docs/backend.md#初始化与配置)。
-
-### 2. 检查密码传输密钥
-
-后端通过 `Rsa:PrivateKeyPath` 读取 **4096 位 PKCS#8 PEM 私钥**，前端使用配对公钥加密密码。启动前确认以下文件存在且配对：
-
-| 文件                                                     | 用途                                        |
-| -------------------------------------------------------- | ------------------------------------------- |
-| `backend/src/Ape.Volo.Web/.secrets/password-private.pem` | 后端私钥，默认路径相对于 Web 项目内容根目录 |
-| `frontend/src/assets/.secrets/password-public.pem`       | 前端公钥                                    |
-
-私钥缺失或格式不正确会阻止后端启动。现有密钥用于开发和演示，更换私钥后需同步替换前端公钥。
-
-### 3. 启动后端
+### 2. 启动后端
 
 在仓库根目录执行：
 
@@ -110,7 +103,7 @@ dotnet restore backend/Ape.Volo.Admin.slnx
 dotnet run --project backend/src/Ape.Volo.Web/Ape.Volo.Web.csproj
 ```
 
-### 4. 启动前端
+### 3. 启动前端
 
 另开终端，在仓库根目录执行：
 
@@ -120,7 +113,7 @@ pnpm install
 pnpm dev
 ```
 
-### 5. 访问系统
+### 4. 访问系统
 
 | 服务       | 默认本地地址                                                                                 |
 | ---------- | -------------------------------------------------------------------------------------------- |
@@ -208,6 +201,17 @@ ape-volo-admin/
 | [接口契约](docs/contract.md)        | 动态路由、请求参数、响应格式与字段类型 |
 | [架构约定](docs/decisions.md)       | 接口代理、事务、数据范围等实现约定     |
 | [岗位示例](docs/examples/README.md) | 已有业务模块的前后端调用关系           |
+
+## 项目系列
+
+本仓库为主仓库，提供 .NET 后端与 TypeScript 前端；其他版本可按团队技术栈选择。
+
+| 项目 | 定位 | 核心技术 |
+| --- | --- | --- |
+| **[ape-volo-admin](https://github.com/xianhc/ape-volo-admin)** | **主仓库 · 完整前后端** | .NET 10 + SqlSugar / Vue 3 + TypeScript + Element Plus |
+| [ape-volo-admin-go](https://github.com/xianhc/ape-volo-admin-go) | Go 后端 | Go + Gin + GORM |
+| [ape-volo-admin-java](https://github.com/xianhc/ape-volo-admin-java) | Java 后端 | Java 25 + Spring Boot 4 + MyBatis-Plus |
+| [ape-volo-web-js](https://github.com/xianhc/ape-volo-web-js) | JavaScript 前端 | Vue 3 + JavaScript + Vite + Element Plus |
 
 ## 贡献指南
 

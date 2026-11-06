@@ -103,12 +103,12 @@
 </template>
 
 <script setup lang="ts">
-  import type { Position } from '@/api/organization/types/position.types'
+  import type { Position } from '@/api/organization/position/types'
 
   import { computed, reactive, ref } from 'vue'
   import { ElMessage, ElMessageBox } from 'element-plus'
-  import { del, edit, get, add, download } from '@/api/organization/positions'
-  import type { PositionQueryParams } from '@/api/organization/types/position.types'
+  import { del, edit, get, add, download } from '@/api/organization/position'
+  import type { PositionQueryParams } from '@/api/organization/position/types'
   import TablePage from '@/components/crud/TablePage.vue'
   import CrudToolbarActions from '@/components/crud/CrudToolbarActions.vue'
   import RowActions from '@/components/crud/RowActions.vue'

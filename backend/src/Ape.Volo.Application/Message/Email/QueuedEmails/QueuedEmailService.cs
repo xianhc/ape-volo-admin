@@ -7,6 +7,7 @@ using Ape.Volo.Shared.Model;
 using Ape.Volo.Core.Repository.SugarHandler;
 using Ape.Volo.Core.Utils;
 using Ape.Volo.Entity.Message.Email.QueuedEmails;
+using Ape.Volo.Entity.Message.Email;
 using Microsoft.Extensions.Logging;
 
 namespace Ape.Volo.Application.Message.Email.QueuedEmails;
@@ -62,17 +63,15 @@ public class QueuedEmailService : BaseService<QueuedEmail>, IQueuedEmailService
     [HasPerm(SystemPermissions.QueuedEmails.Add)]
     public async Task<OperateResult> CreateAsync(CreateUpdateQueuedEmailDto createUpdateQueuedEmailDto, CancellationToken ct = default)
     {
-        var emailAccount = await _emailAccountService.FindByIdAsync(createUpdateQueuedEmailDto.EmailAccountId, ct);
+        var emailAccount = await _emailAccountService.GetByIdAsync(createUpdateQueuedEmailDto.EmailAccountId, ct);
         if (emailAccount == null)
         {
-            return OperateResult.Error(ValidationError.NotExist(createUpdateQueuedEmailDto,
-                "邮件账户",
-                nameof(createUpdateQueuedEmailDto.Id)));
+            return NotFound<EmailAccount>(createUpdateQueuedEmailDto.EmailAccountId);
         }
 
-        createUpdateQueuedEmailDto.From = emailAccount.Email;
-        createUpdateQueuedEmailDto.FromName = emailAccount.DisplayName;
         var queuedEmail = Mapper.MapTo<QueuedEmail>(createUpdateQueuedEmailDto);
+        queuedEmail.From = emailAccount.Email;
+        queuedEmail.FromName = emailAccount.DisplayName;
         var result = await AddAsync(queuedEmail, ct: ct);
         return OperateResult.Result(result);
     }
@@ -89,22 +88,18 @@ public class QueuedEmailService : BaseService<QueuedEmail>, IQueuedEmailService
     {
         if (!await TableWhere(x => x.Id == createUpdateQueuedEmailDto.Id).AnyAsync(ct))
         {
-            return OperateResult.Error(ValidationError.NotExist(createUpdateQueuedEmailDto,
-                "队列邮件",
-                nameof(createUpdateQueuedEmailDto.Id)));
+            return NotFound(createUpdateQueuedEmailDto.Id);
         }
 
-        var emailAccount = await _emailAccountService.FindByIdAsync(createUpdateQueuedEmailDto.EmailAccountId, ct);
+        var emailAccount = await _emailAccountService.GetByIdAsync(createUpdateQueuedEmailDto.EmailAccountId, ct);
         if (emailAccount == null)
         {
-            return OperateResult.Error(ValidationError.NotExist(createUpdateQueuedEmailDto,
-                "邮件账户",
-                nameof(createUpdateQueuedEmailDto.EmailAccountId)));
+            return NotFound<EmailAccount>(createUpdateQueuedEmailDto.EmailAccountId);
         }
 
-        createUpdateQueuedEmailDto.From = emailAccount.Email;
-        createUpdateQueuedEmailDto.FromName = emailAccount.DisplayName;
         var queuedEmail = Mapper.MapTo<QueuedEmail>(createUpdateQueuedEmailDto);
+        queuedEmail.From = emailAccount.Email;
+        queuedEmail.FromName = emailAccount.DisplayName;
         var result = await UpdateAsync(queuedEmail, ct: ct);
         return OperateResult.Result(result);
     }
@@ -116,7 +111,7 @@ public class QueuedEmailService : BaseService<QueuedEmail>, IQueuedEmailService
         var emailAccounts = await TableWhere(x => ids.Contains(x.Id)).ToListAsync(ct);
         if (emailAccounts.Count < 1)
         {
-            return OperateResult.Error(ValidationError.NotExist());
+            return NotFound();
         }
 
         var result = await LogicDeleteAsync(x => ids.Contains(x.Id), ct);
@@ -136,16 +131,16 @@ public class QueuedEmailService : BaseService<QueuedEmail>, IQueuedEmailService
     public async Task<OperateResult> ResetEmailCode(string emailAddress, string messageTemplateName, CancellationToken ct = default)
     {
         var emailMessageTemplate =
-            await _emailMessageTemplateService.QueryByNameAsync(messageTemplateName, ct);
+            await _emailMessageTemplateService.GetByNameAsync(messageTemplateName, ct);
         if (emailMessageTemplate == null)
         {
-            return OperateResult.Error(ValidationError.NotExist());
+            return NotFound<EmailMessageTemplate>(messageTemplateName, nameof(EmailMessageTemplate.Name));
         }
 
-        var emailAccount = await _emailAccountService.FindByIdAsync(emailMessageTemplate.EmailAccountId, ct);
+        var emailAccount = await _emailAccountService.GetByIdAsync(emailMessageTemplate.EmailAccountId, ct);
         if (emailAccount == null)
         {
-            return OperateResult.Error(ValidationError.NotExist());
+            return NotFound<EmailAccount>(emailMessageTemplate.EmailAccountId);
         }
 
         // 同一收件人 60 秒内只允许发送一次，避免被用来轰炸任意邮箱
@@ -169,10 +164,8 @@ public class QueuedEmailService : BaseService<QueuedEmail>, IQueuedEmailService
         queuedEmail.SentTries = 1;
         queuedEmail.EmailAccountId = emailAccount.Id;
 
-        await _cache.RemoveAsync(GlobalConstants.CachePrefix.EmailCaptcha +
-                                    queuedEmail.To.ToMd5String());
         var isTrue = await _cache.SetAsync(
-            GlobalConstants.CachePrefix.EmailCaptcha + queuedEmail.To.ToMd5String16(), captcha,
+            GlobalConstants.CachePrefix.EmailCaptcha + queuedEmail.To, captcha,
             TimeSpan.FromMinutes(5), null);
 
         if (isTrue)
@@ -246,7 +239,7 @@ public class QueuedEmailService : BaseService<QueuedEmail>, IQueuedEmailService
         var queuedEmails = await QueryToSendMailAsync(
             new QueuedEmailQueryCriteria { MaxTries = MaxTries, IsSend = false }, ct);
         var accountIds = queuedEmails.Select(x => x.EmailAccountId).Distinct().ToArray();
-        var emailAccounts = await _emailAccountService.FindByIdsAsync(accountIds, ct);
+        var emailAccounts = await _emailAccountService.GetByIdsAsync(accountIds, ct);
 
         foreach (var queuedEmail in queuedEmails)
         {
@@ -304,7 +297,7 @@ public class QueuedEmailService : BaseService<QueuedEmail>, IQueuedEmailService
     /// <param name="emailAddress">收件人地址</param>
     /// <returns>缓存键</returns>
     private static string EmailCooldownKey(string emailAddress) =>
-        GlobalConstants.CachePrefix.EmailCaptcha + "cooldown:" + emailAddress.ToMd5String();
+        GlobalConstants.CachePrefix.EmailCaptcha + "cooldown:" + emailAddress;
 
     #endregion
 }

@@ -24,20 +24,7 @@ public sealed class DynamicApiValidationFilter : IActionFilter, IOrderedFilter
 
         if (context.ModelState.IsValid) return;
 
-        var actionError = context.ModelState.GetErrors();
-        context.Result = new ContentResult
-        {
-            Content = new ActionResultVm
-            {
-                Status = StatusCodes.Status400BadRequest,
-                ActionError = actionError,
-                Message = actionError.GetFirstError(),
-                Timestamp = DateTime.Now.ToUnixTimeStampMillisecond().ToString(),
-                Path = context.HttpContext.Request.Path.Value?.ToLower() ?? string.Empty
-            }.ToJson(),
-            ContentType = "application/json; charset=utf-8",
-            StatusCode = StatusCodes.Status400BadRequest
-        };
+        context.Result = context.ModelState.ToErrorResult(context.HttpContext);
     }
 
     /// <summary>

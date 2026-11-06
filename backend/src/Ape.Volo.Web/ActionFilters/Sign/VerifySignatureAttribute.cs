@@ -1,10 +1,11 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
-using Ape.Volo.Application.Contracts.SystemManagement.AppSecrets.Models;
+using Ape.Volo.Application.Contracts.System.AppSecrets;
 using Ape.Volo.Common.Enums;
 using Ape.Volo.Common.Extensions;
 using Ape.Volo.Core.Caches;
 using Ape.Volo.Core.Utils;
+using Ape.Volo.Entity.System;
 using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace Ape.Volo.Web.ActionFilters.Sign;
@@ -78,16 +79,11 @@ public class VerifySignatureAttribute : BaseActionFilter
         }
 
         var appSecretModel = await filterContext.HttpContext.RequestServices.GetRequiredService<IAppSecretService>()
-            .QueryByAppIdAsync(appId);
+            .GetByAppIdAsync(appId);
         if (appSecretModel == null)
         {
-            CreateUpdateAppSecretDto createUpdateAppSecretDto = new CreateUpdateAppSecretDto
-            {
-                AppId = appId
-            };
             filterContext.Result =
-                Error(filterContext.HttpContext, ValidationError.NotExist(createUpdateAppSecretDto, "App应用密钥",
-                    nameof(createUpdateAppSecretDto.AppId)));
+                Error(filterContext.HttpContext, ValidationError.NotExist<AppSecret>(appId, nameof(AppSecret.AppId)));
             return;
         }
 

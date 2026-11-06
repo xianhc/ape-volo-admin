@@ -22,6 +22,7 @@ public static class HostServicesExtensions
         services.TryAddSingleton(TimeProvider.System);
         services.AddScoped<IClientEnvironment, ClientEnvironment>();
         services.AddSingleton<IFileStorage, LocalFileStorage>();
+        services.AddSingleton<IFileTypeResolver, FileTypeResolver>();
         services.AddSingleton<ICaptchaImageGenerator, CaptchaImageGenerator>();
         services.AddScoped<IPasswordDecryptor>(_ => new RsaPasswordDecryptor(passwordPrivateKeyPem));
         return services;

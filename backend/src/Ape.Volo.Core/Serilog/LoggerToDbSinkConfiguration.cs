@@ -1,9 +1,10 @@
-﻿using Ape.Volo.Core.ConfigOptions;
+using Ape.Volo.Core.ConfigOptions;
 using Microsoft.Extensions.DependencyInjection;
-using Ape.Volo.Common.Logging;
+using Ape.Volo.Application.Contracts.Abstractions.Logging;
 using Microsoft.Extensions.Options;
 using Serilog;
 using Serilog.Configuration;
+using Ape.Volo.Application.Contracts.Abstractions;
 
 namespace Ape.Volo.Core.Serilog;
 
@@ -19,11 +20,14 @@ public static class LoggerToDbSinkConfiguration
     /// <param name="scopeFactory">作用域工厂</param>
     /// <param name="logDataConnectionOptions">日志库连接配置</param>
     /// <param name="fallbackLogWriter">独立兜底输出</param>
+    /// <param name="idGenerator">唯一 ID 生成器</param>
     /// <returns>Serilog 配置</returns>
     public static LoggerConfiguration WriteToDb(this LoggerConfiguration loggerConfiguration,
-        IServiceScopeFactory scopeFactory, LogDataConnectionOptions logDataConnectionOptions, IFallbackLogWriter fallbackLogWriter)
+        IServiceScopeFactory scopeFactory, LogDataConnectionOptions logDataConnectionOptions,
+        IFallbackLogWriter fallbackLogWriter, IIdGenerator idGenerator)
     {
-        var loggerToDbSink = new LoggerToDbSink(scopeFactory, Options.Create(logDataConnectionOptions), fallbackLogWriter);
+        var loggerToDbSink = new LoggerToDbSink(scopeFactory, Options.Create(logDataConnectionOptions),
+            fallbackLogWriter, idGenerator);
         var batchingOptions = new BatchingOptions
         {
             BatchSizeLimit = 500,

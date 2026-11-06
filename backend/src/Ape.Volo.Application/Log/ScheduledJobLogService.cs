@@ -1,6 +1,5 @@
 using Ape.Volo.Application.Contracts.Authorization;
 using Ape.Volo.Application.Contracts.Log.Models;
-using Ape.Volo.Application.Contracts.Operations.Models;
 using Ape.Volo.Shared.Model;
 using Ape.Volo.Core.Repository.SugarHandler;
 using Ape.Volo.Entity.Log;
@@ -26,16 +25,6 @@ public class ScheduledJobLogService : BaseService<ScheduledJobLog>, IScheduledJo
     #endregion
 
     #region 基础方法
-
-    /// <inheritdoc />
-    public async Task<OperateResult> CreateAsync(ScheduledJobLogDto scheduledJobLogDto, CancellationToken ct = default)
-    {
-        ct.ThrowIfCancellationRequested();
-        var scheduledJobLog = Mapper.MapTo<ScheduledJobLog>(scheduledJobLogDto);
-        // 分表插入没有取消重载，必须等待写入结束后再让所属作用域释放。
-        var result = await SugarClient.Insertable(scheduledJobLog).SplitTable().ExecuteCommandAsync() > 0;
-        return OperateResult.Result(result);
-    }
 
     /// <inheritdoc />
     [HasPerm(SystemPermissions.ScheduledJobLogs.List)]

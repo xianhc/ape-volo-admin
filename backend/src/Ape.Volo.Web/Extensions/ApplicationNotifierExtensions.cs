@@ -25,7 +25,7 @@ public static class ApplicationNotifierExtensions
             var port = GetListeningPort(app);
 
             ConsoleHelper.WriteLine("欢迎使用《ape-volo-admin》中后台权限管理系统\n" +
-                                    "当前版本：v3.6.1\n" +
+                                    "当前版本：v3.6.2\n" +
                                     "加群方式：微信号：apevolo<备注'加群'>   QQ群：839263566\n" +
                                     "官方网站：https://www.apevolo.com\n" +
                                     $"接口文档地址：http://localhost:{port}/swagger/api/index.html\n" +

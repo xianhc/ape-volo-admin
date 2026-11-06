@@ -2,6 +2,7 @@ using System.Linq.Expressions;
 using Ape.Volo.Common.Extensions;
 using Ape.Volo.Shared.Model;
 using Ape.Volo.Core.Repository.SugarHandler;
+using Ape.Volo.Core.Utils;
 using Ape.Volo.Entity.Base;
 using Ape.Volo.Shared.Exceptions;
 using SqlSugar;
@@ -14,7 +15,7 @@ namespace Ape.Volo.Application;
 /// 对外暴露哪些能力，完全由各业务接口自行声明的方法决定。
 /// </summary>
 /// <typeparam name="TEntity">实体类型</typeparam>
-public abstract class BaseService<TEntity> where TEntity : class, ISoftDeletedEntity, new()
+public abstract class BaseService<TEntity> where TEntity : class, IEntity<long>, ISoftDeletedEntity, new()
 {
     #region 字段
 
@@ -47,27 +48,64 @@ public abstract class BaseService<TEntity> where TEntity : class, ISoftDeletedEn
 
     #endregion
 
+    #region 业务校验
+
+    /// <summary>
+    /// 使用当前服务的实体说明返回记录不存在结果
+    /// </summary>
+    /// <param name="id">可选的记录主键</param>
+    /// <returns>业务失败结果</returns>
+    protected static OperateResult NotFound(object? id = null)
+        => OperateResult.Error(ValidationError.NotExist<TEntity>(id));
+
+    /// <summary>
+    /// 使用关联实体的说明返回记录不存在结果
+    /// </summary>
+    /// <param name="value">关联记录的查询值</param>
+    /// <param name="propertyName">关联记录的查询字段，默认主键</param>
+    /// <returns>业务失败结果</returns>
+    protected static OperateResult NotFound<TRelated>(object? value = null, string propertyName = "Id")
+        => OperateResult.Error(ValidationError.NotExist<TRelated>(value, propertyName));
+
+    /// <summary>
+    /// 使用当前实体的字段说明返回数据重复结果
+    /// </summary>
+    /// <param name="field">DTO 的字段访问表达式</param>
+    /// <returns>业务失败结果</returns>
+    protected static OperateResult AlreadyExists<TValue>(Expression<Func<TValue>> field)
+        => OperateResult.Error(ValidationError.IsExist(field, typeof(TEntity)));
+
+    /// <summary>
+    /// 使用当前实体的字段说明返回必填结果
+    /// </summary>
+    /// <param name="field">DTO 的字段访问表达式</param>
+    /// <returns>业务失败结果</returns>
+    protected static OperateResult Required<TValue>(Expression<Func<TValue>> field)
+        => OperateResult.Error(ValidationError.Required(field, typeof(TEntity)));
+
+    #endregion
+
     #region 查询
 
     /// <summary>
-    /// 按主键查询单条
+    /// 按主键查询单条实体
     /// </summary>
     /// <param name="id">主键</param>
     /// <param name="ct">取消令牌</param>
     /// <returns>实体，不存在时返回 null</returns>
-    protected async Task<TEntity?> GetByIdAsync(long id, CancellationToken ct = default)
+    protected async Task<TEntity?> GetEntityByIdAsync(long id, CancellationToken ct = default)
     {
         ct.ThrowIfCancellationRequested();
         return await SugarClient.Queryable<TEntity>().In(id).FirstAsync(ct);
     }
 
     /// <summary>
-    /// 按主键批量查询
+    /// 按主键批量查询实体
     /// </summary>
     /// <param name="ids">主键集合</param>
     /// <param name="ct">取消令牌</param>
     /// <returns>实体集合，主键集合为空时返回空集合</returns>
-    protected async Task<List<TEntity>> GetByIdsAsync(IEnumerable<long> ids, CancellationToken ct = default)
+    protected async Task<List<TEntity>> GetEntitiesByIdsAsync(IEnumerable<long> ids, CancellationToken ct = default)
     {
         var pkValues = ids.Distinct().Select(x => (object)x).ToArray();
         if (pkValues.Length == 0)
@@ -86,39 +124,11 @@ public abstract class BaseService<TEntity> where TEntity : class, ISoftDeletedEn
     /// 添加实体
     /// </summary>
     /// <param name="entity">实体</param>
-    /// <param name="lockString">锁</param>
     /// <param name="ct">取消令牌</param>
     /// <returns></returns>
-    protected async Task<bool> AddAsync(TEntity entity, string lockString = "", CancellationToken ct = default)
+    protected async Task<bool> AddAsync(TEntity entity, CancellationToken ct = default)
     {
-        var insert = SugarClient.Insertable(entity);
-        if (!lockString.IsNullOrEmpty())
-        {
-            insert = insert.With(lockString);
-        }
-
-        var result = await insert.ExecuteCommandAsync(ct);
-
-        return result > 0;
-    }
-
-    /// <summary>
-    /// 批量添加实体
-    /// </summary>
-    /// <param name="entities">实体集合</param>
-    /// <param name="lockString">锁</param>
-    /// <param name="ct">取消令牌</param>
-    /// <returns></returns>
-    protected async Task<bool> AddAsync(List<TEntity> entities, string lockString = "",
-        CancellationToken ct = default)
-    {
-        var insert = SugarClient.Insertable(entities);
-        if (!lockString.IsNullOrEmpty())
-        {
-            insert = insert.With(lockString);
-        }
-
-        var result = await insert.ExecuteCommandAsync(ct);
+        var result = await SugarClient.Insertable(entity).ExecuteCommandAsync(ct);
         return result > 0;
     }
 
@@ -133,35 +143,14 @@ public abstract class BaseService<TEntity> where TEntity : class, ISoftDeletedEn
     /// <param name="isUpdateColumns">更新列</param>
     /// <param name="ignoreColumns">忽略列</param>
     /// <param name="isIgnoreNull">是否忽略NULL列更新</param>
-    /// <param name="lockString">是否加锁</param>
     /// <param name="ct">取消令牌</param>
     /// <returns></returns>
     protected async Task<bool> UpdateAsync(TEntity entity,
         Expression<Func<TEntity, object>>? isUpdateColumns = null,
-        Expression<Func<TEntity, object>>? ignoreColumns = null, bool isIgnoreNull = true, string lockString = "",
+        Expression<Func<TEntity, object>>? ignoreColumns = null, bool isIgnoreNull = true,
         CancellationToken ct = default)
     {
-        var up = BuildUpdateable(entity, isUpdateColumns, ignoreColumns, isIgnoreNull, lockString);
-        var result = await up.ExecuteCommandAsync(ct);
-        return result > 0;
-    }
-
-    /// <summary>
-    /// 批量更新实体
-    /// </summary>
-    /// <param name="entities">实体对象</param>
-    /// <param name="isUpdateColumns">更新列</param>
-    /// <param name="ignoreColumns">忽略列</param>
-    /// <param name="isIgnoreNull">是否忽略NULL列更新</param>
-    /// <param name="lockString">是否加锁</param>
-    /// <param name="ct">取消令牌</param>
-    /// <returns></returns>
-    protected async Task<bool> UpdateAsync(List<TEntity> entities,
-        Expression<Func<TEntity, object>>? isUpdateColumns = null,
-        Expression<Func<TEntity, object>>? ignoreColumns = null, bool isIgnoreNull = true, string lockString = "",
-        CancellationToken ct = default)
-    {
-        var up = BuildUpdateable(entities, isUpdateColumns, ignoreColumns, isIgnoreNull, lockString);
+        var up = BuildUpdateable(entity, isUpdateColumns, ignoreColumns, isIgnoreNull);
         var result = await up.ExecuteCommandAsync(ct);
         return result > 0;
     }
@@ -169,9 +158,9 @@ public abstract class BaseService<TEntity> where TEntity : class, ISoftDeletedEn
     /// <summary>
     /// 构造更新对象，统一处理更新列/忽略列互斥与软删字段保护
     /// </summary>
-    private IUpdateable<TEntity> BuildUpdateable(object entityOrEntities,
+    private IUpdateable<TEntity> BuildUpdateable(TEntity entity,
         Expression<Func<TEntity, object>>? isUpdateColumns,
-        Expression<Func<TEntity, object>>? ignoreColumns, bool isIgnoreNull, string lockString)
+        Expression<Func<TEntity, object>>? ignoreColumns, bool isIgnoreNull)
     {
         if (isUpdateColumns != null && ignoreColumns != null)
         {
@@ -183,18 +172,18 @@ public abstract class BaseService<TEntity> where TEntity : class, ISoftDeletedEn
             x => new { x.IsDeleted, x.DeleterId, x.DeletionTime };
         ignoreColumns = ignoreColumns == null ? ignoreSoftDeleteFields : ignoreColumns.AndAlso(ignoreSoftDeleteFields);
 
-        var up = entityOrEntities is List<TEntity> entities
-            ? SugarClient.Updateable(entities)
-            : SugarClient.Updateable((TEntity)entityOrEntities);
+        var up = SugarClient.Updateable(entity);
 
         up = up.IgnoreColumns(ignoreAllNullColumns: isIgnoreNull);
-        if (!lockString.IsNullOrEmpty())
-        {
-            up = up.With(lockString);
-        }
-
+        // 对象更新不支持 EnableQueryFilter，必须把当前可见主键作为同一条 UPDATE 的约束。
+        // DISTINCT 派生表避免 MySQL 将同表读取合并回更新目标；SQL 和参数均由 ORM 生成。
+        var visibleIds = Table.Where(row => row.Id == entity.Id).Select(row => row.Id).Distinct();
+        var visibleSql = visibleIds.ToSql();
+        var idColumn = visibleIds.SqlBuilder.GetTranslationColumnName(
+            SugarClient.EntityMaintenance.GetDbColumnName<TEntity>(nameof(IEntity<long>.Id)));
         return up.UpdateColumnsIF(isUpdateColumns != null, isUpdateColumns)
-            .IgnoreColumns(ignoreColumns);
+            .IgnoreColumns(ignoreColumns)
+            .Where($"{idColumn} IN (SELECT {idColumn} FROM ({visibleSql.Key}) AS permitted_rows)", visibleSql.Value);
     }
 
     #endregion
@@ -214,7 +203,7 @@ public abstract class BaseService<TEntity> where TEntity : class, ISoftDeletedEn
         // AOP 在模板实例上补的字段不会进入 SQL。
         var deleterId = _sugarRepository.CurrentUserId;
         var deletionTime = DateTime.Now;
-        return await SugarClient.Updateable<TEntity>()
+        return await SugarClient.Updateable<TEntity>().EnableQueryFilter()
             .SetColumns(it => new TEntity
             {
                 IsDeleted = true,
@@ -237,79 +226,46 @@ public abstract class BaseService<TEntity> where TEntity : class, ISoftDeletedEn
     /// TableWhere
     /// </summary>
     /// <param name="whereExpression">条件表达式</param>
-    /// <param name="selectExpression">查询表达式</param>
     /// <param name="orderExpression">排序表达式</param>
     /// <param name="orderByType">排序方式</param>
-    /// <param name="isClearDataScopeFilter">清除数据权限过滤器</param>
-    /// <param name="lockString">锁</param>
-    /// <param name="cacheDurationInSeconds">缓存时间(秒)</param>
     /// <param name="isSplitTable">是否分表</param>
     /// <returns></returns>
     protected ISugarQueryable<TEntity> TableWhere(Expression<Func<TEntity, bool>> whereExpression,
-        Expression<Func<TEntity, TEntity>>? selectExpression = null,
-        Expression<Func<TEntity, object>>? orderExpression = null, OrderByType? orderByType = null,
-        bool isClearDataScopeFilter = false, string lockString = "", int cacheDurationInSeconds = 0,
+        Expression<Func<TEntity, object>>? orderExpression = null, OrderByType orderByType = OrderByType.Asc,
         bool isSplitTable = false)
     {
-        return ApplyQueryOptions(Table.Where(whereExpression), selectExpression, orderExpression, orderByType,
-            isClearDataScopeFilter, lockString, cacheDurationInSeconds, isSplitTable);
+        return ApplyQueryOptions(Table.Where(whereExpression), orderExpression, orderByType, isSplitTable);
     }
 
     /// <summary>
     /// TableWhere
     /// </summary>
     /// <param name="conditionalModels">条件模型</param>
-    /// <param name="selectExpression">查询表达式</param>
     /// <param name="orderExpression">排序表达式</param>
     /// <param name="orderByType">排序方式</param>
-    /// <param name="isClearDataScopeFilter">清除数据权限过滤器</param>
-    /// <param name="lockString">锁</param>
-    /// <param name="cacheDurationInSeconds">缓存时间(秒)</param>
     /// <param name="isSplitTable">是否分表</param>
     /// <returns></returns>
     protected ISugarQueryable<TEntity> TableWhere(List<IConditionalModel> conditionalModels,
-        Expression<Func<TEntity, TEntity>>? selectExpression = null,
-        Expression<Func<TEntity, object>>? orderExpression = null, OrderByType? orderByType = null,
-        bool isClearDataScopeFilter = false, string lockString = "", int cacheDurationInSeconds = 0,
+        Expression<Func<TEntity, object>>? orderExpression = null, OrderByType orderByType = OrderByType.Asc,
         bool isSplitTable = false)
     {
-        return ApplyQueryOptions(Table.Where(conditionalModels), selectExpression, orderExpression, orderByType,
-            isClearDataScopeFilter, lockString, cacheDurationInSeconds, isSplitTable);
+        return ApplyQueryOptions(Table.Where(conditionalModels), orderExpression, orderByType, isSplitTable);
     }
 
     /// <summary>
-    /// 统一施加缓存、锁、过滤器、选择列、分表、排序
+    /// 统一施加分表与排序，始终保留软删除和数据范围过滤。
     /// </summary>
     private static ISugarQueryable<TEntity> ApplyQueryOptions(ISugarQueryable<TEntity> query,
-        Expression<Func<TEntity, TEntity>>? selectExpression,
-        Expression<Func<TEntity, object>>? orderExpression, OrderByType? orderByType,
-        bool isClearDataScopeFilter, string lockString, int cacheDurationInSeconds, bool isSplitTable)
+        Expression<Func<TEntity, object>>? orderExpression, OrderByType orderByType, bool isSplitTable)
     {
-        query = query.WithCacheIF(cacheDurationInSeconds > 0, cacheDurationInSeconds);
-
-        if (!lockString.IsNullOrEmpty())
-        {
-            query = query.With(lockString);
-        }
-
-        if (isClearDataScopeFilter)
-        {
-            query = query.ClearFilter<IDataScopedEntity>();
-        }
-
-        if (selectExpression != null)
-        {
-            query = query.Select(selectExpression);
-        }
-
         if (isSplitTable)
         {
             query = query.SplitTable();
         }
 
-        if (orderExpression != null && orderByType != null)
+        if (orderExpression != null)
         {
-            query = query.OrderBy(orderExpression, (OrderByType)orderByType);
+            query = query.OrderBy(orderExpression, orderByType);
         }
 
         return query;
@@ -346,11 +302,7 @@ public abstract class BaseService<TEntity> where TEntity : class, ISoftDeletedEn
 
         RefAsync<int> totalNumber = 0; //总条数
         RefAsync<int> totalPage = 0; //总页数
-        var query = Table.WithCacheIF(queryOptions.CacheDurationInSeconds > 0, queryOptions.CacheDurationInSeconds);
-        if (!queryOptions.LockString.IsNullOrEmpty())
-        {
-            query = query.With(queryOptions.LockString);
-        }
+        var query = Table;
 
         if (queryOptions.IncludePropertyNameList is { Length: > 0 } includes)
         {
@@ -358,10 +310,6 @@ public abstract class BaseService<TEntity> where TEntity : class, ISoftDeletedEn
             {
                 query = query.IncludesByNameString(name);
             }
-        }
-        else if (queryOptions.IsIncludes)
-        {
-            query = query.IncludesAllFirstLayer(queryOptions.IgnorePropertyNameList ?? []);
         }
 
         if (queryOptions.WhereLambda != null)
@@ -374,11 +322,6 @@ public abstract class BaseService<TEntity> where TEntity : class, ISoftDeletedEn
             query = query.Where(queryOptions.ConditionalModels);
         }
 
-
-        if (queryOptions.SelectExpression != null)
-        {
-            query = query.Select(queryOptions.SelectExpression);
-        }
 
         if (queryOptions.IsSplitTable)
         {
@@ -419,7 +362,7 @@ public abstract class BaseService<TEntity> where TEntity : class, ISoftDeletedEn
     /// 注：分页参数与查询条件均取自条件对象，未传页码时按第 1 页、每页 10 条处理
     /// </summary>
     /// <param name="criteria">分页查询条件</param>
-    /// <param name="configure">额外查询配置（IsIncludes / IsSplitTable / WhereLambda 等）</param>
+    /// <param name="configure">额外查询配置（导航白名单、分表、条件表达式）</param>
     /// <param name="ct">取消令牌</param>
     /// <typeparam name="TDto">返回项类型</typeparam>
     /// <returns>当前页数据与总数</returns>
@@ -434,7 +377,7 @@ public abstract class BaseService<TEntity> where TEntity : class, ISoftDeletedEn
     /// </summary>
     /// <param name="request">分页请求（PageIndex / PageSize / Sorting）</param>
     /// <param name="conditionalModels">查询条件模型</param>
-    /// <param name="configure">额外查询配置（IsIncludes / IsSplitTable / WhereLambda 等）</param>
+    /// <param name="configure">额外查询配置（导航白名单、分表、条件表达式）</param>
     /// <param name="ct">取消令牌</param>
     /// <typeparam name="TDto">返回项类型</typeparam>
     /// <returns>当前页数据与总数</returns>

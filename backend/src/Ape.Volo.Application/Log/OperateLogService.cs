@@ -37,25 +37,6 @@ public class OperateLogService : BaseService<OperateLog>, IOperateLogService
 
     #region 基础方法
 
-    /// <inheritdoc />
-    public async Task<OperateResult> CreateAsync(OperateLogDto operateLogDto, CancellationToken ct = default)
-    {
-        ct.ThrowIfCancellationRequested();
-        var operateLog = Mapper.MapTo<OperateLog>(operateLogDto);
-        // 分表插入没有取消重载，必须等待写入结束后再让所属作用域释放。
-        var result = await SugarClient.Insertable(operateLog).SplitTable().ExecuteCommandAsync() > 0;
-        return OperateResult.Result(result);
-    }
-
-    /// <inheritdoc />
-    public async Task<OperateResult> CreateListAsync(List<OperateLogDto> operateLogDtos, CancellationToken ct = default)
-    {
-        ct.ThrowIfCancellationRequested();
-        var operateLogs = Mapper.MapTo<List<OperateLog>>(operateLogDtos);
-        var result = await SugarClient.Insertable(operateLogs).SplitTable().ExecuteCommandAsync() > 0;
-        return OperateResult.Result(result);
-    }
-
 
 
     /// <inheritdoc />
@@ -65,7 +46,7 @@ public class OperateLogService : BaseService<OperateLog>, IOperateLogService
 
     /// <inheritdoc />
     [Authorize]
-    public Task<PagedResultDto<OperateLogVo>> QueryByCurrentAsync(PagedAndSortedResultRequestDto request, CancellationToken ct = default)
+    public Task<PagedResultDto<OperateLogVo>> GetByCurrentAsync(PagedAndSortedResultRequestDto request, CancellationToken ct = default)
         => PageAsync<OperateLogVo>(request, null, options =>
         {
             options.WhereLambda = x => x.CreatorId == _currentUser.Id;

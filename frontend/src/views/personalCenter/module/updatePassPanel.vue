@@ -46,7 +46,7 @@
   import { reactive, ref } from 'vue'
   import { ElMessage } from 'element-plus'
   import type { FormInstance } from 'element-plus'
-  import { editUserPass } from '@/api/permission/user'
+  import { editUserPass } from '@/api/identity/user'
   import { signOut } from '@/services/session/applicationSession'
 
   interface PwdModifyForm {

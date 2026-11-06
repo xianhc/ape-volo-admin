@@ -18,6 +18,10 @@ public sealed class SugarQueryProvider(ISqlSugarClient sqlSugarClient) : ISugarQ
 
         // 独立客户端避免污染业务查询的过滤器状态；软删除过滤器刻意保留。
         using var db = sqlSugarClient.CopyNew();
+        // CopyNew 共用 QueryFilter 实例；先复制集合再移除规则，不能修改请求客户端的过滤器。
+        var filters = new QueryFilterProvider();
+        filters.GetFilterList.AddRange(db.QueryFilter.GetFilterList);
+        db.QueryFilter = filters;
         db.QueryFilter.Clear<IDataScopedEntity>();
         return await query(db);
     }

@@ -5,7 +5,6 @@ using System.IO.Compression;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using Ape.Volo.Common.Extensions;
-using Ape.Volo.Common.Global;
 using Ape.Volo.Shared.Model;
 using ClosedXML.Excel;
 

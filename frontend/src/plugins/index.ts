@@ -6,7 +6,6 @@ import { setupStore } from '@/pinia'
 import { setupIcons } from './icons'
 import { setupPermission } from './permission'
 import { setupHttpFeedback } from './http'
-import { setupDiagnostics } from './diagnostics'
 
 export default {
   install(app: App): void {
@@ -14,7 +13,6 @@ export default {
     app.use(ElementPlus)
     // 仓储
     setupStore(app)
-    setupDiagnostics(app)
     setupDirective(app)
     setupHttpFeedback()
     // Icon

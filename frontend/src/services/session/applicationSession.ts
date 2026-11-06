@@ -1,6 +1,6 @@
 import { getUserInfo, login, logout } from '@/api/auth'
 import type { AuthContext } from '@/api/auth.types'
-import { build } from '@/api/permission/menu'
+import { build } from '@/api/identity/menu'
 import { useUserStore } from '@/pinia/modules/user'
 import { useRouterStore } from '@/pinia/modules/router'
 import { useDictionaryStore } from '@/pinia/modules/dictionary'

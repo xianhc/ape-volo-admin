@@ -1,7 +1,7 @@
 using Ape.Volo.Application.Contracts.Message.Email;
-using Ape.Volo.Application.Contracts.SystemManagement.ServerInfo;
+using Ape.Volo.Application.Contracts.System.ServerInfo;
 using Ape.Volo.Core.Message.Email;
-using Ape.Volo.Core.SystemManagement.ServerInfo;
+using Ape.Volo.Core.System.ServerInfo;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Ape.Volo.Core.Extensions;

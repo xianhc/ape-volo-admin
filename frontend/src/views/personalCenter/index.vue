@@ -284,7 +284,7 @@
   import { useUserStore } from '@/pinia/modules/user'
   import { isvalidPhone } from '@/utils/validate'
   import { getDict, type DictOption } from '@/composables/useDictionary'
-  import { editUserCenter } from '@/api/permission/user'
+  import { editUserCenter } from '@/api/identity/user'
   import updatePassPanel from './module/updatePassPanel.vue'
   import updateEmailPanel from './module/updateEmailPanel.vue'
   import OperateLogSection from './module/OperateLogSection.vue'

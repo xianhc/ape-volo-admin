@@ -57,7 +57,7 @@ public class TokenService(IOptions<JwtAuthOptions> options, IAuthSessionService 
         if (!TryGetIdentity(principal, JwtTokenValidation.RefreshTokenUse, out var userId, out var sessionId,
                 out _)) return null;
 
-        var session = await sessions.FindActiveAsync(sessionId, ct);
+        var session = await sessions.GetActiveAsync(sessionId, ct);
         if (session == null || session.UserId != userId) return null;
 
         var previousHash = Hash(refreshToken);
@@ -87,7 +87,7 @@ public class TokenService(IOptions<JwtAuthOptions> options, IAuthSessionService 
     {
         if (!TryGetIdentity(principal, JwtTokenValidation.AccessTokenUse, out var userId, out var sessionId,
                 out var tokenId)) return false;
-        var session = await sessions.FindActiveAsync(sessionId, ct);
+        var session = await sessions.GetActiveAsync(sessionId, ct);
         return session != null && session.UserId == userId && session.AccessTokenId == tokenId;
     }
 
@@ -104,7 +104,7 @@ public class TokenService(IOptions<JwtAuthOptions> options, IAuthSessionService 
         }
 
         if (!TryGetIdentity(principal, use, out var userId, out var sessionId, out var tokenId)) return;
-        var session = await sessions.FindActiveAsync(sessionId, ct);
+        var session = await sessions.GetActiveAsync(sessionId, ct);
         if (session == null || session.UserId != userId) return;
         if ((use == JwtTokenValidation.AccessTokenUse && session.AccessTokenId == tokenId) ||
             use == JwtTokenValidation.RefreshTokenUse)

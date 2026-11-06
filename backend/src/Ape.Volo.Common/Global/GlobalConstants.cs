@@ -50,21 +50,6 @@ public static class GlobalConstants
         public const string UserRoleCodes = "user:roleCode:id:";
 
         /// <summary>
-        /// 加载菜单根据PID
-        /// </summary>
-        public const string LoadMenusByPId = "menu:pid:";
-
-        /// <summary>
-        /// 加载菜单根据ID
-        /// </summary>
-        public const string LoadMenusById = "menu:id:";
-
-        /// <summary>
-        /// 全部菜单
-        /// </summary>
-        public const string LoadAllMenu = "menu:LoadAllMenu";
-
-        /// <summary>
         /// 加载设置信息
         /// </summary>
         public const string LoadSettingByName = "setting:name:";
@@ -79,11 +64,6 @@ public static class GlobalConstants
         /// </summary>
         public const string UserDataScopeAllById = "user:dataScope:all:id:";
 
-
-        /// <summary>
-        /// 加载字典详情信息
-        /// </summary>
-        public const string LoadDictDetailByDictId = "dict:detail:dictid:";
 
         /// <summary>
         /// 加载字典详情信息

@@ -13,7 +13,7 @@ public interface IEmailAccountLookupService
     /// <param name="id">账户 ID</param>
     /// <param name="ct">取消令牌</param>
     /// <returns>账户，不存在时为 null</returns>
-    Task<EmailAccountVo?> FindByIdAsync(long id, CancellationToken ct = default);
+    Task<EmailAccountVo?> GetByIdAsync(long id, CancellationToken ct = default);
 
     /// <summary>
     /// 批量读取发送邮件所需的账户配置。
@@ -21,6 +21,6 @@ public interface IEmailAccountLookupService
     /// <param name="ids">账户 ID 集合</param>
     /// <param name="ct">取消令牌</param>
     /// <returns>按账户 ID 索引的账户配置</returns>
-    Task<IReadOnlyDictionary<long, EmailAccountVo>> FindByIdsAsync(
+    Task<IReadOnlyDictionary<long, EmailAccountVo>> GetByIdsAsync(
         IReadOnlyCollection<long> ids, CancellationToken ct = default);
 }

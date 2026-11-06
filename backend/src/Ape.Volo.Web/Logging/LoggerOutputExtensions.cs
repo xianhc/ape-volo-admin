@@ -1,4 +1,3 @@
-﻿using System.Text;
 using Ape.Volo.Core.Serilog;
 using Serilog;
 using Serilog.Events;
@@ -37,28 +36,23 @@ public static class LoggerOutputExtensions
     /// 文件
     /// </summary>
     /// <param name="loggerConfiguration"></param>
-    /// <param name="logEvent"></param>
-    /// <param name="contentRootPath">内容根目录，日志写入其下的 Logs 子目录</param>
+    /// <param name="contentRootPath">内容根目录，日志写入其下的 logs/日期 子目录</param>
     /// <returns></returns>
-    public static LoggerConfiguration WriteToFile(this LoggerConfiguration loggerConfiguration, LogEventLevel logEvent,
-        string contentRootPath)
+    public static LoggerConfiguration WriteToFile(this LoggerConfiguration loggerConfiguration, string contentRootPath)
     {
         //系统日志
-        loggerConfiguration = loggerConfiguration.WriteTo.Logger(lg =>
-            lg.Filter.ByIncludingOnly(p => p.Level == logEvent).RecordLog().WriteTo.Async(s =>
-                s.File(Path.Combine(contentRootPath, "Logs", logEvent.ToString(), ".log"),
-                    rollingInterval: RollingInterval.Day,
-                    outputTemplate: LoggerProperty.MessageTemplate, retainedFileCountLimit: 31,
-                    encoding: Encoding.UTF8)));
+        foreach (var level in Enum.GetValues<LogEventLevel>())
+        {
+            loggerConfiguration.WriteTo.Logger(lg =>
+                lg.Filter.ByIncludingOnly(p => p.Level == level).RecordLog().WriteTo.Async(s =>
+                    s.Sink(new DailyFileSink(contentRootPath, level + ".log"))));
+        }
 
         //sql日志
         loggerConfiguration = loggerConfiguration.WriteTo.Logger(lg =>
-            lg.Filter.ByIncludingOnly(p => p.Level == logEvent).RecordSql(LoggerProperty.ToFile)
+            lg.RecordSql(LoggerProperty.ToFile)
                 .WriteTo.Async(s =>
-                    s.File(Path.Combine(contentRootPath, "Logs", "AopSql", ".log"),
-                        rollingInterval: RollingInterval.Day,
-                        outputTemplate: LoggerProperty.MessageTemplate, retainedFileCountLimit: 31,
-                        encoding: Encoding.UTF8)));
+                    s.Sink(new DailyFileSink(contentRootPath, "AopSql.log"))));
         return loggerConfiguration;
     }
 

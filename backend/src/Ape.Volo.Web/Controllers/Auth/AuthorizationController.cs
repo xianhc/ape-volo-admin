@@ -1,6 +1,6 @@
 using System.ComponentModel;
 using Ape.Volo.Web.Controllers.Base;
-using Ape.Volo.Application.Contracts.Permission.Users.Models;
+using Ape.Volo.Application.Contracts.Identity.Users.Models;
 using Ape.Volo.Common.Attributes;
 using Ape.Volo.Common.Extensions;
 using Ape.Volo.Shared.Model;

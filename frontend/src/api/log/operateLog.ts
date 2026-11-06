@@ -38,9 +38,9 @@ export const getCurrent = (
   params: OperateCurrentLogQueryParams
 ): Promise<AxiosResponse<OperateLogPageResponse>> => {
   return request({
-    url: '/operate-log/query-by-current',
-    method: 'post',
-    data: params
+    url: '/operate-log/get-by-current',
+    method: 'get',
+    params
   })
 }
 

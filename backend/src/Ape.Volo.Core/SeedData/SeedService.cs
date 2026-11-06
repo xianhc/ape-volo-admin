@@ -1,17 +1,17 @@
 using System.Reflection;
 using System.Text;
-using Ape.Volo.Common.Converters;
 using Ape.Volo.Common.Helper;
 using Ape.Volo.Core.ConfigOptions;
 using Ape.Volo.Entity.Attributes;
 using Ape.Volo.Entity.Message.Email;
 using Ape.Volo.Entity.Operations;
-using Ape.Volo.Entity.Organization;
-using Ape.Volo.Entity.Permission;
-using Ape.Volo.Entity.Permission.Roles;
-using Ape.Volo.Entity.Permission.Users;
-using Ape.Volo.Entity.SystemManagement;
-using Ape.Volo.Entity.SystemManagement.Dictionaries;
+using Ape.Volo.Entity.Organization.Departments;
+using Ape.Volo.Entity.Organization.Positions;
+using Ape.Volo.Entity.Identity;
+using Ape.Volo.Entity.Identity.Roles;
+using Ape.Volo.Entity.Identity.Users;
+using Ape.Volo.Entity.System;
+using Ape.Volo.Entity.System.Dictionaries;
 using Newtonsoft.Json;
 using SqlSugar;
 
@@ -39,14 +39,7 @@ namespace Ape.Volo.Core.SeedData
                     return;
                 }
 
-                if (dataContext.DbType != DbType.Oracle)
-                {
-                    dataContext.Db.DbMaintenance.CreateDatabase();
-                }
-                else
-                {
-                    throw new Exception("不支持Oracle使用代码建库,请先建库后注释该代码重新启动！");
-                }
+                EnsureDatabase(dataContext.Db, "主库", "DataConnection:ConnectionItem");
 
 
                 #region 初始化主库数据表
@@ -76,14 +69,12 @@ namespace Ape.Volo.Core.SeedData
 
                 #region 初始化主库数据
 
-                JsonSerializerSettings setting = new();
-                JsonConvert.DefaultSettings = () =>
+                var setting = new JsonSerializerSettings
                 {
-                    setting.DateFormatHandling = DateFormatHandling.MicrosoftDateFormat;
-                    setting.DateFormatString = "yyyy-MM-dd HH:mm:ss";
-                    setting.NullValueHandling = NullValueHandling.Ignore;
-                    setting.Converters = new List<JsonConverter> { new CurrentDateTimeConverter() };
-                    return setting;
+                    DateFormatHandling = DateFormatHandling.MicrosoftDateFormat,
+                    DateFormatString = "yyyy-MM-dd HH:mm:ss",
+                    NullValueHandling = NullValueHandling.Ignore,
+                    Converters = { new SeedDateTimeConverter() }
                 };
                 string seedDataFolder = "resources/db/{0}.json";
                 seedDataFolder = Path.Combine(contentRootPath, seedDataFolder);
@@ -319,7 +310,7 @@ namespace Ape.Volo.Core.SeedData
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                throw new InvalidOperationException($"主库初始化失败：{ex.Message}", ex);
             }
         }
 
@@ -339,14 +330,7 @@ namespace Ape.Volo.Core.SeedData
 
 
             var logDb = dataContext.Db.GetConnectionScope(logConnId);
-            if (logDb.CurrentConnectionConfig.DbType != DbType.Oracle)
-            {
-                logDb.DbMaintenance.CreateDatabase();
-            }
-            else
-            {
-                throw new Exception("sqlSugar不支持Oracle使用代码建库,请先建库后注释该代码重新启动！");
-            }
+            EnsureDatabase(logDb, "日志库", "LogDataConnection");
 
 
             var logEntityList = typeof(Ape.Volo.Entity.Base.EntityBase).Assembly.GetExportedTypes()
@@ -382,6 +366,28 @@ namespace Ape.Volo.Core.SeedData
             ConsoleHelper.WriteLine("Log database initialization successful！", ConsoleColor.Green);
             ConsoleHelper.WriteLine();
             return Task.FromResult(Task.CompletedTask);
+        }
+
+        private static void EnsureDatabase(ISqlSugarClient db, string role, string configurationPath)
+        {
+            if (db.CurrentConnectionConfig.DbType != DbType.Oracle)
+            {
+                db.DbMaintenance.CreateDatabase();
+                return;
+            }
+
+            // Oracle 由 DBA 准备数据库和业务用户，应用仅初始化已有 Schema 中的表。
+            try
+            {
+                db.Ado.CheckConnection();
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException(
+                    $"Oracle{role}（连接 ID：{db.CurrentConnectionConfig.ConfigId}）连接失败。" +
+                    "SqlSugar 不支持自动创建 Oracle 数据库；请确认数据库服务/PDB 和业务用户（Schema）已准备就绪，" +
+                    $"账号具备建表权限，并检查 {configurationPath} 中的连接配置。无需修改初始化源码。", ex);
+            }
         }
     }
 }

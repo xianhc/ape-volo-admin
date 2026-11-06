@@ -1,5 +1,4 @@
-﻿using IP2Region.Net.Abstractions;
-using Shyjus.BrowserDetection;
+﻿using Shyjus.BrowserDetection;
 
 namespace Ape.Volo.Web.Authentication;
 
@@ -8,7 +7,7 @@ namespace Ape.Volo.Web.Authentication;
 /// </summary>
 public sealed class ClientEnvironment : IClientEnvironment
 {
-    private readonly ISearcher _ipSearcher;
+    private readonly IIpLocationService _ipSearcher;
     private readonly IBrowserDetector _browserDetector;
 
     /// <summary>
@@ -17,7 +16,7 @@ public sealed class ClientEnvironment : IClientEnvironment
     /// <param name="httpContextAccessor">HTTP 上下文访问器</param>
     /// <param name="ipSearcher">IP 归属地查询</param>
     /// <param name="browserDetector">UA 解析</param>
-    public ClientEnvironment(IHttpContextAccessor httpContextAccessor, ISearcher ipSearcher,
+    public ClientEnvironment(IHttpContextAccessor httpContextAccessor, IIpLocationService ipSearcher,
         IBrowserDetector browserDetector)
     {
         _ipSearcher = ipSearcher;
@@ -29,7 +28,7 @@ public sealed class ClientEnvironment : IClientEnvironment
     public string IpAddress { get; }
 
     /// <inheritdoc />
-    public string Location => _ipSearcher.Search(IpAddress) ?? string.Empty;
+    public string Location => _ipSearcher.Search(IpAddress).ToString();
 
     /// <inheritdoc />
     public string OperatingSystem => _browserDetector.Browser?.OS ?? string.Empty;

@@ -1,6 +1,6 @@
-﻿using Ape.Volo.Common.Enums;
+using Ape.Volo.Common.Enums;
 using Ape.Volo.Common.Extensions;
-using Ape.Volo.Common.Logging;
+using Ape.Volo.Application.Contracts.Abstractions.Logging;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Ape.Volo.Core.ConfigOptions;
 using Microsoft.Extensions.Options;
@@ -58,11 +58,7 @@ public static class SerilogExtensions
             var serilogOptions = services.GetRequiredService<IOptions<SerilogOptions>>().Value;
             if (serilogOptions.ToFile)
             {
-                foreach (LogEventLevel logEvent in Enum.GetValues(typeof(LogEventLevel)))
-                {
-                    //输出到文件
-                    logger.WriteToFile(logEvent, context.HostingEnvironment.ContentRootPath);
-                }
+                logger.WriteToFile(context.HostingEnvironment.ContentRootPath);
             }
 
             if (services.GetRequiredService<IOptions<SystemOptions>>().Value.RunMode == RunMode.Dev && serilogOptions.ToConsole)
@@ -77,7 +73,7 @@ public static class SerilogExtensions
                 //输出到数据库
                 logger.WriteToDb(services.GetRequiredService<IServiceScopeFactory>(),
                     services.GetRequiredService<IOptions<LogDataConnectionOptions>>().Value,
-                    services.GetRequiredService<IFallbackLogWriter>());
+                    services.GetRequiredService<IFallbackLogWriter>(), services.GetRequiredService<IIdGenerator>());
             }
 
             if (serilogOptions.ToElasticsearch && services.GetRequiredService<IOptions<MiddlewareOptions>>().Value.Elasticsearch)

@@ -57,6 +57,19 @@ export interface SetTokenData {
  */
 const APE_VOLO_ADMIN_TOKEN_KEY = 'ape-volo-admin-token'
 
+/** 跨标签页账号变化需要清理页面状态；同一会话的令牌轮换不触发清理。 */
+export const isSessionIdentityChange = (event: Pick<StorageEvent, 'key' | 'oldValue' | 'newValue'>): boolean => {
+  if (event.key === null) return true
+  if (event.key !== APE_VOLO_ADMIN_TOKEN_KEY) return false
+  try {
+    const previous = JSON.parse(event.oldValue ?? 'null') as Partial<ApeToken> | null
+    const current = JSON.parse(event.newValue ?? 'null') as Partial<ApeToken> | null
+    return previous?.sessionId !== current?.sessionId
+  } catch {
+    return true
+  }
+}
+
 /**
  * 默认令牌对象结构
  * @constant {ApeToken}

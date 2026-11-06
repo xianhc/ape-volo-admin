@@ -24,8 +24,6 @@ interface ClientOptions {
   feedback: HttpFeedback
   session?: SessionAccess
   now?: () => number
-  /** 与界面反馈独立的服务端错误诊断。 */
-  onServerError?: (error: AxiosError) => void
 }
 
 /** 刷新失败已统一反馈，避免被业务请求的响应拦截器再次处理。 */
@@ -97,9 +95,6 @@ export function createHttpClient(options: ClientOptions) {
       const session = options.session
       if (session && config?.authSessionId !== undefined && config.authSessionId !== session.read().sessionId) {
         throw new SessionChangedError('Session changed before error response')
-      }
-      if (response && response.status >= 500) {
-        try { options.onServerError?.(error) } catch { /* 诊断失败不影响业务错误传播。 */ }
       }
       if (response?.status === 401 && config && session) {
         if (config.authSessionId !== session.read().sessionId) throw new SessionChangedError('Session changed after request')

@@ -30,10 +30,10 @@ public class ScheduledJobService : BaseService<ScheduledJob>, IScheduledJobServi
     #region 基础方法
 
     /// <inheritdoc />
-    Task<ScheduledJobVo> IScheduledJobStore.QueryByIdAsync(long id, CancellationToken ct) => QueryByIdAsync(id, ct);
+    Task<ScheduledJobVo> IScheduledJobStore.GetByIdAsync(long id, CancellationToken ct) => GetByIdAsync(id, ct);
 
     /// <inheritdoc />
-    Task<List<ScheduledJobVo>> IScheduledJobStore.QueryByIdsAsync(IEnumerable<long> ids, CancellationToken ct) => QueryByIdsAsync(ids, ct);
+    Task<List<ScheduledJobVo>> IScheduledJobStore.GetByIdsAsync(IEnumerable<long> ids, CancellationToken ct) => GetByIdsAsync(ids, ct);
 
     /// <inheritdoc />
     Task<List<ScheduledJobVo>> IScheduledJobStore.GetAllAsync(CancellationToken ct) => GetAllAsync(ct);
@@ -41,9 +41,9 @@ public class ScheduledJobService : BaseService<ScheduledJob>, IScheduledJobServi
     /// <inheritdoc />
     /// <exception cref="BadRequestException">作业不存在</exception>
     [HasPerm(SystemPermissions.ScheduledJobs.List)]
-    public async Task<ScheduledJobVo> QueryByIdAsync(long id, CancellationToken ct = default)
+    public async Task<ScheduledJobVo> GetByIdAsync(long id, CancellationToken ct = default)
     {
-        var scheduledJob = await GetByIdAsync(id, ct);
+        var scheduledJob = await GetEntityByIdAsync(id, ct);
 
         // 按主键查询属于「必须存在」的语义，缺数据直接抛业务异常，避免调用方到处判空
         if (scheduledJob == null)
@@ -56,9 +56,9 @@ public class ScheduledJobService : BaseService<ScheduledJob>, IScheduledJobServi
 
     /// <inheritdoc />
     [HasPerm(SystemPermissions.ScheduledJobs.List)]
-    public async Task<List<ScheduledJobVo>> QueryByIdsAsync(IEnumerable<long> ids, CancellationToken ct = default)
+    public async Task<List<ScheduledJobVo>> GetByIdsAsync(IEnumerable<long> ids, CancellationToken ct = default)
     {
-        var scheduledJobs = await GetByIdsAsync(ids, ct);
+        var scheduledJobs = await GetEntitiesByIdsAsync(ids, ct);
         return Mapper.MapTo<List<ScheduledJobVo>>(scheduledJobs);
     }
 
@@ -76,7 +76,7 @@ public class ScheduledJobService : BaseService<ScheduledJob>, IScheduledJobServi
         if (await TableWhere(q => q.JobName == createUpdateScheduledJobDto.JobName).CountAsync(ct) > 0)
         {
             throw new BadRequestException(
-                ValidationError.IsExist(createUpdateScheduledJobDto, nameof(createUpdateScheduledJobDto.JobName)));
+                ValidationError.IsExist(() => createUpdateScheduledJobDto.JobName, typeof(ScheduledJob)));
         }
 
         if (await TableWhere(q =>
@@ -84,7 +84,7 @@ public class ScheduledJobService : BaseService<ScheduledJob>, IScheduledJobServi
                 q.ClassName == createUpdateScheduledJobDto.ClassName).CountAsync(ct) > 0)
         {
             throw new BadRequestException(
-                ValidationError.IsExist(createUpdateScheduledJobDto, nameof(createUpdateScheduledJobDto.ClassName)));
+                ValidationError.IsExist(() => createUpdateScheduledJobDto.ClassName, typeof(ScheduledJob)));
         }
 
         var scheduledJob = Mapper.MapTo<ScheduledJob>(createUpdateScheduledJobDto);
@@ -100,17 +100,14 @@ public class ScheduledJobService : BaseService<ScheduledJob>, IScheduledJobServi
             await TableWhere(x => x.Id == createUpdateScheduledJobDto.Id).FirstAsync(ct);
         if (oldScheduledJob.IsNull())
         {
-            return OperateResult.Error(ValidationError.NotExist(createUpdateScheduledJobDto,
-                "作业调度",
-                nameof(createUpdateScheduledJobDto.Id)));
+            return NotFound(createUpdateScheduledJobDto.Id);
         }
 
         if (oldScheduledJob.JobName != createUpdateScheduledJobDto.JobName
             && await TableWhere(q =>
                 q.JobName == createUpdateScheduledJobDto.JobName).CountAsync(ct) > 0)
         {
-            return OperateResult.Error(
-                ValidationError.IsExist(createUpdateScheduledJobDto, nameof(createUpdateScheduledJobDto.JobName)));
+            return AlreadyExists(() => createUpdateScheduledJobDto.JobName);
         }
 
 
@@ -119,8 +116,7 @@ public class ScheduledJobService : BaseService<ScheduledJob>, IScheduledJobServi
                 q.AssemblyName == createUpdateScheduledJobDto.AssemblyName &&
                 q.ClassName == createUpdateScheduledJobDto.ClassName).CountAsync(ct) > 0)
         {
-            return OperateResult.Error(
-                ValidationError.IsExist(createUpdateScheduledJobDto, nameof(createUpdateScheduledJobDto.ClassName)));
+            return AlreadyExists(() => createUpdateScheduledJobDto.ClassName);
         }
 
         var scheduledJob = Mapper.MapTo<ScheduledJob>(createUpdateScheduledJobDto);
@@ -146,21 +142,6 @@ public class ScheduledJobService : BaseService<ScheduledJob>, IScheduledJobServi
     [HasPerm(SystemPermissions.ScheduledJobs.List)]
     public Task<PagedResultDto<ScheduledJobVo>> GetListAsync(ScheduledJobQueryCriteria scheduledJobQueryCriteria, CancellationToken ct = default)
         => PageAsync<ScheduledJobVo>(scheduledJobQueryCriteria, ct: ct);
-
-    /// <inheritdoc />
-    [HasPerm(SystemPermissions.ScheduledJobs.List, SystemPermissions.ScheduledJobLogs.List)]
-    public async Task<List<ScheduledJobSmallVo>> QueryAllJobNameAsync(CancellationToken ct = default)
-    {
-        return Mapper.MapTo<List<ScheduledJobSmallVo>>(await Table.ToListAsync(ct));
-    }
-
-    /// <inheritdoc />
-    [HasPerm(SystemPermissions.ScheduledJobs.List)]
-    public async Task<ScheduledJobVo?> QueryByJobNameAsync(string jobName, CancellationToken ct = default)
-    {
-        var scheduledJob = await TableWhere(x => x.JobName == jobName).FirstAsync(ct);
-        return scheduledJob == null ? null : Mapper.MapTo<ScheduledJobVo>(scheduledJob);
-    }
 
     /// <inheritdoc />
     [HasPerm(SystemPermissions.ScheduledJobs.Download)]

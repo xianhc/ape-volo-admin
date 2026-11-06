@@ -11,27 +11,6 @@ public interface IOperateLogService : IApplicationService
     #region 基础接口
 
     /// <summary>
-    /// 创建
-    /// </summary>
-    /// <param name="operateLogDto"></param>
-    /// <param name="ct">取消令牌</param>
-    /// <returns></returns>
-    // 审计日志由宿主生成，不接受客户端伪造写入。
-    [RemoteService(false)]
-    Task<OperateResult> CreateAsync(OperateLogDto operateLogDto, CancellationToken ct = default);
-
-
-    /// <summary>
-    /// 创建
-    /// </summary>
-    /// <param name="operateLogDtos"></param>
-    /// <param name="ct">取消令牌</param>
-    /// <returns></returns>
-    [RemoteService(false)]
-    Task<OperateResult> CreateListAsync(List<OperateLogDto> operateLogDtos, CancellationToken ct = default);
-
-
-    /// <summary>
     /// 查询
     /// </summary>
     /// <param name="logQueryCriteria"></param>
@@ -45,7 +24,7 @@ public interface IOperateLogService : IApplicationService
     /// <param name="request"></param>
     /// <param name="ct">取消令牌</param>
     /// <returns></returns>
-    Task<PagedResultDto<OperateLogVo>> QueryByCurrentAsync(PagedAndSortedResultRequestDto request, CancellationToken ct = default);
+    Task<PagedResultDto<OperateLogVo>> GetByCurrentAsync(PagedAndSortedResultRequestDto request, CancellationToken ct = default);
 
     /// <summary>
     /// 获取操作日志数量

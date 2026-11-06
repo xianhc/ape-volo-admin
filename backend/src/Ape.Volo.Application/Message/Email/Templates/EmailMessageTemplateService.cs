@@ -35,8 +35,7 @@ public class EmailMessageTemplateService : BaseService<EmailMessageTemplate>, IE
     {
         if (await TableWhere(x => x.Name == createUpdateEmailMessageTemplateDto.Name).AnyAsync(ct))
         {
-            return OperateResult.Error(ValidationError.IsExist(createUpdateEmailMessageTemplateDto,
-                nameof(createUpdateEmailMessageTemplateDto.Name)));
+            return AlreadyExists(() => createUpdateEmailMessageTemplateDto.Name);
         }
 
 
@@ -52,16 +51,13 @@ public class EmailMessageTemplateService : BaseService<EmailMessageTemplate>, IE
         var emailMessageTemplate = await TableWhere(x => x.Id == createUpdateEmailMessageTemplateDto.Id).FirstAsync(ct);
         if (emailMessageTemplate.IsNull())
         {
-            return OperateResult.Error(ValidationError.NotExist(createUpdateEmailMessageTemplateDto,
-                "邮件模板",
-                nameof(createUpdateEmailMessageTemplateDto.Id)));
+            return NotFound(createUpdateEmailMessageTemplateDto.Id);
         }
 
         if (emailMessageTemplate.Name != createUpdateEmailMessageTemplateDto.Name &&
             await TableWhere(j => j.Name == emailMessageTemplate.Name).AnyAsync(ct))
         {
-            return OperateResult.Error(ValidationError.IsExist(createUpdateEmailMessageTemplateDto,
-                nameof(createUpdateEmailMessageTemplateDto.Name)));
+            return AlreadyExists(() => createUpdateEmailMessageTemplateDto.Name);
         }
 
         var result = await UpdateAsync(
@@ -76,7 +72,7 @@ public class EmailMessageTemplateService : BaseService<EmailMessageTemplate>, IE
         var messageTemplateList = await TableWhere(x => ids.Contains(x.Id)).ToListAsync(ct);
         if (messageTemplateList.Count <= 0)
         {
-            return OperateResult.Error(ValidationError.NotExist());
+            return NotFound();
         }
 
         var result = await LogicDeleteAsync(x => ids.Contains(x.Id), ct);
@@ -90,7 +86,7 @@ public class EmailMessageTemplateService : BaseService<EmailMessageTemplate>, IE
         => PageAsync<EmailMessageTemplateVo>(messageTemplateQueryCriteria, ct: ct);
 
     /// <inheritdoc />
-    public async Task<EmailMessageTemplateVo?> QueryByNameAsync(string name, CancellationToken ct = default)
+    public async Task<EmailMessageTemplateVo?> GetByNameAsync(string name, CancellationToken ct = default)
     {
         var template = await TableWhere(x => x.Name == name).FirstAsync(ct);
         return template == null ? null : Mapper.MapTo<EmailMessageTemplateVo>(template);

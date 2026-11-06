@@ -2,9 +2,9 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <Version>3.6.1</Version>
-    <AssemblyVersion>3.6.1.0</AssemblyVersion>
-    <FileVersion>3.6.1.0</FileVersion>
+    <Version>3.6.2</Version>
+    <AssemblyVersion>3.6.2.0</AssemblyVersion>
+    <FileVersion>3.6.2.0</FileVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -42,7 +42,7 @@
 
   <!--
     宿主直接使用的类型必须显式声明引用，不靠传递依赖：
-    Common（HasPermAttribute / GlobalConstants / IdHelper / BCryptHelper / 扩展方法）、
+    Common（HasPermAttribute / GlobalConstants / BCryptHelper / 扩展方法）、
     Entity（SqlSugarExtensions 的 ICreateByEntity / ISoftDeletedEntity）、
     Shared（OperateResult / PagedResultDto / ExportBase 等通用模型与枚举）。
   -->
@@ -57,7 +57,7 @@
 
   <ItemGroup>
     <Content Update="resources\db\**\*.json" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
-    <None Remove="resources\ip\ip2region.xdb" />
-    <Content Include="resources\ip\ip2region.xdb" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <None Remove="resources\ip\ip2region_v4.xdb;resources\ip\ip2region_v6.xdb" />
+    <Content Include="resources\ip\ip2region_v4.xdb;resources\ip\ip2region_v6.xdb" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
   </ItemGroup>
 </Project>

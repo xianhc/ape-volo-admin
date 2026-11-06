@@ -1,12 +1,13 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 using System.Diagnostics;
 using Ape.Volo.Web.Logging;
-using Ape.Volo.Application.Contracts.Log.Models;
+using Ape.Volo.Entity.Log;
 using Ape.Volo.Common.Attributes;
 using Ape.Volo.Common.Extensions;
-using Ape.Volo.Common.IdGenerator;
-using Ape.Volo.Common.Logging;
-using IP2Region.Net.Abstractions;
+using Ape.Volo.Shared.Settings;
+using Ape.Volo.Application.Contracts.Abstractions;
+using Ape.Volo.Application.Contracts.Abstractions.Logging;
+using Ape.Volo.Application.Contracts.System.Settings;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -18,13 +19,14 @@ namespace Ape.Volo.Web.ActionFilters;
 /// </summary>
 public class OperateLogFilter : IAsyncActionFilter
 {
-    private readonly ILogQueue<OperateLogDto> _operateLogQueue;
+    private readonly ILogQueue<OperateLog> _operateLogQueue;
     private readonly ISettingService _settingService;
     private readonly IBrowserDetector _browserDetector;
-    private readonly ISearcher _ipSearcher;
+    private readonly IIpLocationService _ipSearcher;
     private readonly ILogger<OperateLogFilter> _logger;
     private readonly ICurrentUser _currentUser;
     private readonly IFallbackLogWriter _fallbackLogWriter;
+    private readonly IIdGenerator _idGenerator;
 
     /// <summary>
     /// 初始化 <see cref="OperateLogFilter"/> 的新实例。
@@ -36,10 +38,12 @@ public class OperateLogFilter : IAsyncActionFilter
     /// <param name="logger">logger</param>
     /// <param name="currentUser">当前请求用户</param>
     /// <param name="fallbackLogWriter">独立兜底输出</param>
+    /// <param name="idGenerator">唯一 ID 生成器</param>
 
-    public OperateLogFilter(ILogQueue<OperateLogDto> operateLogQueue, ISearcher searcher,
+    public OperateLogFilter(ILogQueue<OperateLog> operateLogQueue, IIpLocationService searcher,
         ISettingService settingService, IBrowserDetector browserDetector,
-        ILogger<OperateLogFilter> logger, ICurrentUser currentUser, IFallbackLogWriter fallbackLogWriter)
+        ILogger<OperateLogFilter> logger, ICurrentUser currentUser, IFallbackLogWriter fallbackLogWriter,
+        IIdGenerator idGenerator)
     {
         _operateLogQueue = operateLogQueue;
         _settingService = settingService;
@@ -48,6 +52,7 @@ public class OperateLogFilter : IAsyncActionFilter
         _logger = logger;
         _currentUser = currentUser;
         _fallbackLogWriter = fallbackLogWriter;
+        _idGenerator = idGenerator;
     }
 
     /// <summary>
@@ -62,7 +67,7 @@ public class OperateLogFilter : IAsyncActionFilter
     }
 
     /// <summary>
-    /// 执行审计功能
+    /// 执行
     /// </summary>
     /// <param name="context"></param>
     /// <param name="next"></param>
@@ -84,7 +89,8 @@ public class OperateLogFilter : IAsyncActionFilter
             //执行结果
             //var action = context.ActionDescriptor as ControllerActionDescriptor;
             //var isTrue = action.MethodInfo.IsDefined(typeof(DescriptionAttribute), false);
-            var saveDb = await _settingService.GetSettingValue<bool>("IsOperateLogSaveDB", context.HttpContext.RequestAborted);
+            var saveDb = await _settingService.GetSettingValue<bool>(
+                SettingNames.OperateLogSaveToDatabase, context.HttpContext.RequestAborted);
             if (saveDb && resultContext.Result.IsNotNull())
             {
                 var operateLog = await CreateOperateLogAsync(context);
@@ -123,7 +129,7 @@ public class OperateLogFilter : IAsyncActionFilter
     /// </summary>
     /// <param name="context"></param>
     /// <returns></returns>
-    private async Task<OperateLogDto> CreateOperateLogAsync(ActionExecutingContext context)
+    private async Task<OperateLog> CreateOperateLogAsync(ActionExecutingContext context)
     {
         var routeValues = context.ActionDescriptor.RouteValues;
 
@@ -136,9 +142,9 @@ public class OperateLogFilter : IAsyncActionFilter
             .FirstOrDefault();
         var userAgent = context.HttpContext.Request.Headers["User-Agent"].ToString();
         var descriptionValue = descriptionAttribute != null ? descriptionAttribute.Description : "";
-        var operateLog = new OperateLogDto
+        var operateLog = new OperateLog
         {
-            Id = IdHelper.NextId(),
+            Id = _idGenerator.NewId(),
             CreatorId = _currentUser.Id > 0 ? _currentUser.Id : null,
             CreatorName = _currentUser.Account,
             CreationTime = DateTime.Now,
@@ -150,7 +156,7 @@ public class OperateLogFilter : IAsyncActionFilter
             RequestUrl = httpContext.Request.Path,
             RequestParameters = SensitiveDataRedactor.Serialize(arguments),
             RequestIp = remoteIp,
-            IpAddress = _ipSearcher.Search(remoteIp) ?? "",
+            IpAddress = _ipSearcher.Search(remoteIp).ToString(),
             UserAgent = userAgent,
             OperatingSystem = _browserDetector.Browser?.OS ?? "",
             DeviceType = _browserDetector.Browser?.DeviceType ?? "",

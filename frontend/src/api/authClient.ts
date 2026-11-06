@@ -3,7 +3,6 @@ import { httpFeedback } from '@/services/http/httpFeedback'
 import setting from '@/setting'
 import { encrypt } from '@/utils/rsaEncrypt'
 import { getApeToken } from '@/services/session/tokenStorage'
-import { reportServerError } from '@/services/logging/appLogger'
 import { normalizeAuthContext, normalizeTokenResponse } from './auth.types'
 import type {
   AuthContextDto,
@@ -15,8 +14,7 @@ import type {
 /** 登录、刷新和退出不经过受保护接口的鉴权拦截器。 */
 export const authClient = createHttpClient({
   config: { baseURL: import.meta.env.VITE_BASE_API, timeout: setting.timeout },
-  feedback: httpFeedback,
-  onServerError: reportServerError
+  feedback: httpFeedback
 })
 
 export async function login(

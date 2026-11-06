@@ -59,9 +59,6 @@ export default defineConfig(
       : `${basePath}/`
 
     const config: UserConfig = {
-      define: {
-        'import.meta.env.VITE_BUILD_TAG': JSON.stringify(env.VITE_BUILD_TAG || String(timestamp))
-      },
       base: '/', // 编译后js导入的资源路径
       root: './', // index.html文件所在位置
       publicDir: 'public', // 静态资源文件夹

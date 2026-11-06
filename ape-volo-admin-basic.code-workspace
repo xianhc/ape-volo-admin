@@ -15,6 +15,13 @@
   ],
   "settings": {
     "dotnet.defaultSolution": "后端/Ape.Volo.Admin.slnx",
+    "json.schemas": [
+      {
+        "fileMatch": ["**/appsettings.json", "**/appsettings.*.json"],
+        "url": "https://json.schemastore.org/appsettings",
+        "schema": { "type": "object" },
+      },
+    ],
     "files.exclude": {
       "frontend": true,
       "backend": true,

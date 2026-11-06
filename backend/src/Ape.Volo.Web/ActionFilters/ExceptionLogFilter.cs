@@ -1,23 +1,23 @@
-﻿using Ape.Volo.Shared.Exceptions;
+using Ape.Volo.Shared.Exceptions;
 using System.ComponentModel;
 using Ape.Volo.Web.Logging;
-using Ape.Volo.Application.Contracts.Log.Models;
+using Ape.Volo.Entity.Log;
 using Ape.Volo.Common.Extensions;
-using Ape.Volo.Common.IdGenerator;
-using Ape.Volo.Common.Logging;
+using Ape.Volo.Shared.Settings;
+using Ape.Volo.Application.Contracts.Abstractions;
+using Ape.Volo.Application.Contracts.Abstractions.Logging;
+using Ape.Volo.Application.Contracts.System.Settings;
 using Ape.Volo.Core.ConfigOptions;
 using Microsoft.Extensions.Options;
-using IP2Region.Net.Abstractions;
+using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Shyjus.BrowserDetection;
 using StackExchange.Profiling;
-using ExceptionHelper = Ape.Volo.Web.Logging.ExceptionHelper;
 using LogLevel = Ape.Volo.Shared.Enums.LogLevel;
 using MiniProfiler = StackExchange.Profiling.MiniProfiler;
 
-// 消歧义：与 Ape.Volo.Common.Helper.ExceptionHelper 重名，固定引用日志格式化器
 namespace Ape.Volo.Web.ActionFilters;
 
 /// <summary>
@@ -25,14 +25,15 @@ namespace Ape.Volo.Web.ActionFilters;
 /// </summary>
 public class ExceptionLogFilter : IAsyncExceptionFilter
 {
-    private readonly ILogQueue<ExceptionLogDto> _exceptionLogQueue;
+    private readonly ILogQueue<ExceptionLog> _exceptionLogQueue;
     private readonly ISettingService _settingService;
     private readonly IBrowserDetector _browserDetector;
     private readonly ILogger<ExceptionLogFilter> _logger;
-    private readonly ISearcher _ipSearcher;
+    private readonly IIpLocationService _ipSearcher;
     private readonly ICurrentUser _currentUser;
     private readonly MiddlewareOptions _middlewareOptions;
     private readonly IFallbackLogWriter _fallbackLogWriter;
+    private readonly IIdGenerator _idGenerator;
 
     /// <summary>
     /// 初始化 <see cref="ExceptionLogFilter"/> 的新实例。
@@ -45,11 +46,12 @@ public class ExceptionLogFilter : IAsyncExceptionFilter
     /// <param name="currentUser">当前请求用户</param>
     /// <param name="middlewareOptions">中间件配置</param>
     /// <param name="fallbackLogWriter">独立兜底输出</param>
+    /// <param name="idGenerator">唯一 ID 生成器</param>
 
-    public ExceptionLogFilter(ILogQueue<ExceptionLogDto> exceptionLogQueue, ISearcher searcher,
+    public ExceptionLogFilter(ILogQueue<ExceptionLog> exceptionLogQueue, IIpLocationService searcher,
         ISettingService settingService, IBrowserDetector browserDetector,
         ILogger<ExceptionLogFilter> logger, ICurrentUser currentUser, IOptions<MiddlewareOptions> middlewareOptions,
-        IFallbackLogWriter fallbackLogWriter)
+        IFallbackLogWriter fallbackLogWriter, IIdGenerator idGenerator)
     {
         _exceptionLogQueue = exceptionLogQueue;
         _settingService = settingService;
@@ -59,6 +61,7 @@ public class ExceptionLogFilter : IAsyncExceptionFilter
         _currentUser = currentUser;
         _middlewareOptions = middlewareOptions.Value;
         _fallbackLogWriter = fallbackLogWriter;
+        _idGenerator = idGenerator;
     }
 
     /// <summary>
@@ -103,16 +106,17 @@ public class ExceptionLogFilter : IAsyncExceptionFilter
                 MiniProfiler.Current?.CustomTiming("Errors：", throwMsg);
             }
             var remoteIp = context.HttpContext.Connection.RemoteIpAddress?.ToString() ?? "0.0.0.0";
-            var ipAddress = _ipSearcher.Search(remoteIp);
+            var ipAddress = _ipSearcher.Search(remoteIp).ToString();
             var arguments = await Requests.RequestParameterReader.ReadAsync(context.HttpContext.Request, context.HttpContext.RequestAborted);
             //记录日志
-            _logger.LogError(ExceptionHelper.ErrorFormat(context.HttpContext, remoteIp, ipAddress, context.Exception,
+            _logger.LogError(ErrorFormat(context.HttpContext, remoteIp, ipAddress, context.Exception,
                 _currentUser.Account,
                 _browserDetector.Browser?.OS, _browserDetector.Browser?.DeviceType, _browserDetector.Browser?.Name,
                 _browserDetector.Browser?.Version, SensitiveDataRedactor.Serialize(arguments)));
 
 
-            var saveDb = await _settingService.GetSettingValue<bool>("IsExceptionLogSaveDB", context.HttpContext.RequestAborted);
+            var saveDb = await _settingService.GetSettingValue<bool>(
+                SettingNames.ExceptionLogSaveToDatabase, context.HttpContext.RequestAborted);
             // 400 是预期内的输入/业务错误，只留文件日志，不写异常日志表——
             // 否则任何客户端都能用非法参数把 sys_exception_log 灌满
             if (saveDb && exceptionType != typeof(DemoRequestException) &&
@@ -140,14 +144,55 @@ public class ExceptionLogFilter : IAsyncExceptionFilter
     }
 
     /// <summary>
+    /// 格式化异常日志。
+    /// </summary>
+    /// <param name="httpContext">HTTP 上下文</param>
+    /// <param name="remoteIp">远程 IP</param>
+    /// <param name="ipAddress">IP 地址</param>
+    /// <param name="exception">异常</param>
+    /// <param name="currentUserName">当前用户名</param>
+    /// <param name="operatingSystem">操作系统</param>
+    /// <param name="deviceType">设备类型</param>
+    /// <param name="browserName">浏览器名称</param>
+    /// <param name="version">版本号</param>
+    /// <param name="requestContent">调用方已脱敏的请求内容</param>
+    /// <returns>格式化的异常日志</returns>
+    private static string ErrorFormat(HttpContext httpContext, string? remoteIp, string? ipAddress, Exception exception,
+        string? currentUserName,
+        string? operatingSystem, string? deviceType, string? browserName, string? version, string requestContent)
+    {
+        return string.Format("\r\n【异常信息】 : {0} \r\n" +
+                             "【异常类型】 : {1} \r\n" +
+                             "【请求路径】 : {2} \r\n" +
+                             "【请求类型】 : {3} \r\n" +
+                             "【请求内容】 : {4} \r\n" +
+                             "【当前用户】 : {5} \r\n" +
+                             "【当前IP】  : {6} \r\n" +
+                             "【IP地址】  : {7} \r\n" +
+                             "【操作系统】  : {8} \r\n" +
+                             "【设备类型】  : {9} \r\n" +
+                             "【浏览器】  : {10} \r\n" +
+                             "【版本号】  : {11} \r\n" +
+                             "【堆栈调用】 ：{12} \r\n" +
+                             "【完整异常】 ：{13}", exception.Message, exception.GetType().Name,
+            // Query 已由调用方读取并脱敏后放入请求内容，避免 URL 再次输出原始凭证。
+            UriHelper.BuildAbsolute(httpContext.Request.Scheme, httpContext.Request.Host,
+                httpContext.Request.PathBase, httpContext.Request.Path), httpContext.Request.Method,
+            requestContent, currentUserName,
+            remoteIp, ipAddress,
+            operatingSystem, deviceType, browserName, version, exception.StackTrace,
+            Common.Helper.ExceptionHelper.GetExceptionAllMsg(exception));
+    }
+
+    /// <summary>
     /// 创建异常对象
     /// </summary>
     /// <param name="context"></param>
     /// <param name="arguments">已异步读取的请求参数</param>
     /// <returns></returns>
-    private ExceptionLogDto CreateLog(ExceptionContext context, Dictionary<string, object> arguments)
+    private ExceptionLog CreateLog(ExceptionContext context, Dictionary<string, object> arguments)
     {
-        ExceptionLogDto? log = null;
+        ExceptionLog? log = null;
         try
         {
             var routeValues = context.ActionDescriptor.RouteValues;
@@ -159,9 +204,9 @@ public class ExceptionLogFilter : IAsyncExceptionFilter
                 .FirstOrDefault();
             var descriptionValue = descriptionAttribute != null ? descriptionAttribute.Description : "";
             var userAgent = context.HttpContext.Request.Headers["User-Agent"].ToString();
-            log = new ExceptionLogDto
+            log = new ExceptionLog
             {
-                Id = IdHelper.NextId(),
+                Id = _idGenerator.NewId(),
                 CreatorId = _currentUser.Id > 0 ? _currentUser.Id : null,
                 CreatorName = _currentUser.Account,
                 CreationTime = DateTime.Now,
@@ -176,7 +221,7 @@ public class ExceptionLogFilter : IAsyncExceptionFilter
                 ExceptionMessageFull = Common.Helper.ExceptionHelper.GetExceptionAllMsg(context.Exception),
                 ExceptionStack = context.Exception.StackTrace ?? "",
                 RequestIp = remoteIp,
-                IpAddress = _ipSearcher.Search(remoteIp) ?? "",
+                IpAddress = _ipSearcher.Search(remoteIp).ToString(),
                 UserAgent = userAgent,
                 LogLevel = LogLevel.Error,
                 OperatingSystem = _browserDetector.Browser?.OS ?? "",
@@ -190,6 +235,6 @@ public class ExceptionLogFilter : IAsyncExceptionFilter
             // ignored
         }
 
-        return log ?? new ExceptionLogDto();
+        return log ?? new ExceptionLog();
     }
 }

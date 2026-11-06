@@ -32,14 +32,14 @@ public sealed class ScheduledJobManager(IScheduledJobStore jobs, IJobScheduler s
         if (request.Enabled) scheduler.ValidateConfiguration(mapper.MapTo<ScheduledJobVo>(request));
         var result = await jobs.UpdateAsync(request, ct);
         if (!result.IsSuccess) return result;
-        return await ApplyAsync(await jobs.QueryByIdAsync(request.Id, ct), ct);
+        return await ApplyAsync(await jobs.GetByIdAsync(request.Id, ct), ct);
     }
 
     /// <inheritdoc />
     [HasPerm(SystemPermissions.ScheduledJobs.Delete)]
     public async Task<OperateResult> DeleteAsync(IEnumerable<long> ids, CancellationToken ct = default)
     {
-        var existing = await jobs.QueryByIdsAsync(ids, ct);
+        var existing = await jobs.GetByIdsAsync(ids, ct);
         if (existing.Count == 0) return OperateResult.Error("作业不存在。");
         foreach (var job in existing)
             if (!await scheduler.DeleteScheduleJobAsync(job.Id, ct))
@@ -52,7 +52,7 @@ public sealed class ScheduledJobManager(IScheduledJobStore jobs, IJobScheduler s
     [HasRole(RoleCodes.Admin)]
     public async Task<OperateResult> ExecuteAsync(long id, CancellationToken ct = default)
     {
-        var job = await jobs.QueryByIdAsync(id, ct);
+        var job = await jobs.GetByIdAsync(id, ct);
         if (await scheduler.IsExistScheduleJobAsync(id, ct)) return OperateResult.Error("已在运行，请勿重复开启！");
         scheduler.ValidateConfiguration(job);
         job.Enabled = true;
@@ -64,7 +64,7 @@ public sealed class ScheduledJobManager(IScheduledJobStore jobs, IJobScheduler s
     [HasRole(RoleCodes.Admin)]
     public async Task<OperateResult> PauseAsync(long id, CancellationToken ct = default)
     {
-        await jobs.QueryByIdAsync(id, ct);
+        await jobs.GetByIdAsync(id, ct);
         if (await scheduler.GetTriggerStatus(id, ct) == TriggerState.Normal && await scheduler.PauseJob(id, ct))
             return OperateResult.Success();
         return OperateResult.Error("暂停失败，请重试！");
@@ -74,7 +74,7 @@ public sealed class ScheduledJobManager(IScheduledJobStore jobs, IJobScheduler s
     [HasRole(RoleCodes.Admin)]
     public async Task<OperateResult> ResumeAsync(long id, CancellationToken ct = default)
     {
-        await jobs.QueryByIdAsync(id, ct);
+        await jobs.GetByIdAsync(id, ct);
         if (await scheduler.GetTriggerStatus(id, ct) == TriggerState.Paused && await scheduler.ResumeJob(id, ct))
             return OperateResult.Success();
         return OperateResult.Error("恢复失败，请重试！");

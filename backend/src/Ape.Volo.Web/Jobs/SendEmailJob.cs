@@ -1,4 +1,7 @@
 using Ape.Volo.Web.Quartz;
+using Ape.Volo.Web.Logging;
+using Ape.Volo.Entity.Log;
+using Ape.Volo.Application.Contracts.Abstractions.Logging;
 using Quartz;
 
 namespace Ape.Volo.Web.Jobs;
@@ -15,15 +18,18 @@ public class SendEmailJob : JobBase<SendEmailJob>, IJob
     /// </summary>
     /// <param name="schedulerCenterService">调度中心服务</param>
     /// <param name="scheduledJobService">作业配置服务</param>
-    /// <param name="scheduledJobLogService">作业日志服务</param>
+    /// <param name="scheduledJobLogQueue">作业日志队列</param>
     /// <param name="queuedEmailService">邮件队列服务</param>
     /// <param name="logger">日志记录器</param>
+    /// <param name="idGenerator">唯一 ID 生成器</param>
+    /// <param name="fallbackLogWriter">独立文本兜底输出</param>
     public SendEmailJob(ISchedulerCenterService schedulerCenterService, IScheduledJobStore scheduledJobService,
-        IScheduledJobLogService scheduledJobLogService, IQueuedEmailService queuedEmailService,
-        ILogger<SendEmailJob> logger)
+        ILogQueue<ScheduledJobLog> scheduledJobLogQueue, IQueuedEmailService queuedEmailService,
+        ILogger<SendEmailJob> logger, IIdGenerator idGenerator, IFallbackLogWriter fallbackLogWriter)
+        : base(idGenerator, fallbackLogWriter)
     {
         ScheduledJobService = scheduledJobService;
-        ScheduledJobLogService = scheduledJobLogService;
+        ScheduledJobLogQueue = scheduledJobLogQueue;
         _queuedEmailService = queuedEmailService;
         SchedulerCenterService = schedulerCenterService;
         Logger = logger;

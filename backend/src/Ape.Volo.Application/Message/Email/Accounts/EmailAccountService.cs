@@ -29,10 +29,10 @@ public class EmailAccountService : BaseService<EmailAccount>, IEmailAccountServi
     #region 基础方法
 
     /// <inheritdoc />
-    Task<EmailAccountVo?> IEmailAccountLookupService.FindByIdAsync(long id, CancellationToken ct) => QueryByIdAsync(id, ct);
+    Task<EmailAccountVo?> IEmailAccountLookupService.GetByIdAsync(long id, CancellationToken ct) => GetByIdAsync(id, ct);
 
     /// <inheritdoc />
-    async Task<IReadOnlyDictionary<long, EmailAccountVo>> IEmailAccountLookupService.FindByIdsAsync(
+    async Task<IReadOnlyDictionary<long, EmailAccountVo>> IEmailAccountLookupService.GetByIdsAsync(
         IReadOnlyCollection<long> ids, CancellationToken ct)
     {
         if (ids.Count == 0)
@@ -46,9 +46,9 @@ public class EmailAccountService : BaseService<EmailAccount>, IEmailAccountServi
 
     /// <inheritdoc />
     [HasPerm(SystemPermissions.EmailAccounts.List)]
-    public async Task<EmailAccountVo?> QueryByIdAsync(long id, CancellationToken ct = default)
+    public async Task<EmailAccountVo?> GetByIdAsync(long id, CancellationToken ct = default)
     {
-        var emailAccount = await GetByIdAsync(id, ct);
+        var emailAccount = await GetEntityByIdAsync(id, ct);
         return emailAccount == null ? null : Mapper.MapTo<EmailAccountVo>(emailAccount);
     }
 
@@ -58,8 +58,7 @@ public class EmailAccountService : BaseService<EmailAccount>, IEmailAccountServi
     {
         if (await TableWhere(x => x.Email == createUpdateEmailAccountDto.Email).AnyAsync(ct))
         {
-            return OperateResult.Error(ValidationError.IsExist(createUpdateEmailAccountDto,
-                nameof(createUpdateEmailAccountDto.Email)));
+            return AlreadyExists(() => createUpdateEmailAccountDto.Email);
         }
 
         var emailAccount = Mapper.MapTo<EmailAccount>(createUpdateEmailAccountDto);
@@ -74,16 +73,13 @@ public class EmailAccountService : BaseService<EmailAccount>, IEmailAccountServi
         var oldEmailAccount = await TableWhere(x => x.Id == createUpdateEmailAccountDto.Id).FirstAsync(ct);
         if (oldEmailAccount.IsNull())
         {
-            return OperateResult.Error(ValidationError.NotExist(createUpdateEmailAccountDto,
-                "邮件账户",
-                nameof(createUpdateEmailAccountDto.Id)));
+            return NotFound(createUpdateEmailAccountDto.Id);
         }
 
         if (oldEmailAccount.Email != createUpdateEmailAccountDto.Email &&
             await TableWhere(j => j.Email == createUpdateEmailAccountDto.Email).AnyAsync(ct))
         {
-            return OperateResult.Error(ValidationError.IsExist(createUpdateEmailAccountDto,
-                nameof(createUpdateEmailAccountDto.Email)));
+            return AlreadyExists(() => createUpdateEmailAccountDto.Email);
         }
 
         var emailAccount = Mapper.MapTo<EmailAccount>(createUpdateEmailAccountDto);
@@ -98,7 +94,7 @@ public class EmailAccountService : BaseService<EmailAccount>, IEmailAccountServi
         var emailAccounts = await TableWhere(x => ids.Contains(x.Id)).ToListAsync(ct);
         if (emailAccounts.Count < 1)
         {
-            return OperateResult.Error(ValidationError.NotExist());
+            return NotFound();
         }
 
         var result = await LogicDeleteAsync(x => ids.Contains(x.Id), ct);
@@ -115,17 +111,6 @@ public class EmailAccountService : BaseService<EmailAccount>, IEmailAccountServi
     public async Task<List<EmailAccountVo>> GetAllAsync(CancellationToken ct = default)
     {
         return Mapper.MapTo<List<EmailAccountVo>>(await Table.ToListAsync(ct));
-    }
-
-
-    /// <inheritdoc />
-    [HasPerm(SystemPermissions.EmailAccounts.Download)]
-    public async Task<List<ExportBase>> DownloadAsync(EmailAccountQueryCriteria emailAccountQueryCriteria, CancellationToken ct = default)
-    {
-        var emailAccounts = await TableWhere(emailAccountQueryCriteria.ApplyQueryConditionalModel()).ToListAsync(ct);
-        List<ExportBase> emailAccountExports = new List<ExportBase>();
-        emailAccountExports.AddRange(Mapper.MapTo<List<EmailAccountExport>>(emailAccounts));
-        return emailAccountExports;
     }
 
     #endregion

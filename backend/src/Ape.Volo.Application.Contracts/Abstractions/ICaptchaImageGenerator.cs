@@ -11,7 +11,7 @@ public interface ICaptchaImageGenerator
     /// <param name="width">图像宽度</param>
     /// <param name="height">图像高度</param>
     /// <param name="fontSize">字体大小</param>
-    /// <param name="keyLength">验证码长度；为 0 时生成算术验证码</param>
+    /// <param name="keyLength">验证码长度；小于等于 0 时使用默认长度</param>
     /// <returns>可直接放进 img 标签的 data URL 与验证码答案</returns>
     CaptchaImage Create(int width, int height, int fontSize, int keyLength);
 }

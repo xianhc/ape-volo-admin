@@ -8,7 +8,6 @@ namespace Ape.Volo.Core.Caches;
 /// </summary>
 public static class CacheEntries
 {
-    private static string StateKey(string key) => "cache:entries:" + key;
     private sealed record Entry(string Revision, string? Type = null, string? Json = null);
     private static string Empty() => JsonConvert.SerializeObject(new Entry(Guid.NewGuid().ToString("N")));
 
@@ -23,15 +22,14 @@ public static class CacheEntries
     public static async Task<T> GetOrCreateAsync<T>(this ICache cache, string key, Func<Task<T>> load,
         TimeSpan lifetime, CancellationToken ct = default)
     {
-        var stateKey = StateKey(key);
         while (true)
         {
             ct.ThrowIfCancellationRequested();
-            var observed = await cache.GetAsync<string>(stateKey, ct);
+            var observed = await cache.GetAsync<string>(key, ct);
             if (observed == null)
             {
                 observed = Empty();
-                if (!await cache.CompareExchangeAsync(stateKey, null, observed, lifetime, ct)) continue;
+                if (!await cache.CompareExchangeAsync(key, null, observed, lifetime, ct)) continue;
             }
             var entry = JsonConvert.DeserializeObject<Entry>(observed)!;
             if (entry.Type == typeof(T).AssemblyQualifiedName && entry.Json != null)
@@ -43,7 +41,7 @@ public static class CacheEntries
             {
                 Type = typeof(T).AssemblyQualifiedName, Json = result.ToJson()
             });
-            if (await cache.CompareExchangeAsync(stateKey, observed, next, lifetime, ct)) return result;
+            if (await cache.CompareExchangeAsync(key, observed, next, lifetime, ct)) return result;
         }
     }
 
@@ -53,12 +51,11 @@ public static class CacheEntries
     /// <param name="ct">取消令牌；提交后的必要清理使用默认值。</param>
     public static async Task InvalidateAsync(this ICache cache, string key, CancellationToken ct = default)
     {
-        var stateKey = StateKey(key);
         while (true)
         {
             ct.ThrowIfCancellationRequested();
-            var previous = await cache.GetAsync<string>(stateKey, ct);
-            if (await cache.CompareExchangeAsync(stateKey, previous, Empty(), TimeSpan.FromHours(2), ct)) break;
+            var previous = await cache.GetAsync<string>(key, ct);
+            if (await cache.CompareExchangeAsync(key, previous, Empty(), TimeSpan.FromHours(2), ct)) break;
         }
     }
 }

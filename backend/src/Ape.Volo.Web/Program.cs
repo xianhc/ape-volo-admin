@@ -5,7 +5,6 @@ using Ape.Volo.Web.DynamicApi;
 using Ape.Volo.Web.Middleware;
 using Ape.Volo.Common.Converters;
 using Ape.Volo.Common.Enums;
-using Ape.Volo.Common.IdGenerator;
 using Ape.Volo.Core.ConfigOptions;
 using Ape.Volo.Core.Extensions;
 using Autofac;
@@ -29,7 +28,7 @@ builder.Configuration.Sources.Clear();
 builder.Configuration
     .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
     .AddJsonFile($"appsettings.{environment}.json", optional: true, reloadOnChange: true)
-    .AddJsonFile("IpRateLimit.json", optional: true, reloadOnChange: false)
+    .AddJsonFile("ipratelimit.json", optional: true, reloadOnChange: false)
     .AddEnvironmentVariables()
     .AddCommandLine(args);
 JwtTokenValidation.ValidateOptions(builder.Configuration.GetSection("JwtAuth").Get<JwtAuthOptions>()
@@ -37,9 +36,8 @@ JwtTokenValidation.ValidateOptions(builder.Configuration.GetSection("JwtAuth").G
 // 启动时校验密码传输私钥与 JWT 配置；仓库内保留开发演示密钥。
 var passwordPrivateKeyPem = builder.Configuration.ValidateRequiredSecrets(builder.Environment.ContentRootPath);
 
-//配置雪花ID方法参数：WorkerId 由部署环境提供，多实例部署必须各不相同，否则会生成重复 ID
-IdHelper.SetIdGeneratorOptions(new IdGeneratorOptions(
-    (ushort)builder.Configuration.GetValue("IdGenerator:WorkerId", 1)));
+// 同一数据中心内 WorkerId 必须各不相同，所有 ID 调用共享单例生成器。
+builder.Services.AddSnowflakeIdService(builder.Configuration);
 
 // 配置容器
 builder.Host
@@ -71,21 +69,19 @@ builder.Services.AddBrowserDetection();
 builder.Services.AddIpStrategyRateLimitService(builder.Configuration);
 var mvcBuilder = builder.Services.AddControllers(options =>
     {
+        ValidationMetadataProvider.Configure(options);
+        // 授权过滤器
+        options.Filters.Add<ServiceAuthorizationExceptionFilter>();
         // 异常过滤器
         options.Filters.Add<ExceptionLogFilter>();
-        options.Filters.Add<ServiceAuthorizationExceptionFilter>();
         // 审计过滤器
         options.Filters.Add<OperateLogFilter>();
-        if (builder.Configuration.GetConfigurableOptions<SystemOptions>().RunMode == RunMode.Demo)
-        {
-            //演示模式
-            options.Filters.Add<DemoFilter>();
-        }
     })
     .AddControllersAsServices()
     .AddNewtonsoftJson(options =>
         {
             //全局忽略循环引用
+            options.AllowInputFormatterExceptionMessages = false;
             options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
             options.SerializerSettings.NullValueHandling = NullValueHandling.Include;
             options.SerializerSettings.DateFormatString = "yyyy-MM-dd HH:mm:ss";

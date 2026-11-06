@@ -1,7 +1,8 @@
 using System.Net;
-using Ape.Volo.Application.Contracts.SystemManagement.Settings;
+using Ape.Volo.Shared.Settings;
 using Microsoft.Extensions.Options;
 using System.Net.Mail;
+using Ape.Volo.Application.Contracts.System.Settings;
 using Microsoft.Extensions.Logging;
 using Ape.Volo.Core.ConfigOptions;
 using Ape.Volo.Core.Repository.SugarHandler;
@@ -54,7 +55,8 @@ public class SmtpClientFactory : ISmtpClientFactory
     public virtual async Task<SmtpClient> CreateAsync(long? emailAccountId = null, CancellationToken ct = default)
     {
         var accountId = emailAccountId
-                        ?? await _settingService.GetSettingValue<long>("DefaultEmailAccountId", ct);
+                        ?? await _settingService.GetSettingValue<long>(
+                            SettingNames.DefaultEmailAccountId, ct);
         var emailAccount = await _emailAccountRepository.SugarClient.Queryable<EmailAccount>()
                                .FirstAsync(x => x.Id == accountId, ct)
                            ?? throw new Exception("Email account could not be loaded");

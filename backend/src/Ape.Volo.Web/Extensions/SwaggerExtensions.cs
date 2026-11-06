@@ -42,10 +42,12 @@ public static class SwaggerExtensions
                 {
                     Version = options.Version,
                     Title = options.Title + "    " + RuntimeInformation.FrameworkDescription,
-                    Description = $"Build: {DateTime.Now:yyyy-MM-dd HH:mm:ss}  | User: xianhc",
+                    Description = $"Build: {DateTime.Now:yyyy-MM-dd HH:mm:ss}  | User: {options.ContactName}",
                     Contact = new OpenApiContact
                     {
-                        Name = "xianhc", Email = "apevolo@gamil.com", Url = new Uri("https://www.apevolo.com")
+                        Name = options.ContactName,
+                        Email = options.ContactEmail,
+                        Url = string.IsNullOrWhiteSpace(options.ContactUrl) ? null : new Uri(options.ContactUrl, UriKind.Absolute)
                     }
                 });
 

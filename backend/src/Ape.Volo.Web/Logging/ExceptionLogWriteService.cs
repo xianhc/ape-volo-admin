@@ -1,11 +1,13 @@
-﻿using Ape.Volo.Application.Contracts.Log.Models;
+using Ape.Volo.Core.Repository.SugarHandler;
+using Ape.Volo.Entity.Log;
+using SqlSugar;
 
 namespace Ape.Volo.Web.Logging;
 
 /// <summary>
 /// 异常日志异步写入服务
 /// </summary>
-public sealed class ExceptionLogWriteService : LogWriteBackgroundService<ExceptionLogDto>
+public sealed class ExceptionLogWriteService : LogWriteBackgroundService<ExceptionLog>
 {
     /// <summary>
     /// 初始化 <see cref="ExceptionLogWriteService"/> 的新实例。
@@ -14,7 +16,7 @@ public sealed class ExceptionLogWriteService : LogWriteBackgroundService<Excepti
     /// <param name="scopeFactory">scopeFactory</param>
     /// <param name="logger">logger</param>
 
-    public ExceptionLogWriteService(ILogQueue<ExceptionLogDto> logQueue, IServiceScopeFactory scopeFactory,
+    public ExceptionLogWriteService(ILogQueue<ExceptionLog> logQueue, IServiceScopeFactory scopeFactory,
         ILogger<ExceptionLogWriteService> logger)
         : base(logQueue, scopeFactory, logger)
     {
@@ -27,10 +29,13 @@ public sealed class ExceptionLogWriteService : LogWriteBackgroundService<Excepti
     /// <param name="batch">日志批次</param>
     /// <param name="cancellationToken">取消令牌</param>
     /// <returns>异步任务</returns>
-    protected override async Task WriteAsync(IServiceProvider serviceProvider, List<ExceptionLogDto> batch,
+    protected override async Task WriteAsync(IServiceProvider serviceProvider, List<ExceptionLog> batch,
         CancellationToken cancellationToken)
     {
-        var result = await serviceProvider.GetRequiredService<IExceptionLogService>().CreateListAsync(batch, cancellationToken);
-        if (!result.IsSuccess) throw new InvalidOperationException("异常日志批量写入未成功。");
+        cancellationToken.ThrowIfCancellationRequested();
+        var repository = serviceProvider.GetRequiredService<ISugarRepository<ExceptionLog>>();
+        // 分表插入没有取消重载，等待写入结束后再释放当前作用域。
+        var result = await repository.SugarClient.Insertable(batch).SplitTable().ExecuteCommandAsync();
+        if (result <= 0) throw new InvalidOperationException("异常日志批量写入未成功。");
     }
 }

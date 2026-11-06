@@ -48,7 +48,7 @@
   import type { FormInstance } from 'element-plus'
   import { useCrudForm } from '@/components/crud/crudContext'
   import type { EntityDraft } from '@/api/types/base'
-  import type { Position } from '@/api/organization/types/position.types'
+  import type { Position } from '@/api/organization/position/types'
 
   import { ref } from 'vue'
   import { useAppStore } from '@/pinia'

@@ -9,19 +9,19 @@ namespace Ape.Volo.Core.ConfigOptions;
 public class CaptchaOptions
 {
     /// <summary>
-    /// 长度
+    /// 验证码长度
     /// </summary>
-    public int KeyLength { get; set; }
+    public int CodeLength { get; set; }
 
     /// <summary>
     /// 图像宽度
     /// </summary>
-    public int ImgWidth { get; set; }
+    public int ImageWidth { get; set; }
 
     /// <summary>
     /// 图像高度
     /// </summary>
-    public int ImgHeight { get; set; }
+    public int ImageHeight { get; set; }
 
     /// <summary>
     /// 字体大小
@@ -31,10 +31,10 @@ public class CaptchaOptions
     /// <summary>
     /// 触发验证码的失败次数阈值(超出则显示验证码)
     /// </summary>
-    public int Threshold { get; set; }
+    public int FailureThreshold { get; set; }
 
     /// <summary>
-    /// 验证码阈值超时时间 单位：s(秒)
+    /// 失败计数器过期时间 单位：s(秒)
     /// </summary>
-    public int TimeOut { get; set; }
+    public int CounterTtlSeconds { get; set; }
 }

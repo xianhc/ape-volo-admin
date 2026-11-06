@@ -80,6 +80,14 @@
     "CreateBy": "apevolo"
   },
   {
+    "Id": 163519427868426,
+    "DictId": 163519427764349,
+    "Label": "PostgreSQL",
+    "Value": "4",
+    "DictSort": 5,
+    "CreateBy": "apevolo"
+  },
+  {
     "Id": 163519427768392,
     "DictId": 163519427768391,
     "Label": "全部",

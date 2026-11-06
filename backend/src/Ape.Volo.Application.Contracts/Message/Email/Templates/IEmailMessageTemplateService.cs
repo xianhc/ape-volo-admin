@@ -49,7 +49,7 @@ public interface IEmailMessageTemplateService : IApplicationService
     /// <param name="ct">取消令牌</param>
     /// <returns>模板，不存在时返回 null</returns>
     [RemoteService(false)]
-    Task<EmailMessageTemplateVo?> QueryByNameAsync(string name, CancellationToken ct = default);
+    Task<EmailMessageTemplateVo?> GetByNameAsync(string name, CancellationToken ct = default);
 
     #endregion
 }

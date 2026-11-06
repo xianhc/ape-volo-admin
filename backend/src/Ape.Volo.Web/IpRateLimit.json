@@ -1,51 +1,175 @@
 {
   "IpRateLimiting": {
     "EnableEndpointRateLimiting": true,
+    "EnableRegexRuleMatching": false,
     "StackBlockedRequests": false,
     "RealIpHeader": "",
     "ClientIdHeader": "",
     "HttpStatusCode": 429,
-    //"IpWhitelist": [ "127.0.0.1", "::1/10", "192.168.0.0/24" ],
+    "IpWhitelist": [],
     "QuotaExceededResponse": {
       "Content": "{{\"status\":429,\"message\":\"访问过于频繁，请稍后重试！\"}}",
       "ContentType": "application/json",
       "StatusCode": 429
     },
     "EndpointWhitelist": [
-      "get:/api/license",
-      "*:/api/status"
+      "get:/health/index"
     ],
     "ClientWhitelist": [],
     "GeneralRules": [
       {
-        "Endpoint": "get:/api/auth/captcha*",
-        "Period": "5s",
-        "Limit": 3
-      },
-      {
-        "Endpoint": "*:/api/auth/*",
-        "Period": "10s",
-        "Limit": 5
+        "Endpoint": "*:/api/*",
+        "Period": "1s",
+        "Limit": 20
       },
       {
         "Endpoint": "*:/api/*",
         "Period": "10s",
-        "Limit": 8
+        "Limit": 60
+      },
+      {
+        "Endpoint": "*:/api/*",
+        "Period": "1m",
+        "Limit": 300
+      },
+      {
+        "Endpoint": "post:/api/*",
+        "Period": "1m",
+        "Limit": 120
+      },
+      {
+        "Endpoint": "put:/api/*",
+        "Period": "1m",
+        "Limit": 120
+      },
+      {
+        "Endpoint": "delete:/api/*",
+        "Period": "1m",
+        "Limit": 120
+      },
+      {
+        "Endpoint": "post:/api/auth/login",
+        "Period": "10s",
+        "Limit": 5
+      },
+      {
+        "Endpoint": "post:/api/auth/login",
+        "Period": "1m",
+        "Limit": 20
+      },
+      {
+        "Endpoint": "get:/api/auth/captcha",
+        "Period": "10s",
+        "Limit": 10
+      },
+      {
+        "Endpoint": "get:/api/auth/captcha",
+        "Period": "1m",
+        "Limit": 60
+      },
+      {
+        "Endpoint": "post:/api/auth/refresh-token",
+        "Period": "10s",
+        "Limit": 30
+      },
+      {
+        "Endpoint": "post:/api/auth/refresh-token",
+        "Period": "1m",
+        "Limit": 120
+      },
+      {
+        "Endpoint": "delete:/api/auth/logout",
+        "Period": "10s",
+        "Limit": 30
+      },
+      {
+        "Endpoint": "delete:/api/auth/logout",
+        "Period": "1m",
+        "Limit": 120
+      },
+      {
+        "Endpoint": "post:/api/auth/reset-email-code",
+        "Period": "1m",
+        "Limit": 3
+      },
+      {
+        "Endpoint": "post:/api/auth/reset-email-code",
+        "Period": "1h",
+        "Limit": 20
+      },
+      {
+        "Endpoint": "put:/api/user/update-password",
+        "Period": "1m",
+        "Limit": 5
+      },
+      {
+        "Endpoint": "put:/api/user/update-password",
+        "Period": "1h",
+        "Limit": 30
+      },
+      {
+        "Endpoint": "put:/api/user/update-email",
+        "Period": "1m",
+        "Limit": 5
+      },
+      {
+        "Endpoint": "put:/api/user/update-email",
+        "Period": "1h",
+        "Limit": 30
+      },
+      {
+        "Endpoint": "post:/api/file-record/create",
+        "Period": "10s",
+        "Limit": 20
+      },
+      {
+        "Endpoint": "post:/api/file-record/create",
+        "Period": "1m",
+        "Limit": 60
+      },
+      {
+        "Endpoint": "post:/api/user/update-avatar",
+        "Period": "10s",
+        "Limit": 5
+      },
+      {
+        "Endpoint": "post:/api/user/update-avatar",
+        "Period": "1m",
+        "Limit": 20
+      },
+      {
+        "Endpoint": "*:/api/*/download",
+        "Period": "10s",
+        "Limit": 2
+      },
+      {
+        "Endpoint": "*:/api/*/download",
+        "Period": "1m",
+        "Limit": 10
+      },
+      {
+        "Endpoint": "post:/api/scheduled-job-manager/execute",
+        "Period": "10s",
+        "Limit": 5
+      },
+      {
+        "Endpoint": "post:/api/scheduled-job-manager/execute",
+        "Period": "1m",
+        "Limit": 20
+      },
+      {
+        "Endpoint": "get:/api/server-resources/get-list",
+        "Period": "10s",
+        "Limit": 10
+      },
+      {
+        "Endpoint": "get:/api/server-resources/get-list",
+        "Period": "1m",
+        "Limit": 60
       }
     ]
   },
   "IpRateLimitPolicies": {
-    "IpRules": [
-      {
-        "Ip": "127.0.0.1",
-        "Rules": [
-          {
-            "Endpoint": "*",
-            "Period": "1s",
-            "Limit": 5
-          }
-        ]
-      }
-    ]
+    "IpRules": []
   }
 }

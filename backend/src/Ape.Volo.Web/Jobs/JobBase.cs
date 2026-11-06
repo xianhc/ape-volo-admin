@@ -1,8 +1,10 @@
 using System.Diagnostics;
 using Ape.Volo.Web.Quartz;
-using Ape.Volo.Application.Contracts.Log.Models;
+using Ape.Volo.Entity.Log;
+using Ape.Volo.Web.Logging;
 using Ape.Volo.Common.Extensions;
-using Ape.Volo.Common.IdGenerator;
+using Ape.Volo.Application.Contracts.Abstractions;
+using Ape.Volo.Application.Contracts.Abstractions.Logging;
 using Quartz;
 
 namespace Ape.Volo.Web.Jobs;
@@ -12,6 +14,20 @@ namespace Ape.Volo.Web.Jobs;
 /// </summary>
 public class JobBase<T>
 {
+    private readonly IIdGenerator _idGenerator;
+    private readonly IFallbackLogWriter _fallbackLogWriter;
+
+    /// <summary>
+    /// 初始化作业日志所需的唯一 ID 生成器与文本兜底输出。
+    /// </summary>
+    /// <param name="idGenerator">唯一 ID 生成器</param>
+    /// <param name="fallbackLogWriter">独立文本兜底输出</param>
+    protected JobBase(IIdGenerator idGenerator, IFallbackLogWriter fallbackLogWriter)
+    {
+        _idGenerator = idGenerator;
+        _fallbackLogWriter = fallbackLogWriter;
+    }
+
     #region 字段
 
     /// <summary>
@@ -20,9 +36,9 @@ public class JobBase<T>
     public IScheduledJobStore ScheduledJobService = default!;
 
     /// <summary>
-    /// 作业日志服务
+    /// 作业日志队列
     /// </summary>
-    public IScheduledJobLogService ScheduledJobLogService = default!;
+    public ILogQueue<ScheduledJobLog> ScheduledJobLogQueue = default!;
 
     /// <summary>
     /// 调度中心服务
@@ -54,25 +70,14 @@ public class JobBase<T>
         var ct = context.CancellationToken;
         //positionName
         var jobId = context.JobDetail.JobDataMap.GetLong(Ape.Volo.Web.Quartz.SchedulerCenterService.JobIdKey);
-        var scheduledJob = await ScheduledJobService.QueryByIdAsync(jobId, ct);
-        if (scheduledJob == null)
-        {
-            await Task.CompletedTask;
-            return;
-        }
+        var scheduledJob = await ScheduledJobService.GetByIdAsync(jobId, ct);
 
-        //JOB组名
-        string groupName = scheduledJob.JobGroup;
-        //日志
-        string jobHistory =
-            $"【{DateTime.Now:yyyy-MM-dd HH:mm:ss}】【执行开始】【组别：{groupName} => 任务：{scheduledJob.JobName}";
         //耗时
         try
         {
             stopwatch.Start();
             await func(); //执行任务
             stopwatch.Stop();
-            jobHistory += $"，【{DateTime.Now:yyyy-MM-dd HH:mm:ss}】【执行成功】";
         }
         catch (Exception ex)
         {
@@ -95,19 +100,15 @@ public class JobBase<T>
             {
                 //实现自己的告警邮件模板 再添加队列信息
             }
-
-            jobHistory += $"，【{DateTime.Now:yyyy-MM-dd HH:mm:ss}】【执行失败:{ex.Message}】";
         }
         finally
         {
-            var taskSeconds = Math.Round(stopwatch.Elapsed.TotalSeconds, 3);
-            jobHistory += $"，【{DateTime.Now:yyyy-MM-dd HH:mm:ss}】【执行结束】(耗时:{taskSeconds}秒)";
-            if (ScheduledJobLogService != null)
+            try
             {
-                //记录任务日志（作业执行只写日志表，不回写作业主表）
-                var scheduledJobLog = new ScheduledJobLogDto
+                // 作业只构建日志并非阻塞入队，数据库写入由后台独立作用域完成。
+                var scheduledJobLog = new ScheduledJobLog
                 {
-                    Id = IdHelper.NextId(),
+                    Id = _idGenerator.NewId(),
                     ScheduledJobId = scheduledJob.Id,
                     JobName = scheduledJob.JobName,
                     JobGroup = scheduledJob.JobGroup,
@@ -121,11 +122,28 @@ public class JobBase<T>
                     CreatorName = "ScheduledJob",
                     CreationTime = DateTime.Now
                 };
-                await ScheduledJobLogService.CreateAsync(scheduledJobLog, ct);
+                if (!ScheduledJobLogQueue.TryEnqueue(scheduledJobLog))
+                {
+                    Logger.LogWarning("作业日志队列已满，本次日志被丢弃（累计丢弃 {Dropped} 条）",
+                        ScheduledJobLogQueue.DroppedCount);
+                }
+            }
+            catch (Exception ex)
+            {
+                try
+                {
+                    await _fallbackLogWriter.WriteAsync(
+                        $"作业日志处理失败：{scheduledJob.Id}（{scheduledJob.JobName}）{Environment.NewLine}" +
+                        $"执行结果：{(isSuccess ? "成功" : "失败")}，耗时：{stopwatch.ElapsedMilliseconds}ms{Environment.NewLine}" +
+                        $"{exceptionDetail}{Environment.NewLine}{ex}",
+                        CancellationToken.None);
+                }
+                catch (Exception)
+                {
+                    // 兜底输出再次失败时丢弃日志，不能影响作业结果或覆盖原有异常。
+                }
             }
         }
-
-        Logger.LogInformation(jobHistory);
     }
 
     #endregion
