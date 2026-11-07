@@ -11,10 +11,8 @@ public enum PermissionCacheItem
     RoleCodes,
     /// <summary>用户权限代码。</summary>
     AuthCodes,
-    /// <summary>数据范围用户集合。</summary>
-    DataScopeUsers,
-    /// <summary>全部数据范围标识。</summary>
-    AllDataScope,
+    /// <summary>用户数据权限快照。</summary>
+    DataScope,
     /// <summary>用户路由菜单。</summary>
     UserMenus
 }

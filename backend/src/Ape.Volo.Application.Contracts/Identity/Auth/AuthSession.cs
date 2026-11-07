@@ -16,11 +16,6 @@ public class AuthSession
     public long UserId { get; set; }
 
     /// <summary>
-    /// 用户撤销版本号，与缓存中的版本不一致时会话即失效
-    /// </summary>
-    public string UserVersion { get; set; } = string.Empty;
-
-    /// <summary>
     /// 当前有效访问令牌的标识，刷新后旧令牌随之失效
     /// </summary>
     public string AccessTokenId { get; set; } = string.Empty;

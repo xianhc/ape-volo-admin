@@ -52,10 +52,14 @@ await transaction.CommitAsync(ct);
 
 - `UseCache.Expiration` 单位为分钟，缓存键不包含取消令牌。ID、名称等简单值直接拼接，仅 AOP 的复杂查询参数序列化后计算 MD5。依赖当前用户的结果必须使用用户缓存键；事务内直接查询，不读写共享结果。
 - 缓存键直接按 `auth:`、`identity:`、`setting:`、`dict:` 等业务前缀分组，不添加公共目录前缀。
-- 权限缓存统一由 `PermissionCacheService` 管理，键使用 `identity:` 前缀，不添加版本号。用户、角色、菜单变更提交后失效关联缓存；组织成员与部门树变更同时推进数据范围修订。会话撤销也在提交后执行。
+- 权限缓存统一由 `PermissionCacheService` 管理，键使用 `identity:` 前缀，不添加版本号。用户、角色、菜单变更提交后失效关联缓存；组织成员与部门树变更同时清理数据范围缓存。会话撤销也在提交后执行。
+- 数据权限通过 `IDataScopeService.GetDataScopeAsync` 一次返回并缓存 `AllowAll` 与 `UserIds`；全部权限不展开用户集合，受限空集合不授予访问权。
 - 菜单管理查询直接读取数据库并保留数据范围，用户路由菜单按用户缓存。
 - 字典变更失效名称与明细缓存；设置改名失效新旧名称缓存。内部 `GetSettingValue<T>` 跨数据范围读取全局参数，保留软删除过滤。
-- 缓存契约为 `ICache`，可选键枚举能力为 `ICacheKeyCatalog`，目前仅 Redis 支持；在线用户枚举要求 Redis。
+- 缓存契约为 `ICache`，可选键枚举能力为 `ICacheKeyCatalog`；在线用户枚举要求 Redis。
+- 业务缓存值直接保存字符串或 JSON，不包含 CLR 类型、程序集名称或二次序列化外壳，读取类型由调用方指定。查询缓存未命中时加载并写入，失效时直接删除业务键；Redis 的滑动过期时长单独保存在 `:sliding` 键，不混入业务值。
+
+缓存格式已改为直接保存业务值。升级旧环境时，停止旧版本实例并清理本应用的旧缓存后再启动，已有会话需重新登录；共享 Redis 时仅清理本应用使用的键，不清空整个 Redis。
 
 入口：[工作单元](../backend/src/Ape.Volo.Core/Repository/UnitOfWork/UnitOfWork.cs)、[权限缓存](../backend/src/Ape.Volo.Application/Identity/PermissionCacheService.cs)。
 
@@ -102,6 +106,8 @@ PostgreSQL 查询及 CodeFirst 使用小写命名，大文本使用 `CodeFirst_B
 
 文件日志由 `Serilog:ToFile` 控制，按本地日期写入 `logs/yyyy-MM-dd/`，各级别独立文件，SQL 为 `AopSql.log`，每类最多保留 31 个日期文件。兜底为 `Fallback.log`，清理 30 天前同类文件；旧目录不自动迁移。
 
+控制台日志前缀由 `Serilog:Prefix` 配置，默认 `APE-VOLO`，输出时自动添加方括号；修改后重启生效。
+
 Elasticsearch 输出需同时启用 `Serilog:ToElasticsearch` 与 `Middleware:Elasticsearch`，使用 `Elastic.Serilog.Sinks` 9，要求 Elasticsearch 8.15+。地址由 `Serilog:ElasticsearchEndpoint` 指定，API Key 使用环境变量 `Serilog__ElasticsearchApiKey`。
 
 ## VS Code 调试
@@ -120,3 +126,5 @@ dotnet test Ape.Volo.Admin.slnx
 ```
 
 [tests/](../backend/tests/) 保留契约、安全、事务和关键行为回归。PostgreSQL 集成测试默认跳过；设置 `APEVOLO_TEST_POSTGRES` 指向一次性 PostgreSQL 13+ 实例后运行，会创建并删除独立测试库。业务流程、实际 HTTP 响应和目标数据库初始化仍需按改动验证。
+
+缓存回归默认验证内存实现；设置 `APEVOLO_TEST_REDIS` 为 Redis 连接字符串后，同一组用例也验证 Redis 实现，仅创建和删除带随机标识的测试键。

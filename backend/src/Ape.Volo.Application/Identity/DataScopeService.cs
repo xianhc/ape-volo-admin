@@ -40,39 +40,29 @@ public class DataScopeService : IDataScopeService
     #region 基础方法
 
     /// <inheritdoc />
-    public Task<bool> HasAllDataScopeAsync(long userId, CancellationToken ct = default)
+    public Task<DataScopeSnapshot> GetDataScopeAsync(long userId, CancellationToken ct = default)
     {
         // 权限元数据不受当前账号的创建范围限制，统一走独立客户端读取。
-        return _permissionCache.GetOrCreateAsync(PermissionCacheItem.AllDataScope, userId, () => _sugarQueries.QueryWithoutDataScopeAsync(async db =>
+        return _permissionCache.GetOrCreateAsync(PermissionCacheItem.DataScope, userId, () => _sugarQueries.QueryWithoutDataScopeAsync(async db =>
         {
             var user = await db.Queryable<User>().Includes(x => x.Roles).Where(x => x.Id == userId).FirstAsync(ct);
             if (user.IsNull())
             {
-                return false;
+                return new DataScopeSnapshot();
             }
 
-            return Enumerable.Any(user.Roles ?? [], x => x.DataScopeType == DataScopeType.All);
-        }, ct), ct);
-    }
-
-    /// <inheritdoc />
-    public Task<List<long>> GetDataScopeUserIdsAsync(long userId, CancellationToken ct = default)
-    {
-        return _permissionCache.GetOrCreateAsync(PermissionCacheItem.DataScopeUsers, userId, () => _sugarQueries.QueryWithoutDataScopeAsync(async db =>
-        {
-            List<long> userIdList = new List<long>();
-            var user = await db.Queryable<User>().Includes(x => x.Roles).Where(x => x.Id == userId).FirstAsync(ct);
-            if (user.IsNull())
+            if (Enumerable.Any(user.Roles ?? [], role => role.DataScopeType == DataScopeType.All))
             {
-                return userIdList;
+                return new DataScopeSnapshot { AllowAll = true };
             }
 
+            List<long> userIdList = [];
             foreach (var role in user.Roles ?? [])
             {
                 userIdList.AddRange(await GetUserIds(db, role.DataScopeType, role.Id, user.DeptId, user.Id, ct));
             }
 
-            return Enumerable.ToList(Enumerable.Distinct(userIdList));
+            return new DataScopeSnapshot { UserIds = Enumerable.Distinct(userIdList).ToArray() };
         }, ct), ct);
     }
 

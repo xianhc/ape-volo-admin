@@ -17,9 +17,10 @@ const getWelcomeMessage = (): string => {
 官方网站：https://www.apevolo.com
 接口文档地址：${basePath}:${backendPort}/swagger/api/index.html
 前端运行地址：http://localhost:${frontendPort}
+☕ 请作者喝杯咖啡，支持项目持续维护：https://www.apevolo.com/donate
 --------------------------------------版权声明------------------------------
-** 版权所有 © xianhc。保留所有权利。 **
-** 移除版权标识需购买商用授权：https://www.apevolo.com/empower/index.html **
+** 版权所有 © 2022–2026 xianhc。保留所有权利。 **
+** 开源许可：Apache-2.0，详见 LICENSE；联系邮箱：apevolo@gmail.com **
 `
 }
 

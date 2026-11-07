@@ -45,10 +45,11 @@ public class CacheAop : IInterceptor, IAsyncInterceptor
         }
 
         var cacheKey = CreateCacheKey(invocation, attribute);
-        var cached = _cache.Get<object>(cacheKey);
-        if (cached != null && invocation.Method.ReturnType.IsInstanceOfType(cached))
+        var cached = _cache.Get<string>(cacheKey);
+        if (cached != null)
         {
-            invocation.ReturnValue = cached;
+            invocation.ReturnValue = invocation.Method.ReturnType == typeof(string)
+                ? cached : cached.ToObject(invocation.Method.ReturnType);
             return;
         }
 

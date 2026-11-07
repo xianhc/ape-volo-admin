@@ -151,7 +151,7 @@ public class SettingService : BaseService<Setting>, ISettingService
     }
 
     private Task InvalidateAsync(string name) => _unitOfWork.AfterCommitAsync(() =>
-        _cache.InvalidateAsync(GlobalConstants.CachePrefix.LoadSettingByName + name));
+        _cache.RemoveAsync(GlobalConstants.CachePrefix.LoadSettingByName + name));
 
     /// <summary>
     /// 类型转换

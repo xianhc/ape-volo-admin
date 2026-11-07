@@ -1,163 +1,108 @@
-using System.Text;
-using Ape.Volo.Shared.Exceptions;
-using Ape.Volo.Common.Enums;
-using Ape.Volo.Common.Extensions;
-using Microsoft.Extensions.Caching.Distributed;
-
+using Microsoft.Extensions.Caching.Memory;
 
 namespace Ape.Volo.Core.Caches.Distributed;
 
-public class DistributedCache : ICache
+/// <summary>进程内缓存：业务值直接保存为字符串或 JSON，过期由后端管理。</summary>
+public class DistributedCache(MemoryCache cache) : ICache, ICacheKeyCatalog
 {
-    // 当前实现包装内置 MemoryDistributedCache；固定条带锁在多个包装实例之间共享，且不随键数增长。
+    // 多个包装实例共用同一组固定条带锁，协调原子比较与写入。
     private static readonly SemaphoreSlim[] MutationLocks = Enumerable.Range(0, 128)
         .Select(_ => new SemaphoreSlim(1, 1)).ToArray();
 
+    private static SemaphoreSlim Gate(string key) =>
+        MutationLocks[(StringComparer.Ordinal.GetHashCode(key) & int.MaxValue) % MutationLocks.Length];
 
+    /// <inheritdoc />
+    public T? Get<T>(string key)
+    {
+        var gate = Gate(key);
+        gate.Wait();
+        try { return CacheValues.Deserialize<T>(cache.Get<string>(key)); }
+        finally { gate.Release(); }
+    }
+
+    /// <inheritdoc />
+    public async Task<T?> GetAsync<T>(string key, CancellationToken ct = default)
+    {
+        var gate = Gate(key);
+        await gate.WaitAsync(ct);
+        try { return CacheValues.Deserialize<T>(cache.Get<string>(key)); }
+        finally { gate.Release(); }
+    }
+
+    /// <inheritdoc />
+    public bool Set(string key, object value, TimeSpan? timeout, CacheExpireType? cacheExpireType)
+    {
+        var gate = Gate(key);
+        gate.Wait();
+        try { cache.Set(key, CacheValues.Serialize(value), Options(timeout, cacheExpireType)); }
+        finally { gate.Release(); }
+        return true;
+    }
+
+    /// <inheritdoc />
+    public async Task<bool> SetAsync(string key, object value, TimeSpan? timeout,
+        CacheExpireType? cacheExpireType, CancellationToken ct = default)
+    {
+        var gate = Gate(key);
+        await gate.WaitAsync(ct);
+        try { cache.Set(key, CacheValues.Serialize(value), Options(timeout, cacheExpireType)); }
+        finally { gate.Release(); }
+        return true;
+    }
+
+    /// <inheritdoc />
+    public bool Remove(string key)
+    {
+        var gate = Gate(key);
+        gate.Wait();
+        try { cache.Remove(key); }
+        finally { gate.Release(); }
+        return true;
+    }
+
+    /// <inheritdoc />
+    public async Task<bool> RemoveAsync(string key, CancellationToken ct = default)
+    {
+        var gate = Gate(key);
+        await gate.WaitAsync(ct);
+        try { cache.Remove(key); }
+        finally { gate.Release(); }
+        return true;
+    }
+
+    /// <inheritdoc />
     public async Task<bool> CompareExchangeAsync(string key, string? expected, string? value, TimeSpan timeout,
         CancellationToken ct = default)
     {
         if (value != null && timeout <= TimeSpan.Zero) throw new ArgumentOutOfRangeException(nameof(timeout));
-        var gate = MutationLocks[(StringComparer.Ordinal.GetHashCode(key) & int.MaxValue) % MutationLocks.Length];
+        var gate = Gate(key);
         await gate.WaitAsync(ct);
         try
         {
-            var bytes = await _cache.GetAsync(key, ct);
-            var current = bytes == null ? null : Encoding.UTF8.GetString(bytes).ToObject<ValueInfoEntry>();
-            if (expected == null ? current != null :
-                current == null || current.TypeName != typeof(string).AssemblyQualifiedName || current.Value != expected)
-                return false;
-
-            if (value == null) await _cache.RemoveAsync(key, ct);
-            else
-            {
-                var entry = new ValueInfoEntry
-                {
-                    Value = value, TypeName = typeof(string).AssemblyQualifiedName!,
-                    ExpireTime = timeout, ExpireType = CacheExpireType.Absolute
-                };
-                await _cache.SetAsync(key, Encoding.UTF8.GetBytes(entry.ToJson()),
-                    new DistributedCacheEntryOptions { AbsoluteExpirationRelativeToNow = timeout }, ct);
-            }
+            if (cache.Get<string>(key) != expected) return false;
+            if (value == null) cache.Remove(key);
+            else cache.Set(key, value, Options(timeout, null));
             return true;
         }
         finally { gate.Release(); }
     }
 
-    private readonly IDistributedCache _cache;
-    private const int DefaultTimeout = 60 * 20;
-
-    /// <summary>
-    /// 初始化 <see cref="DistributedCache"/> 的新实例。
-    /// </summary>
-    /// <param name="cache">cache</param>
-
-    public DistributedCache(IDistributedCache cache)
+    /// <inheritdoc />
+    public Task<string[]> GetKeysAsync(string prefix, CancellationToken ct = default)
     {
-        _cache = cache;
+        ct.ThrowIfCancellationRequested();
+        return Task.FromResult(cache.Keys.OfType<string>()
+            .Where(key => key.StartsWith(prefix, StringComparison.Ordinal) && cache.TryGetValue(key, out _))
+            .ToArray());
     }
 
-
-    public T? Get<T>(string key)
+    private static MemoryCacheEntryOptions Options(TimeSpan? timeout, CacheExpireType? expireType)
     {
-        var cacheValue = _cache.Get(key);
-        if (cacheValue.IsNullOrEmpty())
-            return default;
-        var valueEntry = Encoding.UTF8.GetString(cacheValue, 0, cacheValue.Length).ToObject<ValueInfoEntry>();
-        if (valueEntry == null)
-            return default;
-        var result = valueEntry.TypeName == typeof(string).AssemblyQualifiedName
-            ? valueEntry.Value
-            : valueEntry.Value.ToObject(Type.GetType(valueEntry.TypeName) ??
-                throw new InvalidOperationException("缓存条目中的类型无法解析。"));
-
-        if (valueEntry.ExpireType == CacheExpireType.Relative)
-        {
-            _cache.Remove(key);
-            var options = new DistributedCacheEntryOptions { AbsoluteExpirationRelativeToNow = valueEntry.ExpireTime };
-            _cache.Set(key, cacheValue, options);
-            //_cache.Refresh(key);
-        }
-
-        return result == null ? default : (T)result;
+        var lifetime = timeout ?? TimeSpan.FromMinutes(20);
+        if (lifetime <= TimeSpan.Zero) throw new ArgumentOutOfRangeException(nameof(timeout));
+        return expireType == CacheExpireType.Relative
+            ? new MemoryCacheEntryOptions { SlidingExpiration = lifetime }
+            : new MemoryCacheEntryOptions { AbsoluteExpirationRelativeToNow = lifetime };
     }
-
-    public async Task<T?> GetAsync<T>(string key, CancellationToken ct = default)
-    {
-        var cacheValue = await _cache.GetAsync(key, ct);
-        if (cacheValue.IsNullOrEmpty())
-            return default;
-        var valueEntry = Encoding.UTF8.GetString(cacheValue, 0, cacheValue.Length).ToObject<ValueInfoEntry>();
-        if (valueEntry == null)
-            return default;
-        var result = valueEntry.TypeName == typeof(string).AssemblyQualifiedName
-            ? valueEntry.Value
-            : valueEntry.Value.ToObject(Type.GetType(valueEntry.TypeName) ??
-                throw new InvalidOperationException("缓存条目中的类型无法解析。"));
-
-        if (valueEntry.ExpireType == CacheExpireType.Relative)
-        {
-            await _cache.RemoveAsync(key, ct);
-            var options = new DistributedCacheEntryOptions { AbsoluteExpirationRelativeToNow = valueEntry.ExpireTime };
-            await _cache.SetAsync(key, cacheValue, options, ct);
-            // await _cache.RefreshAsync(key);
-        }
-
-        return result == null ? default : (T)result;
-    }
-
-    public bool Set(string key, object value, TimeSpan? timeSpan, CacheExpireType? cacheExpireType)
-    {
-        string jsonStr;
-        if (value is string s)
-            jsonStr = s;
-        else
-            jsonStr = value.ToJson();
-        var expireTime = timeSpan ?? new TimeSpan(0, 0, 0, DefaultTimeout);
-        var entry = new ValueInfoEntry
-        {
-            Value = jsonStr,
-            TypeName = value.GetType().AssemblyQualifiedName!,
-            ExpireTime = expireTime,
-            ExpireType = cacheExpireType ?? CacheExpireType.Absolute
-        };
-        var theValue = entry.ToJson();
-        var options = new DistributedCacheEntryOptions { AbsoluteExpirationRelativeToNow = expireTime };
-        _cache.Set(key, Encoding.UTF8.GetBytes(theValue), options);
-        return true;
-    }
-
-    public async Task<bool> SetAsync(string key, object value, TimeSpan? timeSpan, CacheExpireType? cacheExpireType, CancellationToken ct = default)
-    {
-        string jsonStr;
-        if (value is string s)
-            jsonStr = s;
-        else
-            jsonStr = value.ToJson();
-        var expireTime = timeSpan ?? new TimeSpan(0, 0, 0, DefaultTimeout);
-        var entry = new ValueInfoEntry
-        {
-            Value = jsonStr,
-            TypeName = value.GetType().AssemblyQualifiedName!,
-            ExpireTime = expireTime,
-            ExpireType = cacheExpireType ?? CacheExpireType.Absolute
-        };
-        var theValue = entry.ToJson();
-        var options = new DistributedCacheEntryOptions { AbsoluteExpirationRelativeToNow = expireTime };
-        await _cache.SetAsync(key, Encoding.UTF8.GetBytes(theValue), options, ct);
-        return true;
-    }
-
-    public bool Remove(string key)
-    {
-        _cache.Remove(key);
-        return true;
-    }
-
-    public async Task<bool> RemoveAsync(string key, CancellationToken ct = default)
-    {
-        await _cache.RemoveAsync(key, ct);
-        return true;
-    }
-
 }

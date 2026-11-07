@@ -8,7 +8,7 @@ namespace Ape.Volo.Application.Contracts.Identity;
 public interface IPermissionCacheService
 {
     /// <summary>
-    /// 按用户读取缓存，未命中时加载；与失效操作协调，防止旧结果重新回填。
+    /// 按用户读取缓存，未命中时加载并保存。
     /// </summary>
     /// <typeparam name="T">结果类型</typeparam>
     /// <param name="item">缓存内容</param>

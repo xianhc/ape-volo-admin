@@ -18,16 +18,21 @@ public static class LoggerOutputExtensions
     /// 控制台
     /// </summary>
     /// <param name="loggerConfiguration"></param>
+    /// <param name="prefix">控制台日志前缀，不包含方括号。</param>
     /// <returns></returns>
-    public static LoggerConfiguration WriteToConsole(this LoggerConfiguration loggerConfiguration)
+    public static LoggerConfiguration WriteToConsole(this LoggerConfiguration loggerConfiguration, string prefix)
     {
+        const string outputTemplate =
+            "[{ConsolePrefix:l}] [{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}";
+
         //系统日志
         loggerConfiguration = loggerConfiguration.WriteTo.Logger(lg =>
-            lg.RecordLog().WriteTo.Console());
+            lg.RecordLog().Enrich.WithProperty("ConsolePrefix", prefix).WriteTo.Console(outputTemplate: outputTemplate));
 
         //sql日志
         loggerConfiguration = loggerConfiguration.WriteTo.Logger(lg =>
-            lg.RecordSql(LoggerProperty.ToConsole).WriteTo.Console());
+            lg.RecordSql(LoggerProperty.ToConsole).Enrich.WithProperty("ConsolePrefix", prefix)
+                .WriteTo.Console(outputTemplate: outputTemplate));
 
         return loggerConfiguration;
     }

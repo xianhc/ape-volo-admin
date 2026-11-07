@@ -55,15 +55,9 @@ public static class GlobalConstants
         public const string LoadSettingByName = "setting:name:";
 
         /// <summary>
-        /// 用户数据权限（可访问的用户主键集合）
+        /// 用户数据权限快照
         /// </summary>
         public const string UserDataScopeById = "user:dataScope:id:";
-
-        /// <summary>
-        /// 用户数据权限（是否拥有全部数据）
-        /// </summary>
-        public const string UserDataScopeAllById = "user:dataScope:all:id:";
-
 
         /// <summary>
         /// 加载字典详情信息

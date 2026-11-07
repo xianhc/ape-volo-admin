@@ -109,13 +109,6 @@
     --login-story-glow: color-mix(in srgb, var(--el-color-primary) 20%, transparent);
   }
   :global(html.dark .login-brand img) { mix-blend-mode: normal; padding: 3px; background: #fff; }
-  /* 定版要求的白色硬边仅作用于两行版权文字，避免影响表单和代码的清晰度。 */
-  :global(html.dark .login-footer .text-center) {
-    color: #94a3b8;
-    text-shadow: 0 0 1px #fff, 1px 1px 0 #fff, -1px 1px 0 #fff, 1px -1px 0 #fff, -1px -1px 0 #fff, 0 1px 0 #fff, 0 -1px 0 #fff, 1px 0 0 #fff, -1px 0 0 #fff;
-  }
-  :global(html.dark .login-footer .text-center:first-child a) { color: var(--el-color-primary); }
-  :global(html.dark .login-footer .text-center:last-child a) { color: inherit; font-weight: inherit; }
   :global(html.dark .login-links) { color: #94a3b8; }
   @keyframes login-drift { to { transform: translate(12%, -4%) scale(1.12); } }
   @media (min-width: 1600px) { .editor-stage { width: 720px; } }

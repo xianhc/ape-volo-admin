@@ -8,6 +8,9 @@ namespace Ape.Volo.Core.ConfigOptions;
 [OptionsSettings]
 public class SerilogOptions
 {
+    /// <summary>控制台日志前缀，不包含方括号。</summary>
+    public string Prefix { get; set; } = "APE-VOLO";
+
     /// <summary>
     /// 是否记录SQL日志
     /// </summary>

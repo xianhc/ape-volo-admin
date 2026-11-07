@@ -239,11 +239,12 @@ QQ 群：`839263566` · 微信：`apevolo`（备注“加群”）
 
 ## 版权与授权
 
-**版权所有 © xianhc。**
+**版权所有 © 2022–2026 xianhc。**
 
 本项目采用 [Apache License 2.0](LICENSE)，使用、修改与分发请遵循许可证要求。
 
-> [!IMPORTANT]
-> **请保留项目中的版权与署名信息。**
->
-> **如需移除版权标识，须先购买[商用授权](https://www.apevolo.com/empower/index.html)。**
+Apache License 2.0 允许在遵守许可证条款的前提下使用、修改、商业使用与再分发本项目。
+
+再分发时须提供许可证副本；以源码形式分发衍生作品时，须保留与作品相关的原始版权及署名通知，修改过的文件须显著注明已作修改。完整义务以 [LICENSE](LICENSE) 为准。
+
+商业合作咨询：[apevolo@gmail.com](mailto:apevolo@gmail.com)。

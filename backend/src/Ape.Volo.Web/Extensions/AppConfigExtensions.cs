@@ -46,6 +46,7 @@ public static class AppConfigExtensions
         var serilogOptions = app.Services.GetRequiredService<IOptions<SerilogOptions>>().Value;
         var serilogDict = new Dictionary<string, string>
         {
+            { "控制台日志前缀", serilogOptions.Prefix },
             { "记录SQL日志", serilogOptions.RecordSql.ToString() },
             { "记录SQL参数值", serilogOptions.IncludeSqlParameters.ToString() },
             { "慢SQL阈值(ms)", serilogOptions.SlowSqlThresholdMilliseconds.ToString("0.##") },

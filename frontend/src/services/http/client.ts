@@ -52,7 +52,10 @@ export function createHttpClient(options: ClientOptions) {
       await options.session!.refresh(failedAccessToken)
     } catch (error) {
       if (error instanceof SessionChangedError) throw error
-      if (error instanceof SessionExpiredError || (axios.isAxiosError(error) && error.response?.status === 401)) {
+      // 刷新端点的 400（兼容旧服务）、401、403 均表示无法继续使用当前凭证。
+      // 网络故障、限流和服务端异常保留会话，允许稍后重试。
+      if (error instanceof SessionExpiredError ||
+          (axios.isAxiosError(error) && [400, 401, 403].includes(error.response?.status ?? 0))) {
         expire(sessionId)
       } else if (!axios.isCancel(error) && showError) {
         options.feedback.error(error)

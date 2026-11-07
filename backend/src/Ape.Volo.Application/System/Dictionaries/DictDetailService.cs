@@ -123,7 +123,7 @@ public class DictDetailService : BaseService<DictDetail>, IDictDetailService
         await _unitOfWork.AfterCommitAsync(async () =>
         {
             foreach (var name in names)
-                await _cache.InvalidateAsync(GlobalConstants.CachePrefix.LoadDictByName + name);
+                await _cache.RemoveAsync(GlobalConstants.CachePrefix.LoadDictByName + name);
         });
     }
 

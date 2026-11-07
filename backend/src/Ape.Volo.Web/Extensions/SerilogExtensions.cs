@@ -64,7 +64,7 @@ public static class SerilogExtensions
             if (services.GetRequiredService<IOptions<SystemOptions>>().Value.RunMode == RunMode.Dev && serilogOptions.ToConsole)
             {
                 //输出到控制台
-                logger.WriteToConsole();
+                logger.WriteToConsole(serilogOptions.Prefix);
             }
 
 

@@ -12,7 +12,7 @@ namespace Ape.Volo.Web.Extensions;
 public static class CacheExtensions
 {
     /// <summary>
-    /// 按配置注册缓存实现：启用 Redis 时使用 <see cref="RedisCache"/>，否则使用进程内分布式缓存
+    /// 按配置注册缓存实现：启用 Redis 时使用 <see cref="RedisCache"/>，否则使用进程内缓存
     /// </summary>
     /// <param name="services">服务集合</param>
     /// <param name="configuration">配置根对象</param>
@@ -31,6 +31,7 @@ public static class CacheExtensions
             return;
         }
 
+        services.AddSingleton<Microsoft.Extensions.Caching.Memory.MemoryCache>();
         services.AddSingleton<ICache, DistributedCache>();
     }
 }

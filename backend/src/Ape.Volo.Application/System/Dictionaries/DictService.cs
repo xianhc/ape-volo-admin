@@ -140,7 +140,7 @@ public class DictService : BaseService<Dict>, IDictService
     }
 
     private Task InvalidateAsync(string name) => _unitOfWork.AfterCommitAsync(() =>
-        _cache.InvalidateAsync(GlobalConstants.CachePrefix.LoadDictByName + name));
+        _cache.RemoveAsync(GlobalConstants.CachePrefix.LoadDictByName + name));
 
     #endregion
 

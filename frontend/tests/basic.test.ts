@@ -7,6 +7,52 @@ import { createUserDraft, toUserRequest } from '../src/api/identity/userAdapter'
 import { toRoleRequest } from '../src/api/identity/roleAdapter'
 import { toMenuRequest } from '../src/api/identity/menuAdapter'
 import { isSessionIdentityChange } from '../src/services/session/tokenStorage'
+import type { ApeToken } from '../src/services/session/tokenStorage'
+import { AxiosError, AxiosHeaders } from 'axios'
+import { createHttpClient } from '../src/services/http/client'
+import { createTokenRefresher } from '../src/services/session/tokenRefresh'
+
+test('refreshRejectionEndsSessionWhileTemporaryFailuresKeepCredentials', async () => {
+  for (const proactive of [true, false]) {
+    for (const status of [400, 401, 403, 429, 500, undefined]) {
+      let token: ApeToken = { sessionId: 'first', accessToken: 'access', refreshToken: 'refresh',
+        tokenType: 'Bearer', expires: proactive ? 0 : 2000, refreshTokenExpires: 3000 }
+      let expired = 0
+      let errors = 0
+      let requests = 0
+      const refresh = createTokenRefresher({
+        read: () => token,
+        save: () => assert.fail('Rejected refresh must not save credentials'),
+        request: async () => {
+          throw new AxiosError('Refresh failed', undefined, undefined, undefined, status === undefined ? undefined : {
+            status, statusText: 'Rejected', headers: {}, config: { headers: new AxiosHeaders() },
+            data: { isSuccess: false, status, message: 'token验证失败，请重新登录！' }
+          })
+        },
+        withLock: work => work(), now: () => 1000
+      })
+      const client = createHttpClient({
+        config: { adapter: async config => {
+          requests++
+          throw new AxiosError('Unauthorized', undefined, config, undefined, {
+            status: 401, statusText: 'Unauthorized', data: {}, headers: {}, config
+          })
+        } },
+        session: { read: () => token, refresh, invalidate: () => {
+          token = { ...token, sessionId: '', accessToken: '', refreshToken: '' }
+        } },
+        feedback: { expired: () => { expired++ }, error: () => { errors++ }, forbidden: () => assert.fail('Refresh must use session expiry') },
+        now: () => 1000
+      })
+      await assert.rejects(client.get('/users', { errorFeedback: false }))
+      const rejected = status === 400 || status === 401 || status === 403
+      assert.equal(expired, rejected ? 1 : 0, `proactive=${proactive}, status=${status}`)
+      assert.equal(token.sessionId, rejected ? '' : 'first')
+      assert.equal(errors, 0)
+      assert.equal(requests, proactive ? 0 : 1)
+    }
+  }
+})
 
 test('crossTabSessionChangesClearPagesWhileTokenRotationKeepsThem', () => {
   const key = 'ape-volo-admin-token'

@@ -30,9 +30,10 @@ public static class ApplicationNotifierExtensions
                                     "官方网站：https://www.apevolo.com\n" +
                                     $"接口文档地址：http://localhost:{port}/swagger/api/index.html\n" +
                                     "前端运行地址：http://localhost:9001\n" +
+                                    "☕ 请作者喝杯咖啡，支持项目持续维护：https://www.apevolo.com/donate\n" +
                                     "--------------------------------------版权声明-----------------------------\n" +
-                                    "** 版权所有 © xianhc。保留所有权利。 **\n" +
-                                    "** 移除版权标识需购买商用授权：https://www.apevolo.com/empower/index.html **",
+                                    "** 版权所有 © 2022–2026 xianhc。保留所有权利。 **\n" +
+                                    "** 开源许可：Apache-2.0，详见 LICENSE；联系邮箱：apevolo@gmail.com **",
                 ConsoleColor.Green);
         });
     }

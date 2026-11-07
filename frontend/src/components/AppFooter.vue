@@ -1,40 +1,29 @@
 <!--
-  ⚠️ 版权保护声明 ⚠️
-  🚫 严禁修改此文件的任何内容！
-  
-  📋 重要说明:
-  - 本文件仅包含版权信息展示，不影响系统正常使用
-  - 在未授权情况下，保留此代码即可正常使用所有功能
-  
-  ⚖️ 法律条款:
-  - 本文件包含版权信息，受中华人民共和国著作权法等法律保护
-  - 未经原作者书面授权，严禁修改、删除或替换任何版权信息
-  - 违法删除版权信息的行为将面临法律追责和经济索赔
-  
-  💰 索赔条款:
-  - 非法删除或修改版权信息，每次违法行为索赔金额不少于人民币50,000元
-  - 商业使用中的违法行为，索赔金额将根据商业规模和影响范围进行评估
-  - 我们保留通过技术手段监控和追踪版权信息的权利
-  
-  ✅ 授权联系:
-  📧 微信: apevolo
-  🔗 GitHub: https://github.com/xianhc/ape-volo-admin
-  📝 邮箱: apevolo@gmail.com
-
-  🏛️ 最终提醒:
-  请您遵守版权法律法规，尊重知识产权。
-  合规使用不仅是法律要求，更是对创作者劳动成果的尊重。
-  
-  ⚖️ 本声明具有完全法律效力
+******************************************************************************
+ * 项目名称：APE-VOLO-ADMIN
+ * 开源地址：https://github.com/xianhc/ape-volo-admin
+ * 系统官网：https://www.apevolo.com
+ * 联系邮箱：apevolo@gmail.com
+ *
+ * Copyright © 2022 xianhc（冼浩春）。保留所有权利。
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * 本项目采用 Apache License 2.0，完整许可条款详见根目录 LICENSE 文件。
+ *
+ * 版权与署名保留要求（Apache License 2.0 第 4 条）：
+ * 再分发本项目或其衍生作品时，须向接收者提供许可证副本。
+ * 以源码形式分发衍生作品时，须保留与该作品相关的原始版权及署名通知，
+ * 不得删除原始通知或以他人署名替换；修改过的文件须显著注明已作修改。
+ * 上述说明为许可证要求的提示，完整义务以 LICENSE 条款为准。
+ *
+ * 作者保留依法维护自身合法权益的权利。授权与合作事宜请通过上述邮箱联系。
+ ******************************************************************************
 -->
 
 <template>
   <div
-    class="flex flex-col md:flex-row gap-2 items-center text-sm text-slate-700 dark:text-slate-300 justify-center pb-1"
+    class="app-footer flex flex-col md:flex-row gap-2 items-center text-sm text-slate-700 dark:text-slate-300 justify-center pb-1"
   >
-    <!-- 
-      🔒 版权信息区域 - 受法律保护，删除将面临索赔
-    -->
     <div class="text-center">
       <span class="mr-1">Powered by </span>
       <span>
@@ -48,7 +37,7 @@
     </div>
     <slot />
     <div class="text-center">
-      <span class="mr-1">Copyright</span>
+      <span class="mr-1">Copyright © 2022–{{ currentYear }}</span>
       <span>
         <a class="font-bold text-active" href="https://www.github.com/xianhc">
           xianhc
@@ -59,12 +48,43 @@
 </template>
 
 <script setup lang="ts">
+  const currentYear = new Date().getFullYear()
+
   defineOptions({
     name: 'AppFooter'
   })
 </script>
 
-<!--
-  🏆 最后呼吁:
-  创作不易，维权必行。请尊重知识产权，共建良好的开源环境。
--->
+<style scoped>
+  /* 夜间模式的白色硬边仅作用于两行版权文字。 */
+  :global(html.dark .app-footer > .text-center) {
+    color: #94a3b8;
+    font: 400 12px/1.5 'Segoe UI', sans-serif;
+    text-shadow:
+      0 0 1px #fff,
+      1px 1px 0 #fff,
+      -1px 1px 0 #fff,
+      1px -1px 0 #fff,
+      -1px -1px 0 #fff,
+      0 1px 0 #fff,
+      0 -1px 0 #fff,
+      1px 0 0 #fff,
+      -1px 0 0 #fff;
+  }
+
+  :global(html.dark .app-footer > .text-center:first-child) {
+    color: #53617a;
+    font-size: 13px;
+  }
+
+  :global(html.dark .app-footer > .text-center:first-child a) {
+    color: var(--el-color-primary);
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+
+  :global(html.dark .app-footer > .text-center:last-child a) {
+    color: inherit;
+    font-weight: inherit;
+  }
+</style>

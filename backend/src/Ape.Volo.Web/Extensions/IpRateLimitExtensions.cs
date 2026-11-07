@@ -1,6 +1,7 @@
 ﻿using Ape.Volo.Core.ConfigOptions;
 using AspNetCoreRateLimit;
 using Microsoft.AspNetCore.HttpOverrides;
+using StackExchange.Redis;
 using System.Net;
 
 namespace Ape.Volo.Web.Extensions;
@@ -49,15 +50,13 @@ public static class IpRateLimitExtensions
             var redisOptions = configuration.GetConfigurableOptions<RedisOptions>();
             services.AddStackExchangeRedisCache(option =>
             {
+                option.ConfigurationOptions = new ConfigurationOptions
+                {
+                    EndPoints = { { redisOptions.Host, redisOptions.Port } },
+                    DefaultDatabase = redisOptions.Index
+                };
                 if (!string.IsNullOrWhiteSpace(redisOptions.Password))
-                {
-                    option.Configuration =
-                        $"{redisOptions.Host}:{redisOptions.Port},password={redisOptions.Password},defaultDatabase={redisOptions.Index + 2}";
-                }
-                else
-                {
-                    option.Configuration = redisOptions.Host + ":" + redisOptions.Port;
-                }
+                    option.ConfigurationOptions.Password = redisOptions.Password;
 
                 option.InstanceName = "rateLimit:";
             });

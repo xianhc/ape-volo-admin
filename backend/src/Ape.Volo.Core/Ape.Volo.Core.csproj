@@ -15,6 +15,7 @@
     <!-- 事务拦截器改为 IAsyncInterceptor，避免同步等待异步方法 -->
     <PackageReference Include="Castle.Core.AsyncInterceptor" />
     <PackageReference Include="Mapster" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Memory" />
     <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" />
     <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" />
     <PackageReference Include="Serilog" />

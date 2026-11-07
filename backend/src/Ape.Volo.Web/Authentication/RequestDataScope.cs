@@ -28,15 +28,9 @@ public sealed class RequestDataScope(ICurrentUser user)
     /// <param name="ct">取消令牌</param>
     public async Task InitializeAsync(IDataScopeService service, CancellationToken ct)
     {
-        AllowAll = await service.HasAllDataScopeAsync(user.Id, ct);
+        var snapshot = await service.GetDataScopeAsync(user.Id, ct);
         ct.ThrowIfCancellationRequested();
-        if (AllowAll)
-        {
-            return;
-        }
-
-        var userIds = await service.GetDataScopeUserIdsAsync(user.Id, ct);
-        ct.ThrowIfCancellationRequested();
-        _userIds = userIds.ToArray();
+        _userIds = snapshot.UserIds.ToArray();
+        AllowAll = snapshot.AllowAll;
     }
 }

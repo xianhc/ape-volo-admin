@@ -6,7 +6,7 @@ namespace Ape.Volo.Application.Contracts.Identity.Auth;
 public interface IAuthSessionService
 {
     /// <summary>
-    /// 创建会话并维护用户撤销版本键
+    /// 创建登录会话
     /// </summary>
     /// <param name="session">会话对象</param>
     /// <param name="ct">取消令牌</param>
@@ -18,7 +18,7 @@ public interface IAuthSessionService
     /// </summary>
     /// <param name="sessionId">会话标识</param>
     /// <param name="ct">取消令牌</param>
-    /// <returns>有效会话；不存在、已过期或版本失效时返回 null</returns>
+    /// <returns>有效会话；不存在或已过期时返回 null</returns>
     Task<AuthSession?> GetActiveAsync(string sessionId, CancellationToken ct = default);
 
     /// <summary>
