@@ -66,7 +66,7 @@
 
   const layoutModeMap: Record<MenuNavigationType, LayoutModeInfo> = {
     [MenuNavigationType.SidebarNav]: {
-      icon: 'svg:sidebar-nav',
+      icon: 'lucide:panel-left',
       /**
        * 面向用户显示的标签。
        * @returns 当前语言下对应条目的显示文案。
@@ -83,7 +83,7 @@
       }
     },
     [MenuNavigationType.TopNav]: {
-      icon: 'svg:top-nav',
+      icon: 'lucide:panel-top',
       /**
        * 面向用户显示的标签。
        * @returns 当前语言下对应条目的显示文案。
@@ -100,7 +100,7 @@
       }
     },
     [MenuNavigationType.DualSidebarNav]: {
-      icon: 'svg:dual-sidebar-nav',
+      icon: 'lucide:columns-2',
       /**
        * 面向用户显示的标签。
        * @returns 当前语言下对应条目的显示文案。
@@ -117,7 +117,7 @@
       }
     },
     [MenuNavigationType.CombinationNav]: {
-      icon: 'svg:combination-nav',
+      icon: 'lucide:panels-top-left',
       /**
        * 面向用户显示的标签。
        * @returns 当前语言下对应条目的显示文案。
@@ -134,7 +134,7 @@
       }
     },
     [MenuNavigationType.MixedNav]: {
-      icon: 'svg:combination-nav',
+      icon: 'lucide:panels-top-left',
       /**
        * 面向用户显示的标签。
        * @returns 当前语言下对应条目的显示文案。
@@ -151,7 +151,7 @@
       }
     },
     [MenuNavigationType.HeaderMixedNav]: {
-      icon: 'svg:dual-sidebar-nav',
+      icon: 'lucide:columns-2',
       /**
        * 面向用户显示的标签。
        * @returns 当前语言下对应条目的显示文案。

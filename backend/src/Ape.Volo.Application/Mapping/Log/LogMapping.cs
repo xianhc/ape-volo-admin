@@ -4,4 +4,4 @@ using Ape.Volo.Entity.Log;
 
 [assembly: AutoMapping(typeof(ExceptionLog), typeof(ExceptionLogVo))]
 [assembly: AutoMapping(typeof(OperateLog), typeof(OperateLogVo))]
-[assembly: AutoMapping(typeof(ScheduledJobLog), typeof(ScheduledJobLogVo))]
+[assembly: AutoMapping(typeof(JobLog), typeof(JobLogVo))]

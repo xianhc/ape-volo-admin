@@ -28,7 +28,7 @@
         <el-table-column prop="ipAddress" label="归属地" />
         <el-table-column :min-width="appStore.operateMinWith" label="操作">
           <template #default="scope">
-            <el-button icon="view" type="text" @click="showDetail(scope.row)">详情</el-button>
+            <el-button :icon="createIconifyIcon('lucide:eye')" type="text" @click="showDetail(scope.row)">详情</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -98,6 +98,7 @@
 </template>
 
 <script setup lang="ts">
+  import { createIconifyIcon } from '@/components/icons'
   import { ref } from 'vue'
   import { useAppStore } from '@/pinia'
   import { getCurrent, type OperateLog } from '@/api/log/operateLog'

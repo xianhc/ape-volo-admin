@@ -32,10 +32,10 @@
         </div>
 
         <div class="flex flex-col sm:flex-row gap-3 pt-1">
-          <el-button type="primary" icon="Back" @click="toDashboard">
+          <el-button type="primary" :icon="createIconifyIcon('lucide:arrow-left')" @click="toDashboard">
             返回首页
           </el-button>
-          <el-button type="success" icon="Right" @click="goWebsite">
+          <el-button type="success" :icon="createIconifyIcon('lucide:arrow-right')" @click="goWebsite">
             进入官网
           </el-button>
         </div>
@@ -57,6 +57,7 @@
 </template>
 
 <script setup lang="ts">
+  import { createIconifyIcon } from '@/components/icons'
   import { useRouter } from 'vue-router'
   import setting from '@/setting'
 

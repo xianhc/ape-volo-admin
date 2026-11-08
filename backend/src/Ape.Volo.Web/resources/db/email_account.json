@@ -8,7 +8,7 @@
     "UserName": "apevolo",
     "Password": "123456",
     "EnableSsl": true,
-    "UseDefaultCredentials": 0,
+    "UseDefaultCredentials": false,
     "CreateBy": "apevolo"
   }
 ]

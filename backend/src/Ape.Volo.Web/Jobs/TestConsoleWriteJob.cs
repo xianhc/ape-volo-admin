@@ -15,18 +15,18 @@ public class TestConsoleWriteJob : JobBase<TestConsoleWriteJob>, IJob
     /// 初始化 <see cref="TestConsoleWriteJob"/> 的新实例。
     /// </summary>
     /// <param name="schedulerCenterService">调度中心服务</param>
-    /// <param name="scheduledJobService">作业配置服务</param>
-    /// <param name="scheduledJobLogQueue">作业日志队列</param>
+    /// <param name="jobService">作业配置服务</param>
+    /// <param name="jobLogQueue">作业日志队列</param>
     /// <param name="logger">日志记录器</param>
     /// <param name="idGenerator">唯一 ID 生成器</param>
     /// <param name="fallbackLogWriter">独立文本兜底输出</param>
     public TestConsoleWriteJob(ISchedulerCenterService schedulerCenterService,
-        IScheduledJobStore scheduledJobService, ILogQueue<ScheduledJobLog> scheduledJobLogQueue,
+        IJobStore jobService, ILogQueue<JobLog> jobLogQueue,
         ILogger<TestConsoleWriteJob> logger, IIdGenerator idGenerator, IFallbackLogWriter fallbackLogWriter)
         : base(idGenerator, fallbackLogWriter)
     {
-        ScheduledJobService = scheduledJobService;
-        ScheduledJobLogQueue = scheduledJobLogQueue;
+        JobService = jobService;
+        JobLogQueue = jobLogQueue;
         SchedulerCenterService = schedulerCenterService;
         Logger = logger;
     }

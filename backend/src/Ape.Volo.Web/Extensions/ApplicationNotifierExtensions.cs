@@ -1,7 +1,9 @@
 ﻿using Ape.Volo.Common.Extensions;
 using Ape.Volo.Common.Helper;
+using Ape.Volo.Core.ConfigOptions;
 using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Hosting.Server.Features;
+using Microsoft.Extensions.Options;
 
 namespace Ape.Volo.Web.Extensions;
 
@@ -23,17 +25,19 @@ public static class ApplicationNotifierExtensions
         app.Lifetime.ApplicationStarted.Register(() =>
         {
             var port = GetListeningPort(app);
+            var version = app.Services.GetRequiredService<IOptions<SwaggerOptions>>().Value.Version;
 
             ConsoleHelper.WriteLine("欢迎使用《ape-volo-admin》中后台权限管理系统\n" +
-                                    "当前版本：v3.6.2\n" +
+                                    $"当前版本：v{version}\n" +
                                     "加群方式：微信号：apevolo<备注'加群'>   QQ群：839263566\n" +
                                     "官方网站：https://www.apevolo.com\n" +
                                     $"接口文档地址：http://localhost:{port}/swagger/api/index.html\n" +
                                     "前端运行地址：http://localhost:9001\n" +
                                     "☕ 请作者喝杯咖啡，支持项目持续维护：https://www.apevolo.com/donate\n" +
-                                    "--------------------------------------版权声明-----------------------------\n" +
-                                    "** 版权所有 © 2022–2026 xianhc。保留所有权利。 **\n" +
-                                    "** 开源许可：Apache-2.0，详见 LICENSE；联系邮箱：apevolo@gmail.com **",
+                                    "+---------------------------------- 版权声明 ----------------------------------+\n" +
+                                    "|              ** 版权所有 © 2022–2026 xianhc。保留所有权利。 **               |\n" +
+                                    "|    ** 开源许可：Apache-2.0，详见 LICENSE；联系邮箱：apevolo@gmail.com **     |\n" +
+                                    "+------------------------------------------------------------------------------+",
                 ConsoleColor.Green);
         });
     }

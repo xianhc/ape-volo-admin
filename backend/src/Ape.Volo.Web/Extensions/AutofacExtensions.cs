@@ -47,7 +47,7 @@ public class AutofacExtensions(IConfiguration configuration) : Module
         // 对外能力完全由各业务接口自己声明的方法决定，Autofac 只按业务接口注册。
 
         //注册业务层（全部走构造函数注入，不再使用属性注入）
-        var contracts = typeof(IScheduledJobService).Assembly;
+        var contracts = typeof(IJobService).Assembly;
         var applicationTypes = typeof(Ape.Volo.Application.BaseService<>).Assembly.GetExportedTypes()
             .Concat(typeof(ServerResourcesService).Assembly.GetExportedTypes()
                 .Where(type => typeof(IRemoteService).IsAssignableFrom(type)))

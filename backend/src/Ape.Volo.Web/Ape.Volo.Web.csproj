@@ -3,8 +3,8 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <Version>3.6.2</Version>
-    <AssemblyVersion>3.6.2.0</AssemblyVersion>
-    <FileVersion>3.6.2.0</FileVersion>
+    <AssemblyVersion>3.6.2.2</AssemblyVersion>
+    <FileVersion>3.6.2.2</FileVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

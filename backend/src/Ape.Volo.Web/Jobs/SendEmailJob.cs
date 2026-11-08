@@ -17,19 +17,19 @@ public class SendEmailJob : JobBase<SendEmailJob>, IJob
     /// 初始化 <see cref="SendEmailJob"/> 的新实例。
     /// </summary>
     /// <param name="schedulerCenterService">调度中心服务</param>
-    /// <param name="scheduledJobService">作业配置服务</param>
-    /// <param name="scheduledJobLogQueue">作业日志队列</param>
+    /// <param name="jobService">作业配置服务</param>
+    /// <param name="jobLogQueue">作业日志队列</param>
     /// <param name="queuedEmailService">邮件队列服务</param>
     /// <param name="logger">日志记录器</param>
     /// <param name="idGenerator">唯一 ID 生成器</param>
     /// <param name="fallbackLogWriter">独立文本兜底输出</param>
-    public SendEmailJob(ISchedulerCenterService schedulerCenterService, IScheduledJobStore scheduledJobService,
-        ILogQueue<ScheduledJobLog> scheduledJobLogQueue, IQueuedEmailService queuedEmailService,
+    public SendEmailJob(ISchedulerCenterService schedulerCenterService, IJobStore jobService,
+        ILogQueue<JobLog> jobLogQueue, IQueuedEmailService queuedEmailService,
         ILogger<SendEmailJob> logger, IIdGenerator idGenerator, IFallbackLogWriter fallbackLogWriter)
         : base(idGenerator, fallbackLogWriter)
     {
-        ScheduledJobService = scheduledJobService;
-        ScheduledJobLogQueue = scheduledJobLogQueue;
+        JobService = jobService;
+        JobLogQueue = jobLogQueue;
         _queuedEmailService = queuedEmailService;
         SchedulerCenterService = schedulerCenterService;
         Logger = logger;

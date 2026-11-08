@@ -55,7 +55,7 @@ public static class SwaggerExtensions
             {
                 var apiXml = Path.Combine(basePath, typeof(SwaggerExtensions).Assembly.GetName().Name + ".xml");
                 var applicationXml = Path.Combine(basePath, typeof(Ape.Volo.Application.BaseService<>).Assembly.GetName().Name + ".xml");
-                var contractsXml = Path.Combine(basePath, typeof(Ape.Volo.Application.Contracts.Operations.IScheduledJobService).Assembly.GetName().Name + ".xml");
+                var contractsXml = Path.Combine(basePath, typeof(Ape.Volo.Application.Contracts.System.Jobs.IJobService).Assembly.GetName().Name + ".xml");
                 c.IncludeXmlComments(apiXml, true);
                 c.IncludeXmlComments(applicationXml, true);
                 c.IncludeXmlComments(contractsXml, true);

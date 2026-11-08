@@ -4,7 +4,7 @@
       <div class="lg:col-span-3">
         <div class="ape-volo-content rounded-xl p-6 mb-6 profile-card">
           <h2 class="text-lg font-semibold mb-4 flex items-center gap-2">
-            <el-icon class="text-blue-500"><AppIcon icon="ep:info-filled" /></el-icon>
+            <el-icon class="text-blue-500"><AppIcon icon="lucide:info" /></el-icon>
             基础信息
           </h2>
           <div class="space-y-4">
@@ -38,7 +38,7 @@
               class="flex items-center justify-between gap-1 lg:gap-3 text-gray-600 dark:text-gray-300"
             >
               <div class="flex items-center gap-1 lg:gap-3">
-                <el-icon><AppIcon icon="ep:user" /></el-icon>
+                <el-icon><AppIcon icon="lucide:user-round" /></el-icon>
                 <span class="font-medium">登录账号</span>
               </div>
               <span>{{ userStore.userInfo.userName }}</span>
@@ -47,7 +47,7 @@
               class="flex items-center justify-between gap-1 lg:gap-3 text-gray-600 dark:text-gray-300"
             >
               <div class="flex items-center gap-1 lg:gap-3">
-                <el-icon><AppIcon icon="svg:nick-name" /></el-icon>
+                <el-icon><AppIcon icon="lucide:contact-round" /></el-icon>
                 <span class="font-medium">用户昵称</span>
               </div>
               <span>{{ userStore.userInfo.nickName }}</span>
@@ -56,7 +56,7 @@
               class="flex items-center justify-between gap-1 lg:gap-3 text-gray-600 dark:text-gray-300"
             >
               <div class="flex items-center gap-1 lg:gap-3">
-                <el-icon><AppIcon icon="svg:dept" /></el-icon>
+                <el-icon><AppIcon icon="lucide:network" /></el-icon>
                 <span class="font-medium">所属部门</span>
               </div>
               <span>{{ userStore.userInfo.dept.name }}</span>
@@ -65,7 +65,7 @@
               class="flex items-center justify-between gap-1 lg:gap-3 text-gray-600 dark:text-gray-300"
             >
               <div class="flex items-center gap-1 lg:gap-3">
-                <el-icon><AppIcon icon="ep:phone" /></el-icon>
+                <el-icon><AppIcon icon="lucide:phone" /></el-icon>
                 <span class="font-medium">手机号码</span>
               </div>
               <span>{{ userStore.userInfo.phone }}</span>
@@ -74,7 +74,7 @@
               class="flex items-center justify-between gap-1 lg:gap-3 text-gray-600 dark:text-gray-300"
             >
               <div class="flex items-center gap-1 lg:gap-3">
-                <el-icon><AppIcon icon="ep:message" /></el-icon>
+                <el-icon><AppIcon icon="lucide:mail" /></el-icon>
                 <span class="font-medium">用户邮箱</span>
               </div>
               <span>{{ userStore.userInfo.email }}</span>
@@ -83,7 +83,7 @@
               class="flex items-center justify-between gap-1 lg:gap-3 text-gray-600 dark:text-gray-300"
             >
               <div class="flex items-center gap-1 lg:gap-3">
-                <el-icon><AppIcon icon="ep:lock" /></el-icon>
+                <el-icon><AppIcon icon="lucide:lock-keyhole" /></el-icon>
                 <span class="font-medium">安全设置</span>
               </div>
               <div class="flex gap-1 ml-auto">
@@ -118,7 +118,7 @@
             <el-tab-pane name="profile">
               <template #label>
                 <div class="flex items-center gap-2">
-                  <el-icon><AppIcon icon="ep:postcard" /></el-icon>
+                  <el-icon><AppIcon icon="lucide:contact" /></el-icon>
                   用户资料
                 </div>
               </template>
@@ -163,7 +163,7 @@
             <el-tab-pane name="record">
               <template #label>
                 <div class="flex items-center gap-2">
-                  <el-icon><AppIcon icon="ep:operation" /></el-icon>
+                  <el-icon><AppIcon icon="lucide:history" /></el-icon>
                   行为记录
                 </div>
               </template>
@@ -218,13 +218,13 @@
           >
             <el-button-group>
               <el-tooltip content="向左旋转">
-                <el-button :icon="createIconifyIcon('ep:refresh-left')" @click="rotate(-90)" />
+                <el-button :icon="createIconifyIcon('lucide:rotate-ccw')" @click="rotate(-90)" />
               </el-tooltip>
               <el-tooltip content="向右旋转">
-                <el-button :icon="createIconifyIcon('ep:refresh-right')" @click="rotate(90)" />
+                <el-button :icon="createIconifyIcon('lucide:rotate-cw')" @click="rotate(90)" />
               </el-tooltip>
-              <el-button :icon="createIconifyIcon('ep:plus')" @click="changeScale(1)"></el-button>
-              <el-button :icon="createIconifyIcon('ep:minus')" @click="changeScale(-1)"></el-button>
+              <el-button :icon="createIconifyIcon('lucide:zoom-in')" @click="changeScale(1)"></el-button>
+              <el-button :icon="createIconifyIcon('lucide:zoom-out')" @click="changeScale(-1)"></el-button>
             </el-button-group>
 
             <el-select

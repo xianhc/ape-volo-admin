@@ -148,12 +148,12 @@
         "Limit": 10
       },
       {
-        "Endpoint": "post:/api/scheduled-job-manager/execute",
+        "Endpoint": "post:/api/job-manager/execute",
         "Period": "10s",
         "Limit": 5
       },
       {
-        "Endpoint": "post:/api/scheduled-job-manager/execute",
+        "Endpoint": "post:/api/job-manager/execute",
         "Period": "1m",
         "Limit": 20
       },

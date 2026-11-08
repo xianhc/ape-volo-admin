@@ -9,7 +9,7 @@ global using Ape.Volo.Web.Models;
 global using Ape.Volo.Application.Contracts.Log;
 global using Ape.Volo.Application.Contracts.Message.Email.Accounts;
 global using Ape.Volo.Application.Contracts.Message.Email.Templates;
-global using Ape.Volo.Application.Contracts.Operations;
+global using Ape.Volo.Application.Contracts.System.Jobs;
 global using Ape.Volo.Application.Contracts.Organization.Positions;
 global using Ape.Volo.Application.Contracts.Identity;
 global using Ape.Volo.Application.Contracts.Identity.Auth;

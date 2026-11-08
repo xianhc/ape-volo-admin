@@ -33,12 +33,12 @@ public class JobBase<T>
     /// <summary>
     /// 作业配置服务
     /// </summary>
-    public IScheduledJobStore ScheduledJobService = default!;
+    public IJobStore JobService = default!;
 
     /// <summary>
     /// 作业日志队列
     /// </summary>
-    public ILogQueue<ScheduledJobLog> ScheduledJobLogQueue = default!;
+    public ILogQueue<JobLog> JobLogQueue = default!;
 
     /// <summary>
     /// 调度中心服务
@@ -70,7 +70,7 @@ public class JobBase<T>
         var ct = context.CancellationToken;
         //positionName
         var jobId = context.JobDetail.JobDataMap.GetLong(Ape.Volo.Web.Quartz.SchedulerCenterService.JobIdKey);
-        var scheduledJob = await ScheduledJobService.GetByIdAsync(jobId, ct);
+        var job = await JobService.GetByIdAsync(jobId, ct);
 
         //耗时
         try
@@ -85,9 +85,9 @@ public class JobBase<T>
             exceptionDetail = $" {ex.Message}\n{ex.StackTrace}";
             JobExecutionException e2 = new JobExecutionException(ex);
             //失败后是否暂停
-            if (scheduledJob.PauseAfterFailure)
+            if (job.PauseAfterFailure)
             {
-                await SchedulerCenterService.PauseJob(scheduledJob.Id, ct);
+                await SchedulerCenterService.PauseJob(job.Id, ct);
             }
             else
             {
@@ -96,7 +96,7 @@ public class JobBase<T>
             }
 
             //告警邮箱
-            if (!scheduledJob.AlertEmail.IsNullOrEmpty())
+            if (!job.AlertEmail.IsNullOrEmpty())
             {
                 //实现自己的告警邮件模板 再添加队列信息
             }
@@ -106,26 +106,26 @@ public class JobBase<T>
             try
             {
                 // 作业只构建日志并非阻塞入队，数据库写入由后台独立作用域完成。
-                var scheduledJobLog = new ScheduledJobLog
+                var jobLog = new JobLog
                 {
                     Id = _idGenerator.NewId(),
-                    ScheduledJobId = scheduledJob.Id,
-                    JobName = scheduledJob.JobName,
-                    JobGroup = scheduledJob.JobGroup,
-                    AssemblyName = scheduledJob.AssemblyName,
-                    ClassName = scheduledJob.ClassName,
-                    Cron = scheduledJob.Cron,
+                    JobId = job.Id,
+                    JobName = job.JobName,
+                    JobGroup = job.JobGroup,
+                    AssemblyName = job.AssemblyName,
+                    ClassName = job.ClassName,
+                    Cron = job.Cron,
                     ExceptionDetail = exceptionDetail,
                     ExecutionDuration = stopwatch.ElapsedMilliseconds,
-                    RunParams = scheduledJob.RunParams,
+                    RunParams = job.RunParams,
                     IsSuccess = isSuccess,
-                    CreatorName = "ScheduledJob",
+                    CreatorName = "Job",
                     CreationTime = DateTime.Now
                 };
-                if (!ScheduledJobLogQueue.TryEnqueue(scheduledJobLog))
+                if (!JobLogQueue.TryEnqueue(jobLog))
                 {
                     Logger.LogWarning("作业日志队列已满，本次日志被丢弃（累计丢弃 {Dropped} 条）",
-                        ScheduledJobLogQueue.DroppedCount);
+                        JobLogQueue.DroppedCount);
                 }
             }
             catch (Exception ex)
@@ -133,7 +133,7 @@ public class JobBase<T>
                 try
                 {
                     await _fallbackLogWriter.WriteAsync(
-                        $"作业日志处理失败：{scheduledJob.Id}（{scheduledJob.JobName}）{Environment.NewLine}" +
+                        $"作业日志处理失败：{job.Id}（{job.JobName}）{Environment.NewLine}" +
                         $"执行结果：{(isSuccess ? "成功" : "失败")}，耗时：{stopwatch.ElapsedMilliseconds}ms{Environment.NewLine}" +
                         $"{exceptionDetail}{Environment.NewLine}{ex}",
                         CancellationToken.None);

@@ -13,7 +13,29 @@ export const iconCollections = [
 const localModules = import.meta.glob<string>('../../assets/icons/**/*.svg', { query: '?raw', import: 'default' })
 const localFiles = new Map(Object.entries(localModules).map(([path, loader]) => ['svg:' + path.split('/assets/icons/')[1].replace(/\.svg$/, ''), loader]))
 const pending = new Map<string, Promise<IconifyIcon>>()
-const aliases: Record<string, string> = { job: 'svg:position', timing: 'svg:scheduled-job' }
+const aliases: Record<string, string> = {
+  job: 'lucide:briefcase-business',
+  timing: 'lucide:timer',
+  run: 'lucide:play',
+  pause: 'lucide:pause',
+  resume: 'lucide:circle-play',
+  user: 'lucide:user-round',
+  menu: 'lucide:list-tree',
+  link: 'lucide:link',
+  role: 'lucide:shield-check',
+  timer: 'lucide:timer',
+  dept: 'lucide:network',
+  'nick-name': 'lucide:contact-round',
+  view: 'lucide:eye',
+  Back: 'lucide:arrow-left',
+  Right: 'lucide:arrow-right',
+  github: 'lucide:github',
+  'vue1': 'mdi:vuejs',
+  'html5': 'mdi:language-html5',
+  angular: 'mdi:angular',
+  react: 'mdi:react',
+  js: 'mdi:language-javascript'
+}
 
 function normalizeIconName(name: string): string {
   if (aliases[name]) return aliases[name]

@@ -3,7 +3,7 @@
 namespace Ape.Volo.Shared.Enums;
 
 /// <summary>
-/// 触发器状态（数值与 Quartz.TriggerState 一致，保证前端序列化兼容）
+/// 对外触发器状态编号，由 Quartz 适配器显式转换。
 /// </summary>
 public enum TriggerState
 {

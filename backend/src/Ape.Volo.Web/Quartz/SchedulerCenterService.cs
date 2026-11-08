@@ -1,6 +1,6 @@
 ﻿using System.Globalization;
 using System.Reflection;
-using Ape.Volo.Application.Contracts.Operations.Models;
+using Ape.Volo.Application.Contracts.System.Jobs.Models;
 using Ape.Volo.Shared.Exceptions;
 using Quartz;
 using Quartz.Spi;
@@ -14,8 +14,8 @@ namespace Ape.Volo.Web.Quartz;
 /// </summary>
 public sealed class SchedulerCenterService : ISchedulerCenterService, IAsyncDisposable
 {
-    internal const string JobIdKey = "ScheduledJobId";
-    private const string SchedulerGroup = "ApeVolo.ScheduledJobs";
+    internal const string JobIdKey = "JobId";
+    private const string SchedulerGroup = "ApeVolo.Jobs";
     private readonly Lazy<Task<IScheduler>> _scheduler;
     private readonly ILogger<SchedulerCenterService> _logger;
     private readonly SemaphoreSlim _mutation = new(1, 1);
@@ -40,7 +40,7 @@ public sealed class SchedulerCenterService : ISchedulerCenterService, IAsyncDisp
     }
 
     /// <inheritdoc />
-    public void ValidateConfiguration(ScheduledJobVo job)
+    public void ValidateConfiguration(JobVo job)
     {
         ResolveJobType(job);
         if (job.TriggerType == TriggerType.Cron)
@@ -88,7 +88,7 @@ public sealed class SchedulerCenterService : ISchedulerCenterService, IAsyncDisp
     }
 
     /// <inheritdoc />
-    public Task<bool> AddScheduleJobAsync(ScheduledJobVo job, CancellationToken ct = default) => MutateAsync(async scheduler =>
+    public Task<bool> AddScheduleJobAsync(JobVo job, CancellationToken ct = default) => MutateAsync(async scheduler =>
     {
         ValidateConfiguration(job);
         if (job.Id <= 0) throw new BadRequestException("调度作业必须先保存并取得 ID。");
@@ -143,7 +143,19 @@ public sealed class SchedulerCenterService : ISchedulerCenterService, IAsyncDisp
 
     /// <inheritdoc />
     public async Task<TriggerState> GetTriggerStatus(long id, CancellationToken ct = default)
-        => (TriggerState)(int)await (await _scheduler.Value.WaitAsync(ct)).GetTriggerState(TriggerKey(id), ct);
+    {
+        var state = await (await _scheduler.Value.WaitAsync(ct)).GetTriggerState(TriggerKey(id), ct);
+        return state switch
+        {
+            global::Quartz.TriggerState.None => TriggerState.None,
+            global::Quartz.TriggerState.Normal => TriggerState.Normal,
+            global::Quartz.TriggerState.Paused => TriggerState.Paused,
+            global::Quartz.TriggerState.Complete => TriggerState.Complete,
+            global::Quartz.TriggerState.Error => TriggerState.Error,
+            global::Quartz.TriggerState.Blocked => TriggerState.Blocked,
+            _ => throw new InvalidOperationException($"未知的 Quartz 触发器状态：{state}。")
+        };
+    }
 
     /// <inheritdoc />
     public async ValueTask DisposeAsync()
@@ -169,7 +181,7 @@ public sealed class SchedulerCenterService : ISchedulerCenterService, IAsyncDisp
     private static JobKey Key(long id) => new(id.ToString(CultureInfo.InvariantCulture), SchedulerGroup);
     private static TriggerKey TriggerKey(long id) => new(id.ToString(CultureInfo.InvariantCulture), SchedulerGroup);
 
-    private static Type ResolveJobType(ScheduledJobVo job)
+    private static Type ResolveJobType(JobVo job)
     {
         try
         {

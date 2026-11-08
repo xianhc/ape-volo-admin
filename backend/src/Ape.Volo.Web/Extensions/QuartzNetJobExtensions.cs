@@ -3,7 +3,7 @@ using Ape.Volo.Common.Extensions;
 using Microsoft.Extensions.Options;
 using Ape.Volo.Core.ConfigOptions;
 using Quartz;
-using Quartz.Spi;
+using IJobFactory = Quartz.Spi.IJobFactory;
 using Quartz.Impl;
 using System.Collections.Specialized;
 
@@ -67,9 +67,9 @@ public static class QuartzNetJobExtensions
             {
                 ct.ThrowIfCancellationRequested();
                 await using var scope = provider.CreateAsyncScope();
-                var scheduledJobService = scope.ServiceProvider.GetRequiredService<IScheduledJobStore>();
+                var jobService = scope.ServiceProvider.GetRequiredService<IJobStore>();
                 var schedulerCenter = scope.ServiceProvider.GetRequiredService<ISchedulerCenterService>();
-                var allTaskQuartzList = await scheduledJobService.GetAllAsync(ct);
+                var allTaskQuartzList = await jobService.GetAllAsync(ct);
                 ct.ThrowIfCancellationRequested();
                 foreach (var item in allTaskQuartzList)
                 {

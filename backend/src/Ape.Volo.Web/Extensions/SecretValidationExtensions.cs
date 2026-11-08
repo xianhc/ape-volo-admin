@@ -6,7 +6,7 @@ namespace Ape.Volo.Web.Extensions;
 /// 启动期密钥校验：缺失时直接阻止启动，避免以空密钥运行。
 /// </summary>
 /// <remarks>
-/// 密钥内容不内联到 <c>appsettings.json</c>。仓库中的 <c>.secrets/password-private.pem</c>
+/// 密钥内容不内联到 <c>appsettings.json</c>。仓库中的 <c>resources/keys/password-private.pem</c>
 /// 仅用于开源项目的开发和演示；生产部署必须通过同一路径挂载各环境自己的私钥文件。
 /// </remarks>
 public static class SecretValidationExtensions

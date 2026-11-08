@@ -43,7 +43,7 @@
     "Id": 163519427764345,
     "DictId": 163519427764343,
     "Label": "simple",
-    "Value": "0",
+    "Value": "2",
     "DictSort": 2,
     "CreateBy": "apevolo"
   },
@@ -235,7 +235,7 @@
     "Id": 163519427868420,
     "DictId": 183847050895429,
     "Label": "正常",
-    "Value": "0",
+    "Value": "1",
     "DictSort": 1,
     "CreateBy": "apevolo"
   },
@@ -243,7 +243,7 @@
     "Id": 163519427868421,
     "DictId": 183847050895429,
     "Label": "暂停",
-    "Value": "1",
+    "Value": "2",
     "DictSort": 2,
     "CreateBy": "apevolo"
   },
@@ -251,7 +251,7 @@
     "Id": 163519427868422,
     "DictId": 183847050895429,
     "Label": "完成",
-    "Value": "2",
+    "Value": "3",
     "DictSort": 3,
     "CreateBy": "apevolo"
   },
@@ -259,7 +259,7 @@
     "Id": 163519427868423,
     "DictId": 183847050895429,
     "Label": "错误",
-    "Value": "3",
+    "Value": "4",
     "DictSort": 4,
     "CreateBy": "apevolo"
   },
@@ -267,7 +267,7 @@
     "Id": 163519427868424,
     "DictId": 183847050895429,
     "Label": "阻塞",
-    "Value": "4",
+    "Value": "5",
     "DictSort": 5,
     "CreateBy": "apevolo"
   },
@@ -275,7 +275,7 @@
     "Id": 163519427868425,
     "DictId": 183847050895429,
     "Label": "不存在",
-    "Value": "5",
+    "Value": "0",
     "DictSort": 6,
     "CreateBy": "apevolo"
   }

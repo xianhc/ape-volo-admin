@@ -4,7 +4,6 @@ using Ape.Volo.Common.Helper;
 using Ape.Volo.Core.ConfigOptions;
 using Ape.Volo.Entity.Attributes;
 using Ape.Volo.Entity.Message.Email;
-using Ape.Volo.Entity.Operations;
 using Ape.Volo.Entity.Organization.Departments;
 using Ape.Volo.Entity.Organization.Positions;
 using Ape.Volo.Entity.Identity;
@@ -209,13 +208,13 @@ namespace Ape.Volo.Core.SeedData
 
                 #region 作业调度
 
-                if (!await dataContext.Db.Queryable<ScheduledJob>().AnyAsync())
+                if (!await dataContext.Db.Queryable<Job>().AnyAsync())
                 {
-                    var attr = typeof(ScheduledJob).GetCustomAttribute<SugarTable>();
+                    var attr = typeof(Job).GetCustomAttribute<SugarTable>();
                     if (attr != null)
                     {
-                        await dataContext.GetEntityDb<ScheduledJob>().InsertRangeAsync(
-                            JsonConvert.DeserializeObject<List<ScheduledJob>>(
+                        await dataContext.GetEntityDb<Job>().InsertRangeAsync(
+                            JsonConvert.DeserializeObject<List<Job>>(
                                 FileHelper.ReadFile(string.Format(seedDataFolder, attr.TableName), Encoding.UTF8),
                                 setting));
                     }

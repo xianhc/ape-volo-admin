@@ -200,32 +200,32 @@ public static class SystemPermissions
     /// <summary>
     /// 作业调度权限。
     /// </summary>
-    public static class ScheduledJobs
+    public static class Jobs
     {
         /// <summary>
         /// 作业调度。
         /// </summary>
-        public const string List = "sys:scheduledJob:list";
+        public const string List = "sys:job:list";
 
         /// <summary>
         /// 作业新增。
         /// </summary>
-        public const string Add = "sys:scheduledJob:add";
+        public const string Add = "sys:job:add";
 
         /// <summary>
         /// 作业编辑。
         /// </summary>
-        public const string Edit = "sys:scheduledJob:edit";
+        public const string Edit = "sys:job:edit";
 
         /// <summary>
         /// 作业删除。
         /// </summary>
-        public const string Delete = "sys:scheduledJob:del";
+        public const string Delete = "sys:job:del";
 
         /// <summary>
         /// 作业导出。
         /// </summary>
-        public const string Download = "sys:scheduledJob:download";
+        public const string Download = "sys:job:download";
 
     }
 
@@ -320,12 +320,12 @@ public static class SystemPermissions
     /// <summary>
     /// 作业日志权限。
     /// </summary>
-    public static class ScheduledJobLogs
+    public static class JobLogs
     {
         /// <summary>
         /// 作业日志。
         /// </summary>
-        public const string List = "log:scheduledJob:list";
+        public const string List = "log:job:list";
 
     }
 

@@ -79,12 +79,8 @@
   .editor-stage { width: 640px; max-width: 100%; }
   .login-region { display: flex; align-items: center; justify-content: center; min-width: 0; padding: 95px 32px 88px; background: var(--login-canvas); }
   .login-content { width: 100%; max-width: 448px; }
-  .login-footer { margin-top: 30px; color: #53617a; text-align: center; }
+  .login-footer { margin-top: 30px; text-align: center; }
   .login-footer :deep(> div) { flex-direction: column; gap: 15px; padding: 0; }
-  .login-footer :deep(.text-center) { color: #64728b; font: 400 12px/1.5 'Segoe UI', sans-serif; }
-  .login-footer :deep(.text-center:first-child) { color: #53617a; font-size: 13px; }
-  .login-footer :deep(.text-center:first-child a) { color: var(--el-color-primary); text-transform: uppercase; font-weight: 500; }
-  .login-footer :deep(.text-center:last-child a) { color: #53617a; font-weight: 600; }
   .login-footer :deep(a:hover) { text-decoration: underline; text-underline-offset: 4px; }
   .login-links { display: flex; align-items: center; justify-content: center; gap: 26px; color: #72809a; font-size: 11px; }
   .login-links a { display: flex; align-items: center; gap: 6px; }

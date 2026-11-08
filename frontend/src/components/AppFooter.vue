@@ -22,13 +22,13 @@
 
 <template>
   <div
-    class="app-footer flex flex-col md:flex-row gap-2 items-center text-sm text-slate-700 dark:text-slate-300 justify-center pb-1"
+    class="app-footer flex flex-col md:flex-row gap-2 items-center justify-center pb-1"
   >
     <div class="text-center">
       <span class="mr-1">Powered by </span>
       <span>
         <a
-          class="font-bold text-active"
+          class="app-footer-link"
           href="https://github.com/xianhc/ape-volo-admin"
         >
           Ape-Volo-Admin
@@ -39,7 +39,7 @@
     <div class="text-center">
       <span class="mr-1">Copyright © 2022–{{ currentYear }}</span>
       <span>
-        <a class="font-bold text-active" href="https://www.github.com/xianhc">
+        <a class="app-footer-link" href="https://www.github.com/xianhc">
           xianhc
         </a>
       </span>
@@ -56,35 +56,17 @@
 </script>
 
 <style scoped>
-  /* 夜间模式的白色硬边仅作用于两行版权文字。 */
-  :global(html.dark .app-footer > .text-center) {
-    color: #94a3b8;
-    font: 400 12px/1.5 'Segoe UI', sans-serif;
-    text-shadow:
-      0 0 1px #fff,
-      1px 1px 0 #fff,
-      -1px 1px 0 #fff,
-      1px -1px 0 #fff,
-      -1px -1px 0 #fff,
-      0 1px 0 #fff,
-      0 -1px 0 #fff,
-      1px 0 0 #fff,
-      -1px 0 0 #fff;
+  .app-footer {
+    color: var(--app-text-secondary);
+    font: 400 13px/1.5 'Segoe UI', sans-serif;
   }
 
-  :global(html.dark .app-footer > .text-center:first-child) {
-    color: #53617a;
-    font-size: 13px;
+  .app-footer > .text-center {
+    font: inherit;
   }
 
-  :global(html.dark .app-footer > .text-center:first-child a) {
+  .app-footer-link {
     color: var(--el-color-primary);
-    text-transform: uppercase;
-    font-weight: 500;
-  }
-
-  :global(html.dark .app-footer > .text-center:last-child a) {
-    color: inherit;
-    font-weight: inherit;
+    font-weight: 600;
   }
 </style>

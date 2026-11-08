@@ -21,7 +21,7 @@ public static class DynamicApiExtensions
     public static IMvcBuilder AddDynamicApi(this IMvcBuilder mvc, IConfiguration configuration)
     {
         var options = configuration.GetConfigurableOptions<DynamicApiOptions>();
-        var contractsAssembly = typeof(IScheduledJobService).Assembly;
+        var contractsAssembly = typeof(IJobService).Assembly;
         var registry = DynamicApiRegistry.Build(contractsAssembly, options);
 
         mvc.Services.AddSingleton(registry);

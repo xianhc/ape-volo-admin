@@ -37,18 +37,16 @@
     </el-card>
 
     <!-- 快捷导航 -->
-    <el-row :gutter="10" class="mt-5">
-      <el-col :span="8">
-        <el-card shadow="never" class="ape-volo-content">
+    <el-row :gutter="10" class="mt-5 gap-y-3">
+      <el-col :xs="24" :lg="12">
+        <el-card shadow="never" class="ape-volo-content h-full">
           <template #header>
             <span class="text-gray">快捷导航</span>
           </template>
           <div
             class="dark:text-neutral-400 rounded shadow p-4 border border-gray-200 dark:border-neutral-700"
           >
-            <div
-              class="grid grid-cols-2 md:grid-cols-3 3xl:grid-cols-4 gap-8 border"
-            >
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-8 border">
               <div
                 v-for="(item, index) in menuNavigations"
                 :key="index"
@@ -72,14 +70,14 @@
           </div>
         </el-card>
       </el-col>
-      <el-col :span="16">
-        <el-card shadow="never" class="ape-volo-content">
+      <el-col :xs="24" :lg="12">
+        <el-card shadow="never" class="ape-volo-content h-full">
           <template #header>
             <span class="text-gray">项目</span>
           </template>
           <div>
             <div
-              class="grid grid-rows-2 grid-cols-3 divide-x divide-y cursor-pointer dark:text-neutral-400 rounded shadow border border-gray-200 dark:border-neutral-700"
+              class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 divide-x divide-y cursor-pointer dark:text-neutral-400 rounded shadow border border-gray-200 dark:border-neutral-700"
             >
               <div
                 v-for="(item, index) in projectItems"
@@ -138,7 +136,7 @@
                 rel="noopener noreferrer"
               >
                 完整记录
-                <el-icon><AppIcon icon="ep:top-right" /></el-icon>
+                <el-icon><AppIcon icon="lucide:arrow-up-right" /></el-icon>
               </el-link>
             </div>
           </template>
@@ -181,7 +179,9 @@
                       :underline="false"
                     >
                       详情
-                      <el-icon class="link-icon"><AppIcon icon="ep:top-right" /></el-icon>
+                      <el-icon class="link-icon"
+                        ><AppIcon icon="lucide:arrow-up-right"
+                      /></el-icon>
                     </el-link>
                   </div>
                 </div>
@@ -212,6 +212,34 @@
 
   // 更新记录
   const changeLogList = ref([
+    {
+      version: 'V3.6.2.2',
+      date: '2026-11-08',
+      content: '重整作业调度与日志，完善启停和状态展示，统一图标、首页布局。',
+      tag: '最新'
+    },
+    {
+      version: 'V3.6.21',
+      date: '2026-11-07',
+      content: '简化缓存与会话机制，优化数据权限缓存和跨标签页账号切换。',
+      link: 'https://www.apevolo.com/change-log.html',
+      tag: '优化'
+    },
+    {
+      version: 'V3.6.2',
+      date: '2026-11-07',
+      content:
+        '完善部门用户管理与权限控制，新增 PostgreSQL 支持，优化上传与日志。',
+      link: 'https://www.apevolo.com/change-log.html',
+      tag: '功能更新'
+    },
+    {
+      version: 'V3.6.1',
+      date: '2026-10-31',
+      content: '重构前后端工程与服务分层，统一接口契约、会话和页面组件。',
+      link: 'https://www.apevolo.com/change-log.html',
+      tag: '重构'
+    },
     {
       version: 'v3.5.2',
       date: '2026-04-12',
@@ -369,32 +397,32 @@
 
   const menuNavigations = [
     {
-      icon: 'user',
+      icon: 'lucide:users-round',
       title: '用户管理',
       path: 'user'
     },
     {
-      icon: 'menu',
+      icon: 'lucide:list-tree',
       title: '菜单管理',
       path: 'menu'
     },
     {
-      icon: 'link',
+      icon: 'lucide:plug',
       title: 'API管理',
       path: 'api'
     },
     {
-      icon: 'role',
+      icon: 'lucide:shield-check',
       title: '角色管理',
       path: 'role'
     },
     {
-      icon: 'job',
+      icon: 'lucide:briefcase-business',
       title: '岗位管理',
       path: 'job'
     },
     {
-      icon: 'timer',
+      icon: 'lucide:timer',
       title: '作业调度',
       path: 'timing'
     }
@@ -402,42 +430,42 @@
 
   const projectItems = [
     {
-      icon: 'github',
+      icon: 'lucide:github',
       title: 'Github',
       desc: '不要等待机会，而要创造机会。',
       tag: '开源组',
       date: '2025-01-01'
     },
     {
-      icon: 'vue1',
+      icon: 'mdi:vuejs',
       title: 'Vue',
       desc: '现在的你决定将来的你。',
       tag: '算法组',
       date: '2025-01-01'
     },
     {
-      icon: 'html5',
+      icon: 'mdi:language-html5',
       title: 'Html5',
       desc: '没有什么比努力更重要。',
       tag: '上班摸鱼',
       date: '2025-01-01'
     },
     {
-      icon: 'angular',
+      icon: 'mdi:angular',
       title: 'Angular',
       desc: '热情和欲望可以突破一切难关。',
       tag: 'UI',
       date: '2025-01-01'
     },
     {
-      icon: 'react',
+      icon: 'mdi:react',
       title: 'React',
       desc: '健康的身体是实现目标的基石。',
       tag: '技术牛',
       date: '2025-01-01'
     },
     {
-      icon: 'js',
+      icon: 'mdi:language-javascript',
       title: 'Js',
       desc: '路是走出来的，而不是空想出来的。',
       tag: '架构组',
