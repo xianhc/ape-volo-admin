@@ -278,5 +278,21 @@
     "Value": "0",
     "DictSort": 6,
     "CreateBy": "apevolo"
+  },
+  {
+    "Id": 2119361429127139329,
+    "CreatorId": 163519427764300,
+    "DictId": 2119361429127139328,
+    "Label": "低",
+    "Value": "0",
+    "DictSort": 1
+  },
+  {
+    "Id": 2119361429127139330,
+    "CreatorId": 163519427764300,
+    "DictId": 2119361429127139328,
+    "Label": "高",
+    "Value": "1",
+    "DictSort": 2
   }
 ]

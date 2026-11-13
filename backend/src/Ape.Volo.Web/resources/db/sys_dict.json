@@ -68,5 +68,12 @@
     "Name": "task_trigger_state",
     "Description": "作业触发器状态",
     "CreateBy": "apevolo"
+  },
+  {
+    "Id": 2119361429127139328,
+    "CreatorId": 163519427764300,
+    "DictType": 2,
+    "Name": "priority_type",
+    "Description": "邮件队列优先级"
   }
 ]

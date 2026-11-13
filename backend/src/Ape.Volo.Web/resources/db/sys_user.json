@@ -12,12 +12,12 @@
     "PasswordResetTime": null,
     "GenderCode": 1,
     "CreateBy": "apevolo",
-    "PreferencesConfig" : null
+    "PreferencesConfig": null
   },
   {
     "Id": 163519427764301,
     "UserName": "guest",
-    "NickName": "Mr.冼",
+    "NickName": "Mr.Guest",
     "Email": "guest@gmail.com",
     "Enabled": true,
     "Password": "$2a$11$9BhSJpUSBlfjhemHVho0vej7rOH7PVhu5bqbhRcmwJMEyyVqGLTJe",
@@ -27,6 +27,6 @@
     "PasswordResetTime": null,
     "GenderCode": 1,
     "CreateBy": "apevolo",
-    "PreferencesConfig" : null
+    "PreferencesConfig": null
   }
 ]
